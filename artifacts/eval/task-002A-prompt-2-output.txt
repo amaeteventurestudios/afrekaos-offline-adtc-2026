@@ -1,0 +1,4 @@
+[no model run] model_ok=no binary_ok=no
+Model path: /Users/amaeteumanah/Desktop/Projects/afrekaos-offline-adtc-2026/model/afrekaos.gguf
+Binary:     <unset>
+No benchmark was executed. Numbers are not fabricated.

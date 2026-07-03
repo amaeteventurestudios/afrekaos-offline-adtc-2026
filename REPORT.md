@@ -98,3 +98,40 @@ There is no runnable app yet. For the skeleton stage:
 
 A real quickstart will be added in a later task once the model path and the
 local server are in place. See `specs/001-afrekaos-offline/quickstart.md`.
+
+## Task 002A — Runtime Baseline
+
+This task added the **first executable model/runtime baseline** without building
+retrieval or UI. It establishes runtime discipline, metadata validation, and
+profiler readiness.
+
+**What was added:**
+
+- `app/runtime_config.py` — dependency-free runtime config. Defines
+  `DEFAULT_MODEL_PATH = "model/afrekaos.gguf"` and honors the
+  `AFREKAOS_MODEL_PATH` and `LLAMA_CPP_BIN` environment overrides. Helpers:
+  `get_model_path()`, `get_llama_binary()`, `model_exists()`,
+  `runtime_summary()`.
+- `scripts/check_metadata.py` — metadata contract checker (product name,
+  domain, model path, exactly two non-empty prompts). Exits non-zero on
+  violations.
+- `scripts/run_smoke_prompt.sh` — executable; runs one short SME operations
+  prompt through llama.cpp. Checks model + binary exist first. No internet, no
+  external API.
+- `scripts/profile_model.sh` — executable; runs both canonical metadata prompts
+  and writes outputs + runtime notes under `artifacts/eval/`.
+- `tests/test_metadata_contract.py`, `tests/test_runtime_config.py` —
+  standard-library-only tests.
+- README and this report updated.
+
+**What remains unresolved:**
+
+- No model is downloaded or locked. The model URL is still not locked.
+- If `model/afrekaos.gguf` is absent, the smoke/profiler scripts record that
+  state and do not fabricate benchmark numbers.
+- Actual model selection/download lock is deferred to Task 002B.
+
+**Explicitly not added in this task:** no UI, no retrieval (no SQLite FTS5
+index), no cloud service, no private data, no banking data, no payroll data, no
+tax workflow, and no ERP behavior. No model was downloaded in this task unless a
+local model already existed and was only referenced by the scripts.

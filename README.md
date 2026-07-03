@@ -52,6 +52,36 @@ This is the **skeleton**. Concretely, right now:
 Do not overclaim based on this repo. See `REPORT.md` and
 `specs/001-afrekaos-offline/`.
 
+## Runtime Baseline (Task 002A)
+
+The runtime baseline wires up the **model/runtime path** only — no UI, no
+retrieval, no cloud.
+
+- **Canonical model path:** `model/afrekaos.gguf`
+- **Optional overrides:**
+  - `AFREKAOS_MODEL_PATH` — point at a different GGUF model file.
+  - `LLAMA_CPP_BIN` — path to the llama.cpp binary (e.g. `llama-cli` / `main`).
+
+> The **model URL is not locked yet.** No model is downloaded by this task. If
+> `model/afrekaos.gguf` does not exist, the smoke/profiler scripts report that
+> state clearly and refuse to fabricate results.
+
+Commands:
+
+```bash
+# Validate metadata.json against the product contract.
+python3 scripts/check_metadata.py
+
+# Run one short SME operations prompt through llama.cpp (requires model + binary).
+./scripts/run_smoke_prompt.sh
+
+# Run both canonical prompts and record outputs under artifacts/eval/.
+./scripts/profile_model.sh
+```
+
+Configuration helpers live in `app/runtime_config.py` (`get_model_path()`,
+`get_llama_binary()`, `model_exists()`, `runtime_summary()`).
+
 ## Repository layout
 
 ```

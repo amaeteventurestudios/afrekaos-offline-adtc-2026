@@ -22,9 +22,26 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [x] Placeholder corpus notes under `data/` (public, challenge-safe).
 - [x] Initialize git, set remote, branch `main`, commit, push.
 
-## Future tasks (sketched, not started)
+## Task 002A — Runtime baseline (complete)
 
-### 002 — Model and runtime path
+- [x] `app/runtime_config.py` — `DEFAULT_MODEL_PATH`, `AFREKAOS_MODEL_PATH`,
+      `LLAMA_CPP_BIN` overrides, helpers `get_model_path()`,
+      `get_llama_binary()`, `model_exists()`, `runtime_summary()`.
+      Dependency-free.
+- [x] `scripts/check_metadata.py` — validates product name, domain, model path,
+      exactly two non-empty prompts; exits non-zero on violations.
+- [x] `scripts/run_smoke_prompt.sh` — executable; one AfrekaOS prompt through
+      llama.cpp; checks model + binary; offline only.
+- [x] `scripts/profile_model.sh` — executable; both canonical prompts; writes
+      outputs + notes under `artifacts/eval/`; no fabricated numbers.
+- [x] `tests/test_metadata_contract.py`, `tests/test_runtime_config.py` —
+      standard-library-only tests.
+- [x] README "Runtime Baseline" section; REPORT "Task 002A" section.
+- [x] Validation run (metadata check + direct Python test run).
+
+## Future tasks (sketched)
+
+### 002B — Model selection and lock (open)
 
 - [ ] Select and lock a GGUF model + quantization for 8 GB RAM / integrated
       graphics.
