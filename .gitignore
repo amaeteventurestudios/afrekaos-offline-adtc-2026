@@ -1,0 +1,35 @@
+# --- Model artifacts (large, do not commit) ---
+model/
+*.gguf
+
+# --- Python ---
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- OS noise ---
+.DS_Store
+Thumbs.db
+
+# --- Editor noise ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Build / submission artifacts ---
+# Keep markdown evidence (REPORT.md, specs, etc.) tracked.
+# Only ignore machine-generated JSON blobs that should not be committed.
+artifacts/eval/*.json
+artifacts/submission/*.json
+
+# --- Local secrets / env (never commit) ---
+.env
+.env.*
+*.key

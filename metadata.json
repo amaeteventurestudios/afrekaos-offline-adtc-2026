@@ -1,0 +1,36 @@
+{
+  "product_name": "AfrekaOS Offline",
+  "domain": "SME operations / African small business operations",
+  "edition": "ADTC 2026",
+  "runtime": {
+    "mode": "local-only",
+    "model_format": "gguf",
+    "engine": "llama.cpp",
+    "target_hardware": {
+      "os": "Ubuntu 22.04",
+      "ram_gb": 8,
+      "gpu": "integrated graphics"
+    },
+    "app_type": "local browser app on localhost",
+    "retrieval": "sqlite fts5",
+    "dependencies_cloud": false,
+    "internet_required_during_judged_runtime": false
+  },
+  "model": {
+    "path": "model/afrekaos.gguf",
+    "url_locked": false,
+    "notes": "Placeholder path. The exact model URL is not locked yet. See download_model.sh."
+  },
+  "test_prompts": [
+    {
+      "id": "prompt_1",
+      "label": "daily_operations_triage",
+      "prompt": "A small shop owner reports that sales are lower than usual, two fast-moving items are out of stock, customers are asking for credit, and the supplier delivery is delayed. What should they check first, and what should they avoid doing immediately?"
+    },
+    {
+      "id": "prompt_2",
+      "label": "expansion_readiness",
+      "prompt": "A market operator wants to expand from one location to two locations but has irregular cash records, one trusted staff member, seasonal customer demand, and limited working capital. What risks and readiness factors should they evaluate before expanding?"
+    }
+  ]
+}
