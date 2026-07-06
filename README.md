@@ -131,6 +131,35 @@ ad-hoc bake-off runs:
 CANDIDATE_MODEL_PATH=model/candidates/qwen3-1.7b-q4-k-m.gguf ./scripts/run_smoke_prompt.sh
 ```
 
+## Qwen Direct-Answer Mode (Task 002C)
+
+Task 002B found that `qwen3-1.7b` generated **only thinking output** — its
+`<think>` block consumed the whole token budget and it never produced a
+user-visible SME answer. Task 002C fixes this with a non-thinking template
+(`templates/qwen3_nonthinking.jinja`) and a `/no_think` soft switch, then
+retests qwen3-1.7b in direct-answer mode.
+
+Result: direct mode **eliminated the `<think>` trap** and the candidate produced
+visible SME answers (analyzer verdict: PASS). `qwen3-1.7b-q4-k-m` is locked as
+the **first canonical model** (`model/afrekaos.gguf` → symlink; see
+`model.lock.json`), with quality caveats tracked as unresolved items (prompt-1
+derailed on one of three prompts). It is a working baseline, not a final
+endorsement.
+
+Commands:
+
+```bash
+# Retest qwen3-1.7b in direct-answer mode (template + /no_think).
+AFREKAOS_QWEN_NO_THINK=1 ./scripts/retest_qwen_direct.sh
+
+# Analyze whether outputs produced usable visible answers.
+python3 scripts/analyze_qwen_outputs.py
+```
+
+`model.lock.json` is created only if a candidate passes direct-answer
+viability. `model/` and `*.gguf` remain gitignored; only the lock JSON and the
+symlink target path are recorded in metadata.
+
 ## Repository layout
 
 ```

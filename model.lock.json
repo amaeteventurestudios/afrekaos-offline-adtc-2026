@@ -1,0 +1,42 @@
+{
+  "product": "AfrekaOS Offline",
+  "locked_candidate": "qwen3-1.7b-q4-k-m",
+  "local_model_path": "model/afrekaos.gguf",
+  "local_model_is_symlink": true,
+  "symlink_target": "model/candidates/qwen3-1.7b-q4-k-m.gguf",
+  "model_family": "Qwen3",
+  "source_repo": "bartowski/Qwen_Qwen3-1.7B-GGUF",
+  "source_file": "Qwen_Qwen3-1.7B-Q4_K_M.gguf",
+  "quantization": "Q4_K_M",
+  "format": "GGUF",
+  "mode": "non-thinking/direct-answer",
+  "runtime_template": "templates/qwen3_nonthinking.jinja",
+  "runtime_env": {
+    "AFREKAOS_QWEN_NO_THINK": "1",
+    "note": "Append /no_think to Qwen prompts; apply --jinja --chat-template-file templates/qwen3_nonthinking.jinja and -no-cnv via llama-completion."
+  },
+  "selection_reason": "First canonical baseline. Direct-answer mode (Task 002C) fixes the Task 002B thinking-mode trap: no <think> block appears in any retest output, visible SME answers are produced within the token budget, and timing/memory fit the 8 GB target (generation ~4 tok/s, ~5.4 GB host memory on dev machine). Locked as a working baseline to unblock retrieval (Task 003); not a final endorsement (see unresolved_items).",
+  "evidence_artifacts": [
+    "artifacts/eval/task-002B-model-bakeoff.md",
+    "artifacts/eval/task-002C-qwen-direct-mode.md",
+    "artifacts/eval/model-bakeoff/task-002C/qwen3-1.7b-direct-prompt-1.txt",
+    "artifacts/eval/model-bakeoff/task-002C/qwen3-1.7b-direct-prompt-2.txt",
+    "artifacts/eval/model-bakeoff/task-002C/qwen3-1.7b-direct-smoke.txt",
+    "artifacts/eval/model-bakeoff/task-002C/qwen3-1.7b-direct-runtime-notes.md",
+    "artifacts/eval/model-bakeoff/summary.md"
+  ],
+  "unresolved_items": [
+    "prompt-1 (triage) derailed into off-topic multiple-choice + chemistry hallucination even in direct mode; needs prompt/system-prompt hardening or a larger non-thinking model.",
+    "All TPS/memory numbers are from the development Darwin x86_64 machine, not the target Ubuntu 22.04 / 8 GB hardware.",
+    "Only qwen3-1.7b has been profiled; control (granite-4.1-3b) and reasoning fallback (qwen3-4b) candidates are still absent.",
+    "No checksum verification recorded yet for the candidate file."
+  ],
+  "prohibited_use": [
+    "no cloud inference during judged runtime",
+    "no private customer data",
+    "no banking data",
+    "no payroll workflows",
+    "no tax filing workflows",
+    "no ERP claim"
+  ]
+}

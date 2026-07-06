@@ -34,7 +34,10 @@ def get_model_path() -> Path:
     raw = os.environ.get("AFREKAOS_MODEL_PATH", DEFAULT_MODEL_PATH)
     p = Path(raw)
     if not p.is_absolute():
-        p = (REPO_ROOT / p).resolve()
+        # Resolve the parent directory but keep the final path component intact
+        # so a symlink (e.g. model/afrekaos.gguf -> candidates/...) keeps its
+        # canonical name rather than being rewritten to its target.
+        p = (REPO_ROOT / p).parent.resolve() / p.name
     return p
 
 

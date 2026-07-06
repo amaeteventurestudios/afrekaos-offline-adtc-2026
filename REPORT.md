@@ -205,3 +205,48 @@ a winner.
 
 This task claims no accounting, banking, payroll, tax, or ERP capability, and
 adds no UI, retrieval, cloud service, private data, or external API.
+
+## Task 002C — Qwen Direct-Answer Mode Retest
+
+### The Task 002B failure
+
+Task 002B found that `qwen3-1.7b-q4-k-m` ran real inference but produced **no
+user-visible SME answer**: Qwen3's thinking mode consumed the entire token
+budget inside `<think>` across all three prompts. The winner was left
+unresolved.
+
+### Direct-answer retest
+
+Task 002C added a non-thinking chat template
+(`templates/qwen3_nonthinking.jinja`, the template equivalent of
+`enable_thinking=False`) plus a `/no_think` soft switch
+(`AFREKAOS_QWEN_NO_THINK=1`), and retested qwen3-1.7b via `llama-completion`
+with `-no-cnv`. See `artifacts/eval/task-002C-qwen-direct-mode.md`.
+
+### Actual local result
+
+The thinking-mode trap is **fixed**: no `<think>` block appears in any of the
+three retest outputs (analyzer verdict: **PASS**, 3/3 outputs with useful
+visible answer text). Real timing captured on the development machine:
+generation ~4 tok/s, prompt-eval ~28 tok/s, projected ~5.4 GB host memory.
+
+Answer quality is **mixed**: prompt-2 (expansion) produced a strong, usable SME
+risk analysis; smoke produced a usable checklist; prompt-1 (triage) **derailed**
+into off-topic multiple-choice + chemistry hallucination despite having visible
+text. So direct mode is necessary but the model still needs prompt hardening or
+a larger non-thinking alternative for reliability across all prompts.
+
+### Whether qwen3-1.7b remains viable
+
+**Conditionally yes.** It is locked as the **first canonical model**
+(`model.lock.json`; `model/afrekaos.gguf` is a relative symlink to the
+candidate) so the project can proceed to retrieval (Task 003). This is a working
+baseline, not a final endorsement. Unresolved items: prompt-1 derailment,
+target-hardware profiling, and no comparison candidate (granite/qwen3-4b still
+absent). A fallback candidate (`qwen2.5-3b-instruct-q4-k-m`) is recommended for
+Task 002D if the derailment cannot be tamed.
+
+### Not claimed
+
+No final target-hardware performance is claimed. No accounting, banking,
+payroll, tax, or ERP capability is claimed.

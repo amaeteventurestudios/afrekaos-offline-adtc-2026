@@ -1,0 +1,43 @@
+{#
+  qwen3_nonthinking.jinja
+  AfrekaOS Offline - Task 002C
+
+  Forces Qwen3 into non-thinking / direct-answer mode. This is the template
+  equivalent of Qwen3's `enable_thinking=False` runtime switch.
+
+  Why it exists:
+    Task 002B found that qwen3-1.7b spent its entire token budget inside the
+    <think>...</think> block and never produced a user-visible SME answer.
+    AfrekaOS needs fast, practical, checklist-style answers with NO hidden
+    chain-of-thought shown to the user.
+
+  Mechanism:
+    Mirrors the official Qwen3 non-thinking behavior: an EMPTY
+    <think>\n\n</think> block is emitted before the assistant turn. This
+    pre-satisfies the model's thinking step so it proceeds directly to the
+    final answer within the token budget.
+
+  Usage:
+    llama-completion -m <model> --jinja --chat-template-file templates/qwen3_nonthinking.jinja \
+      -p "<prompt>" -no-cnv -n 256
+
+    Apply ONLY to Qwen3 candidates. Granite is not Qwen3 and is unaffected.
+
+  Offline-only. No chain-of-thought should be shown to the user.
+#}
+{%- if messages is defined and messages|length > 0 -%}
+{%- for message in messages -%}
+{%- if message.role == 'system' -%}
+{{- '<|im_start|>system\n' + message.content + '<|im_end|>\n' -}}
+{%- elif message.role == 'user' -%}
+{{- '<|im_start|>user\n' + message.content + '<|im_end|>\n' -}}
+{%- elif message.role == 'assistant' -%}
+{{- '<|im_start|>assistant\n' + message.content + '<|im_end|>\n' -}}
+{%- endif -%}
+{%- endfor -%}
+{%- endif -%}
+{%- if add_generation_prompt -%}
+{{- '<|im_start|>assistant\n' -}}
+{# Non-thinking: emit an empty think block so the model answers directly. #}
+{{- '<think>\n\n</think>\n\n' -}}
+{%- endif -%}

@@ -60,3 +60,15 @@ a correct, fast, offline model scores well and is easy to defend.
 - UI and retrieval should remain **secondary** until the runtime baseline is
   stable and a winner is locked (`model.lock.json`). See `model.candidates.json`
   and `artifacts/eval/model-bakeoff/rubric.md`.
+
+## Direct-answer note (Task 002C)
+
+- Qwen3 **speed is useful only if it produces visible final answers within the
+  token budget.** Task 002B showed that thinking mode can consume the entire
+  budget inside `<think>` and yield zero user-visible SME content.
+- AfrekaOS should **prefer direct checklist answers over hidden thinking**.
+  The non-thinking template (`templates/qwen3_nonthinking.jinja`) and the
+  `/no_think` switch exist for exactly this reason.
+- The scoring path must capture **actual visible answer quality**, not just
+  generation speed. A model that generates fast but traps everything in
+  `<think>` is not viable for AfrekaOS, no matter how high its TPS.

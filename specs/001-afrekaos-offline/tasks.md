@@ -57,16 +57,36 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [x] README / REPORT / SCORING updated with bake-off rationale.
 - [x] Winner: **unresolved** (no candidate present locally; no `model.lock.json`).
 
+## Task 002C — Qwen direct-answer mode retest (complete)
+
+- [x] `templates/qwen3_nonthinking.jinja` + `templates/README.md` — force
+      Qwen3 non-thinking / direct-answer mode (template equivalent of
+      `enable_thinking=False`); offline-only; no CoT shown to user.
+- [x] `scripts/retest_qwen_direct.sh` — executable; retests qwen3-1.7b on the
+      three bake-off prompts with template + `/no_think`; stdin from `/dev/null`;
+      writes outputs + runtime notes under `artifacts/eval/model-bakeoff/task-002C/`.
+- [x] `scripts/analyze_qwen_outputs.py` — dependency-free analyzer; reports
+      `<think>` presence, visible answer char count, PASS/FAIL/INCONCLUSIVE.
+- [x] `scripts/profile_candidates.sh` updated — Qwen-aware: applies
+      `AFREKAOS_QWEN_NO_THINK=1` + non-thinking template only to Qwen
+      candidates; records `/no_think`, template, `<think>` presence, usable text.
+- [x] `tests/test_qwen_direct_mode.py` — validates artifacts exist; analyzer
+      handles missing files and think/answer logic.
+- [x] `artifacts/eval/task-002C-qwen-direct-mode.md` evidence doc.
+- [x] Real retest run: direct mode eliminated `<think>` (analyzer PASS, 3/3);
+      prompt-2 + smoke usable; prompt-1 derailed (recorded as unresolved).
+- [x] **Winner: qwen3-1.7b-q4-k-m** locked as first canonical model.
+      `model.lock.json` created; `model/afrekaos.gguf` → relative symlink.
+
 ## Future tasks (sketched)
 
-### 002C — Final model lock (open)
+### 002D — Fallback / comparison model testing (open)
 
-- [ ] Acquire candidate(s) locally (`CANDIDATE=… ./download_model.sh`).
-- [ ] Run `./scripts/profile_candidates.sh` on the target hardware.
-- [ ] Score candidates with `artifacts/eval/model-bakeoff/rubric.md`.
-- [ ] Only if evidence clearly supports a winner: promote it to
-      `model/afrekaos.gguf` and create `model.lock.json`.
-- [ ] Verify zero network calls during judged runtime.
+- [ ] If the prompt-1 derailment cannot be tamed, acquire and test
+      `qwen2.5-3b-instruct-q4-k-m` (no thinking-mode trap) or `qwen3-4b-q4-k-m`.
+- [ ] Acquire `granite-4.1-3b-q4-k-m` control for comparison.
+- [ ] Re-profile on the target Ubuntu 22.04 / 8 GB hardware.
+- [ ] Harden system prompt / stop tokens for reliable direct SME answers.
 
 ### 003 — Retrieval layer (open)
 
