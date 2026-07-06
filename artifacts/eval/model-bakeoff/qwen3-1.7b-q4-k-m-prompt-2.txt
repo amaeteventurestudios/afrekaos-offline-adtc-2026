@@ -1,0 +1,59 @@
+0.00.014.654 I llama_completion: llama backend init
+0.00.014.663 I llama_completion: load the model and apply lora adapter, if any
+0.00.014.669 I common_init_result: fitting params to device memory ...
+0.00.014.669 I common_init_result: (for bugs during this step try to reproduce them with -fit off, or provide --verbose logs if the bug only occurs with -fit on)
+0.00.393.917 I common_params_fit_impl: projected to use 5410 MiB of host memory vs. 32768 MiB of total host memory
+0.00.747.215 W load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.02.261.681 I common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
+0.02.817.600 I llama_completion: llama threadpool init, n_threads = 4
+0.02.817.627 I llama_completion: chat template is available, enabling conversation mode (disable it with -no-cnv)
+0.02.817.628 W *** User-specified prompt will pre-start conversation, did you mean to set --system-prompt (-sys) instead?
+0.02.817.794 I llama_completion: chat template example:
+<|im_start|>system
+You are a helpful assistant<|im_end|>
+<|im_start|>user
+Hello<|im_end|>
+<|im_start|>assistant
+Hi there<|im_end|>
+<|im_start|>user
+How are you?<|im_end|>
+<|im_start|>assistant
+
+0.02.817.798 I 
+0.02.817.817 I system_info: n_threads = 4 (n_threads_batch = 4) / 8 | CPU : SSE3 = 1 | SSSE3 = 1 | ACCELERATE = 1 | OPENMP = 1 | REPACK = 1 | 
+0.02.817.817 I 
+0.02.818.115 I llama_completion: interactive mode on.
+0.02.818.121 I sampler seed: 3857516847
+0.02.818.129 I sampler params: 
+	repeat_last_n = 64, repeat_penalty = 1.000, frequency_penalty = 0.000, presence_penalty = 0.000
+	dry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = -1
+	top_k = 40, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, top_n_sigma = -1.000, temp = 0.700
+	mirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000, adaptive_target = -1.000, adaptive_decay = 0.900
+0.02.818.139 I sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+0.02.818.140 I generate: n_ctx = 32768, n_batch = 2048, n_predict = 96, n_keep = 0
+0.02.818.141 I 
+0.02.818.141 I == Running in interactive mode. ==
+0.02.818.141 I  - Press Ctrl+C to interject at any time.
+0.02.818.142 I  - Press Return to return control to the AI.
+ - To return control without starting a new line, end your input with '/'.
+ - If you want to submit another line, end your input with '\'.
+0.02.818.142 I  - Not using system message. To change it, set a different value via -sys PROMPT
+0.02.818.142 I 
+user
+A market operator wants to expand from one location to two locations but has irregular cash records, one trusted staff member, seasonal customer demand, and limited working capital. What risks and readiness factors should they evaluate before expanding?
+assistant
+<think>
+Okay, let's see. The user is a market operator looking to expand from one location to two locations. They have some specific challenges: irregular cash records, one trusted staff member, seasonal customer demand, and limited working capital. They need to evaluate risks and readiness factors before expanding. 
+
+First, I need to break down the key points. The main issues are irregular cash records, limited working capital, one trusted staff member, and seasonal demand. So the risks would
+> EOF by user
+
+
+0.22.602.986 I common_perf_print:    sampling time =      32.74 ms
+0.22.602.987 I common_perf_print:    samplers time =      14.94 ms /   147 tokens
+0.22.603.006 I common_perf_print:        load time =    2298.80 ms
+0.22.603.008 I common_perf_print: prompt eval time =    1614.52 ms /    51 tokens (   31.66 ms per token,    31.59 tokens per second)
+0.22.603.010 I common_perf_print:        eval time =   17960.91 ms /    95 runs   (  189.06 ms per token,     5.29 tokens per second)
+0.22.603.011 I common_perf_print:       total time =   19785.41 ms /   146 tokens
+0.22.603.012 I common_perf_print: unaccounted time =     177.23 ms /   0.9 %      (total - sampling - prompt eval - eval) / (total)
+0.22.603.012 I common_perf_print:    graphs reused =         95

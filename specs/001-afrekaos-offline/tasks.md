@@ -39,18 +39,36 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [x] README "Runtime Baseline" section; REPORT "Task 002A" section.
 - [x] Validation run (metadata check + direct Python test run).
 
+## Task 002B — Model bake-off (complete)
+
+- [x] `model.candidates.json` — Qwen-first bake-off: qwen3-1.7b (primary),
+      qwen3-4b (secondary), granite-4.1-3b (control); canonical winner path
+      `model/afrekaos.gguf`; prohibited-use boundaries.
+- [x] `scripts/check_model_candidates.py` — validates 3 candidates, roles,
+      local paths under `model/candidates/`, winner path, prohibited-use.
+- [x] `download_model.sh` rewritten — candidate acquisition via `CANDIDATE=`,
+      `FORCE=1`, llama.cpp `-hf` preferred, manual fallback; no cloud inference.
+- [x] `scripts/run_smoke_prompt.sh`, `scripts/profile_model.sh` updated for
+      candidate mode (`CANDIDATE_MODEL_PATH` override, candidate id printed).
+- [x] `scripts/profile_candidates.sh` — bake-off profiler writing under
+      `artifacts/eval/model-bakeoff/`; missing-model notes; no fabricated numbers.
+- [x] `artifacts/eval/model-bakeoff/rubric.md` — 0-3 scorecard.
+- [x] `tests/test_model_candidates.py` — standard-library-only tests.
+- [x] README / REPORT / SCORING updated with bake-off rationale.
+- [x] Winner: **unresolved** (no candidate present locally; no `model.lock.json`).
+
 ## Future tasks (sketched)
 
-### 002B — Model selection and lock (open)
+### 002C — Final model lock (open)
 
-- [ ] Select and lock a GGUF model + quantization for 8 GB RAM / integrated
-      graphics.
-- [ ] Stand up llama.cpp runtime on Ubuntu 22.04.
+- [ ] Acquire candidate(s) locally (`CANDIDATE=… ./download_model.sh`).
+- [ ] Run `./scripts/profile_candidates.sh` on the target hardware.
+- [ ] Score candidates with `artifacts/eval/model-bakeoff/rubric.md`.
+- [ ] Only if evidence clearly supports a winner: promote it to
+      `model/afrekaos.gguf` and create `model.lock.json`.
 - [ ] Verify zero network calls during judged runtime.
-- [ ] Profile RAM and TPS; record evidence in `artifacts/eval/`.
-- [ ] Update `download_model.sh` to fetch the locked model with a checksum.
 
-### 003 — Retrieval layer
+### 003 — Retrieval layer (open)
 
 - [ ] Define the SQLite FTS5 schema (see `data-model.md`).
 - [ ] Index the public SME operations corpus in `data/`.

@@ -82,6 +82,55 @@ python3 scripts/check_metadata.py
 Configuration helpers live in `app/runtime_config.py` (`get_model_path()`,
 `get_llama_binary()`, `model_exists()`, `runtime_summary()`).
 
+## Model Bake-Off (Task 002B)
+
+AfrekaOS uses a **Qwen-first** model bake-off. Speed and responsiveness matter
+for daily SME operations, so the small/fast Qwen candidate is the default to
+beat; Granite is kept only as a conservative control baseline, not the default.
+
+**Canonical winning model path:** `model/afrekaos.gguf`
+
+> `model/` and `*.gguf` files are **gitignored**. No GGUF is committed. The
+> model URL is **not locked yet** — a winner is only recorded after local
+> evidence is captured and `model.lock.json` is explicitly created.
+
+Candidates (see `model.candidates.json`):
+
+| id | repo | role |
+|----|------|------|
+| `qwen3-1.7b-q4-k-m` | `bartowski/Qwen_Qwen3-1.7B-GGUF` | primary speed candidate |
+| `qwen3-4b-q4-k-m`   | `bartowski/Qwen_Qwen3-4B-GGUF`   | secondary reasoning candidate |
+| `granite-4.1-3b-q4-k-m` | `ibm-granite/granite-4.1-3b-GGUF` | control baseline |
+
+Acquire candidates (uses llama.cpp `-hf` when a binary is available, else prints
+manual commands; no cloud inference):
+
+```bash
+CANDIDATE=qwen3-1.7b-q4-k-m    ./download_model.sh
+CANDIDATE=qwen3-4b-q4-k-m      ./download_model.sh
+CANDIDATE=granite-4.1-3b-q4-k-m ./download_model.sh
+CANDIDATE=all                  ./download_model.sh
+```
+
+Run the bake-off profiler against whatever candidates are present locally:
+
+```bash
+./scripts/profile_candidates.sh     # outputs under artifacts/eval/model-bakeoff/
+```
+
+Validate the candidate contract:
+
+```bash
+python3 scripts/check_model_candidates.py
+```
+
+Smoke/profiler scripts also accept a `CANDIDATE_MODEL_PATH` override for
+ad-hoc bake-off runs:
+
+```bash
+CANDIDATE_MODEL_PATH=model/candidates/qwen3-1.7b-q4-k-m.gguf ./scripts/run_smoke_prompt.sh
+```
+
 ## Repository layout
 
 ```

@@ -135,3 +135,73 @@ profiler readiness.
 index), no cloud service, no private data, no banking data, no payroll data, no
 tax workflow, and no ERP behavior. No model was downloaded in this task unless a
 local model already existed and was only referenced by the scripts.
+
+## Task 002B — Model Bake-Off
+
+### Why the project shifted from a Granite lock to a Qwen-first bake-off
+
+An earlier direction was to lock Granite as the default model. That is reversed.
+AfrekaOS needs **fast, practical, checklist-style** responses for everyday SME
+operators; Granite is useful as a *conservative control baseline* but should not
+be the default if a Qwen candidate is faster and good enough on SME operations
+prompts. So the selection mode is now `qwen_first_bakeoff`: the small/fast Qwen
+candidate is the default to beat, and Granite only serves as a sanity-check
+control.
+
+### Candidates
+
+| id | role | repo | quant |
+|----|------|------|-------|
+| `qwen3-1.7b-q4-k-m` | primary speed candidate | `bartowski/Qwen_Qwen3-1.7B-GGUF` | Q4_K_M |
+| `qwen3-4b-q4-k-m` | secondary reasoning candidate | `bartowski/Qwen_Qwen3-4B-GGUF` | Q4_K_M |
+| `granite-4.1-3b-q4-k-m` | control baseline | `ibm-granite/granite-4.1-3b-GGUF` | Q4_K_M |
+
+Canonical winning model path (only filled after a real winner is locked):
+`model/afrekaos.gguf`.
+
+### What was actually validated locally
+
+`download_model.sh` was rewritten into a candidate acquisition script that reads
+`model.candidates.json` as the source of truth, supports `CANDIDATE=` selection,
+prefers llama.cpp `-hf` acquisition, and falls back to printed manual commands.
+`check_model_candidates.py`, `profile_candidates.sh`, a rubric, and tests were
+added. All contract checks and the unittest suite pass.
+
+### Whether any model exists locally
+
+<!-- BEGIN-LOCAL-STATE -->
+_This section reflects the actual machine state at task time (see
+`artifacts/eval/task-002B-model-bakeoff.md`)._
+- `qwen3-1.7b-q4-k-m`: **present** (1.2 GB, acquired via direct HuggingFace
+  download; `llama-cli -hf` did not resolve Bartowski's real filename).
+- `qwen3-4b-q4-k-m`: **absent**.
+- `granite-4.1-3b-q4-k-m`: **absent**.
+- `model/afrekaos.gguf`: **absent** (no winner promoted).
+<!-- END-LOCAL-STATE -->
+
+### Whether real inference ran
+
+**Yes — for qwen3-1.7b only**, via `llama-completion` (build 9700). Real timing
+was captured (generation ~5 tok/s, prompt eval ~24-28 tok/s on the development
+machine; projected ~5.4 GB host memory). The other two candidates had no local
+file and were recorded as missing-model.
+
+However, **qwen3-1.7b produced no usable user-visible SME answer**: its Qwen3
+thinking mode consumed the entire token budget inside `<think>` and never
+emitted the actual checklist/advice. So the practical-answer floor was not met
+at this configuration. Two runtime bugs were found and fixed during the bake-off
+(`llama-cli` conversation-mode runaway → prefer `llama-completion`; interactive
+stdin stealing the loop's input → redirect from `/dev/null`). **No final
+performance is claimed** — target-hardware numbers and a thinking-disabled
+re-run are still required.
+
+### Winner status
+
+**Unresolved.** No winner is selected and no `model.lock.json` exists, because
+no local evidence supports a selection yet. This is deliberate: do not fabricate
+a winner.
+
+### Not claimed
+
+This task claims no accounting, banking, payroll, tax, or ERP capability, and
+adds no UI, retrieval, cloud service, private data, or external API.

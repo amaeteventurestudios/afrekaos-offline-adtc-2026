@@ -1,0 +1,48 @@
+{
+  "product": "AfrekaOS Offline",
+  "selection_mode": "qwen_first_bakeoff",
+  "canonical_winning_model_path": "model/afrekaos.gguf",
+  "candidates": [
+    {
+      "id": "qwen3-1.7b-q4-k-m",
+      "repo": "bartowski/Qwen_Qwen3-1.7B-GGUF",
+      "quantization": "Q4_K_M",
+      "format": "GGUF",
+      "role": "primary_speed_candidate",
+      "local_candidate_path": "model/candidates/qwen3-1.7b-q4-k-m.gguf",
+      "selection_reason": "Speed-first candidate. AfrekaOS needs fast, practical, checklist-style responses for everyday SME operators. Small footprint suits the 8 GB RAM target."
+    },
+    {
+      "id": "qwen3-4b-q4-k-m",
+      "repo": "bartowski/Qwen_Qwen3-4B-GGUF",
+      "quantization": "Q4_K_M",
+      "format": "GGUF",
+      "role": "secondary_reasoning_candidate",
+      "local_candidate_path": "model/candidates/qwen3-4b-q4-k-m.gguf",
+      "selection_reason": "Stronger reasoning candidate to fall back on if the 1.7B model is too shallow on SME operations prompts."
+    },
+    {
+      "id": "granite-4.1-3b-q4-k-m",
+      "repo": "ibm-granite/granite-4.1-3b-GGUF",
+      "quantization": "Q4_K_M",
+      "format": "GGUF",
+      "role": "control_candidate",
+      "local_candidate_path": "model/candidates/granite-4.1-3b-q4-k-m.gguf",
+      "selection_reason": "Conservative control baseline only. Not the default; used to sanity-check Qwen candidates, not to replace them by default."
+    }
+  ],
+  "scoring_notes": {
+    "speed_emphasis": "Speed and responsiveness matter more for AfrekaOS daily SME operations than they did for prior challenge shapes.",
+    "quality_floor": "Practical answer quality still matters; a fast but reckless model is not acceptable.",
+    "winner_criteria": "Winner must balance RAM, TPS, first-token latency, and SME answer quality.",
+    "scale": "See artifacts/eval/model-bakeoff/rubric.md (0-3 per category)."
+  },
+  "prohibited_use": [
+    "no cloud inference during judged runtime",
+    "no private customer data",
+    "no banking data",
+    "no payroll workflows",
+    "no tax filing workflows",
+    "no ERP claim"
+  ]
+}

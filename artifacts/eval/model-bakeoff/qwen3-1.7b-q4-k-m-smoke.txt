@@ -1,0 +1,59 @@
+0.00.012.736 I llama_completion: llama backend init
+0.00.012.745 I llama_completion: load the model and apply lora adapter, if any
+0.00.012.751 I common_init_result: fitting params to device memory ...
+0.00.012.751 I common_init_result: (for bugs during this step try to reproduce them with -fit off, or provide --verbose logs if the bug only occurs with -fit on)
+0.00.360.761 I common_params_fit_impl: projected to use 5410 MiB of host memory vs. 32768 MiB of total host memory
+0.00.594.730 W load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.02.110.942 I common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
+0.02.702.243 I llama_completion: llama threadpool init, n_threads = 4
+0.02.702.273 I llama_completion: chat template is available, enabling conversation mode (disable it with -no-cnv)
+0.02.702.274 W *** User-specified prompt will pre-start conversation, did you mean to set --system-prompt (-sys) instead?
+0.02.702.448 I llama_completion: chat template example:
+<|im_start|>system
+You are a helpful assistant<|im_end|>
+<|im_start|>user
+Hello<|im_end|>
+<|im_start|>assistant
+Hi there<|im_end|>
+<|im_start|>user
+How are you?<|im_end|>
+<|im_start|>assistant
+
+0.02.702.452 I 
+0.02.702.480 I system_info: n_threads = 4 (n_threads_batch = 4) / 8 | CPU : SSE3 = 1 | SSSE3 = 1 | ACCELERATE = 1 | OPENMP = 1 | REPACK = 1 | 
+0.02.702.480 I 
+0.02.702.750 I llama_completion: interactive mode on.
+0.02.702.756 I sampler seed: 3880298920
+0.02.702.780 I sampler params: 
+	repeat_last_n = 64, repeat_penalty = 1.000, frequency_penalty = 0.000, presence_penalty = 0.000
+	dry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = -1
+	top_k = 40, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, top_n_sigma = -1.000, temp = 0.700
+	mirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000, adaptive_target = -1.000, adaptive_decay = 0.900
+0.02.702.795 I sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+0.02.702.796 I generate: n_ctx = 32768, n_batch = 2048, n_predict = 96, n_keep = 0
+0.02.702.796 I 
+0.02.702.796 I == Running in interactive mode. ==
+0.02.702.796 I  - Press Ctrl+C to interject at any time.
+0.02.702.797 I  - Press Return to return control to the AI.
+ - To return control without starting a new line, end your input with '/'.
+ - If you want to submit another line, end your input with '\'.
+0.02.702.797 I  - Not using system message. To change it, set a different value via -sys PROMPT
+0.02.702.797 I 
+user
+A small shop has low sales, missing fast-moving stock, supplier delay, and more customers asking for credit. Give a short operating checklist.
+assistant
+<think>
+Okay, the user wants a short operating checklist for a small shop that's having some issues. Let me break down the problem. The shop has low sales, missing fast-moving stock, supplier delays, and more customers asking for credit. 
+
+First, I need to identify the key areas that need attention. Low sales could be due to lack of inventory or poor marketing. Missing fast-moving stock means they might not have the popular items, so that's a problem. Supplier
+> EOF by user
+
+
+0.20.974.483 I common_perf_print:    sampling time =      32.47 ms
+0.20.974.489 I common_perf_print:    samplers time =      14.87 ms /   132 tokens
+0.20.974.490 I common_perf_print:        load time =    2220.08 ms
+0.20.974.492 I common_perf_print: prompt eval time =    1505.57 ms /    36 tokens (   41.82 ms per token,    23.91 tokens per second)
+0.20.974.493 I common_perf_print:        eval time =   16555.22 ms /    95 runs   (  174.27 ms per token,     5.74 tokens per second)
+0.20.974.494 I common_perf_print:       total time =   18272.25 ms /   131 tokens
+0.20.974.495 I common_perf_print: unaccounted time =     178.99 ms /   1.0 %      (total - sampling - prompt eval - eval) / (total)
+0.20.974.495 I common_perf_print:    graphs reused =         95

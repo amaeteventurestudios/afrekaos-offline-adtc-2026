@@ -48,3 +48,15 @@ The order of effort should be:
 
 A slick UI on top of a missing or slow model scores badly. A plain UI on top of
 a correct, fast, offline model scores well and is easy to defend.
+
+## Bake-off note (Task 002B)
+
+- AfrekaOS is using a **Qwen-first bake-off** because speed and responsiveness
+  matter for daily SME operations. The small/fast Qwen candidate is the default
+  to beat; Granite is only a control baseline, not the default.
+- The automated score still depends on **actual local profiling**: real RAM,
+  real TPS, real first-token latency, and real metadata-prompt outputs — never
+  on vendor specs or fabricated numbers.
+- UI and retrieval should remain **secondary** until the runtime baseline is
+  stable and a winner is locked (`model.lock.json`). See `model.candidates.json`
+  and `artifacts/eval/model-bakeoff/rubric.md`.

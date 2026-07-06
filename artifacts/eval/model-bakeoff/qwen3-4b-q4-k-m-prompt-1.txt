@@ -1,0 +1,4 @@
+[missing model] candidate=qwen3-4b-q4-k-m
+file=/Users/amaeteumanah/Desktop/Projects/afrekaos-offline-adtc-2026/model/candidates/qwen3-4b-q4-k-m.gguf
+No inference was run because the candidate GGUF is absent.
+No benchmark numbers were fabricated.
