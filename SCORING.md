@@ -72,3 +72,15 @@ a correct, fast, offline model scores well and is easy to defend.
 - The scoring path must capture **actual visible answer quality**, not just
   generation speed. A model that generates fast but traps everything in
   `<think>` is not viable for AfrekaOS, no matter how high its TPS.
+
+## Retrieval note (Task 003A)
+
+- Retrieval (SQLite FTS5 over public SME notes) supports **demo quality and
+  answer grounding** — it gives the model on-topic anchors before inference.
+- The **automated score is still driven by the model/runtime metadata path**
+  (Layer 1). Retrieval does not replace model profiling; it complements it.
+- Retrieval should **reduce off-topic SME answers** (e.g. the Task 002C prompt-1
+  derailment) but it does not replace model profiling, and it cannot be credited
+  as a win until grounded prompts are actually run through the model.
+- **Prompt previews are not benchmark answers.** They are inputs; only real
+  inference produces scorable outputs.

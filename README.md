@@ -160,6 +160,32 @@ python3 scripts/analyze_qwen_outputs.py
 viability. `model/` and `*.gguf` remain gitignored; only the lock JSON and the
 symlink target path are recorded in metadata.
 
+## Local Retrieval Layer (Task 003A)
+
+AfrekaOS grounds prompts in **local** SME operations notes before model
+inference. Retrieval uses **SQLite FTS5** over the public corpus in `data/`.
+The index is **local** and **no cloud database** is used. The SQLite database is
+generated locally and should not be treated as private data.
+
+```bash
+# Build the SQLite FTS5 index from local markdown notes.
+python3 scripts/build_retrieval_index.py
+
+# Query the index (three default AfrekaOS queries if none given).
+python3 scripts/query_retrieval.py
+python3 scripts/query_retrieval.py "low sales stockout supplier delay customer credit"
+
+# Preview the full grounded prompt (retrieved context + question + rules).
+# Does NOT call the model.
+python3 scripts/preview_grounded_prompt.py "A small shop owner reports low sales, missing stock, supplier delay, and more customers asking for credit. What should they check first?"
+```
+
+Retrieval grounds prompts before model inference: it anchors the model on
+concrete SME operations concepts (reorder points, lead times, credit limits,
+cash-on-hand checks) and adds answer rules that forbid off-topic, chain-of-thought,
+and financial-software claims. This is intended to reduce the prompt-1 derailment
+seen in Task 002C.
+
 ## Repository layout
 
 ```

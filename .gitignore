@@ -29,6 +29,12 @@ Thumbs.db
 artifacts/eval/*.json
 artifacts/submission/*.json
 
+# --- Generated retrieval index (rebuilt locally; not source) ---
+data/afrekaos_fts.sqlite
+*.sqlite
+*.sqlite-journal
+*.db
+
 # --- Local secrets / env (never commit) ---
 .env
 .env.*

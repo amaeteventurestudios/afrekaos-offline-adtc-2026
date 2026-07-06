@@ -250,3 +250,40 @@ Task 002D if the derailment cannot be tamed.
 
 No final target-hardware performance is claimed. No accounting, banking,
 payroll, tax, or ERP capability is claimed.
+
+## Task 003A — SQLite Retrieval Layer
+
+This task added the **first local SQLite FTS5 retrieval layer** so AfrekaOS can
+ground prompts before model inference.
+
+**What was added:**
+
+- `app/retrieval.py` — FTS5 module: `build_index`, `search`, `get_document`,
+  `retrieval_summary`. Standard library only.
+- `app/prompt_context.py` — grounded prompt builder: `build_context_block`,
+  `build_grounded_prompt` (role + retrieved context + question + answer rules).
+- `scripts/build_retrieval_index.py`, `scripts/query_retrieval.py`,
+  `scripts/preview_grounded_prompt.py`.
+- `tests/test_retrieval.py`, `tests/test_prompt_context.py` (65 tests total,
+  all passing).
+- Evidence: `artifacts/eval/task-003A-retrieval.md`,
+  `artifacts/eval/task-003A-grounded-prompt-preview.md`.
+
+**Source directories:** `data/sme_operations/`, `data/language/`, `data/sources/`
+— public SME operations notes only. Model files, artifacts, and `.git` are never
+indexed.
+
+**Index path:** `data/afrekaos_fts.sqlite` (generated locally; gitignored as a
+build artifact). 8 documents indexed; SQLite FTS5 confirmed available.
+
+**Why retrieval matters after the Qwen prompt-1 derailment.** In Task 002C,
+`qwen3-1.7b` derailed on prompt-1 into off-topic content even in direct-answer
+mode. The grounded prompt builder now injects the relevant SME notes (supplier
+lead times, stock-cover checks, cashflow/credit discipline) and answer rules
+that forbid off-topic, chain-of-thought, and financial-software claims. This
+narrows the relevant context and should raise the answer floor — though
+confirming the reduction requires actually running grounded prompts through the
+model (Task 003B), which is deliberately out of scope here.
+
+**This is still not UI.** No cloud database, private data, banking workflow,
+payroll workflow, tax workflow, or ERP behavior was added.

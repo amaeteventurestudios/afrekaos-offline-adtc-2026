@@ -88,13 +88,31 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [ ] Re-profile on the target Ubuntu 22.04 / 8 GB hardware.
 - [ ] Harden system prompt / stop tokens for reliable direct SME answers.
 
-### 003 — Retrieval layer (open)
+### 003A — SQLite FTS5 retrieval layer (complete)
 
-- [ ] Define the SQLite FTS5 schema (see `data-model.md`).
-- [ ] Index the public SME operations corpus in `data/`.
-- [ ] Wire retrieval into the reasoning path.
+- [x] `app/retrieval.py` — SQLite FTS5 module: `build_index`, `search`,
+      `get_document`, `retrieval_summary`; BM25 ranking; clear failures if FTS5
+      unavailable or index missing. Standard library only.
+- [x] `app/prompt_context.py` — `build_context_block`, `build_grounded_prompt`
+      (role + retrieved context + question + answer rules; forbids
+      accounting/banking/payroll/tax/ERP claims and `<think>` blocks).
+- [x] `scripts/build_retrieval_index.py`, `scripts/query_retrieval.py`,
+      `scripts/preview_grounded_prompt.py`.
+- [x] `tests/test_retrieval.py`, `tests/test_prompt_context.py` — temp-index
+      tests; validate search relevance, missing-index behavior, prompt shape.
+- [x] Index built: 8 documents (6 sme_operations + 1 language + 1 sources);
+      FTS5 available.
+- [x] Evidence: `artifacts/eval/task-003A-retrieval.md`,
+      `artifacts/eval/task-003A-grounded-prompt-preview.md`.
+- [x] README / REPORT / SCORING updated.
 
-### 004 — Local browser app
+### 003B — Connect grounded prompts to model inference (open)
+
+- [ ] Run grounded prompts through `qwen3-1.7b` (direct mode) and capture outputs.
+- [ ] Re-score prompt-1 to confirm retrieval reduces derailment.
+- [ ] Compare grounded vs. ungrounded SME answer quality.
+
+### 004 — Local browser app (open)
 
 - [ ] Localhost server scaffolding (no external deps).
 - [ ] Operator flows: inventory, cashflow, credit, supplier, staffing,
