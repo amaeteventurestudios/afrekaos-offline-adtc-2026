@@ -287,3 +287,36 @@ model (Task 003B), which is deliberately out of scope here.
 
 **This is still not UI.** No cloud database, private data, banking workflow,
 payroll workflow, tax workflow, or ERP behavior was added.
+
+## Task 003B — Grounded Inference
+
+This task connected the SQLite FTS5 retrieval layer (Task 003A) to the locked
+Qwen model and compared grounded vs ungrounded outputs.
+
+**What was added:** `app/model_inference.py` (inference helper with grounded/
+ungrounded runners, bounded generation, subprocess timeout, stdin from
+DEVNULL), `scripts/run_grounded_inference.py` (6-run comparison),
+`scripts/analyze_grounded_outputs.py` (derailment/SME-term analyzer), and tests.
+
+**Grounded vs ungrounded comparison.** All 3 prompts (metadata prompt-1,
+prompt-2, smoke) were run twice: once ungrounded (role + rules only) and once
+grounded (role + retrieved SME context + rules), both in Qwen direct-answer
+mode. Real inference ran on all 6 via `llama-completion`.
+
+**Did real inference run?** Yes — all 6 runs completed with no timeouts.
+Generation ~3.4–4.1 tok/s, projected 5410 MiB host memory (development machine).
+
+**Did prompt-1 improve?** Yes — the Task 002C derailment (chemistry/
+multiple-choice) is **fully resolved**. Neither grounded nor ungrounded
+prompt-1 derailed; the answer rules + AfrekaOS role kept the model on SME
+operations. Grounding further improved specificity (concrete stock counts,
+expiration dates, supplier delivery status from retrieved notes). Analyzer
+verdict: **PASS**.
+
+**Limitations:** small sample (6 runs), dev-machine timing (not target
+hardware), BM25 keyword retrieval (not semantic), and the role+rules alone
+fixed the derailment so retrieval's marginal contribution is specificity rather
+than derailment prevention per se.
+
+**This is still not UI.** No cloud database, private data, banking workflow,
+payroll workflow, tax workflow, or ERP behavior was added.

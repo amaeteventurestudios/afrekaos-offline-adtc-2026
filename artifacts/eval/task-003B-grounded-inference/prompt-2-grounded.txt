@@ -1,0 +1,75 @@
+0.00.021.682 I llama_completion: llama backend init
+0.00.021.693 I llama_completion: load the model and apply lora adapter, if any
+0.00.021.700 I common_init_result: fitting params to device memory ...
+0.00.021.700 I common_init_result: (for bugs during this step try to reproduce them with -fit off, or provide --verbose logs if the bug only occurs with -fit on)
+0.00.554.233 I common_params_fit_impl: projected to use 5410 MiB of host memory vs. 32768 MiB of total host memory
+0.00.805.986 W load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.02.509.879 I common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
+0.03.348.128 I llama_completion: llama threadpool init, n_threads = 4
+0.03.348.151 I 
+0.03.348.171 I system_info: n_threads = 4 (n_threads_batch = 4) / 8 | CPU : SSE3 = 1 | SSSE3 = 1 | ACCELERATE = 1 | OPENMP = 1 | REPACK = 1 | 
+0.03.348.171 I 
+0.03.349.749 I sampler seed: 1053817772
+0.03.349.758 I sampler params: 
+	repeat_last_n = 64, repeat_penalty = 1.000, frequency_penalty = 0.000, presence_penalty = 0.000
+	dry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = -1
+	top_k = 40, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, top_n_sigma = -1.000, temp = 0.700
+	mirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000, adaptive_target = -1.000, adaptive_decay = 0.900
+0.03.349.767 I sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+0.03.349.768 I generate: n_ctx = 32768, n_batch = 2048, n_predict = 200, n_keep = 0
+0.03.349.768 I 
+You are AfrekaOS, an offline SME operations copilot for African small business operators.
+
+Local SME operations context (retrieved offline):
+
+1. [sme_operations] Expansion readiness (SME operations)
+   source: data/sme_operations/expansion.md
+   ...e afford it?" alone — it is whether the operator's records, staff, cash discipline, and demand base can survive being split across two sites. ## Readiness factors to evaluate - **R...
+
+2. [sme_operations] Staffing (SME operations)
+   source: data/sme_operations/staffing.md
+   ...s the coverage plan during peak hours / market days? - What delegation is safe today vs. what requires the owner? ## What to avoid - Assuming one trusted staff member can cover two...
+
+3. [sme_operations] Inventory (SME operations)
+   source: data/sme_operations/inventory.md
+   ...onal pressure point for a small shop or market operator. Stockouts of fast-moving items directly cost sales and trust; overstock ties up limited working capital. ## What to check (...
+
+4. [language] Yoruba mode — design placeholder
+   source: data/language/yoruba_mode.md
+   ...uage experience for AfrekaOS Offline so operators can reason through operations in Yoruba, fully offline. ## Open design questions - Multilingual model vs. translation step vs. bil...
+
+5. [sme_operations] Cashflow (SME operations)
+   source: data/sme_operations/cashflow.md
+   ...re is about timing, not just totals. An operator can be profitable on paper and still unable to restock or pay staff because cash is tied up in stock, credit extended to customers,...
+
+Operator question:
+A market operator wants to expand from one location to two locations but has irregular cash records, one trusted staff member, seasonal customer demand, and limited working capital. What risks and readiness factors should they evaluate before expanding?
+
+Answer rules:
+- Give practical, concrete operating steps.
+- Stay strictly on SME operations (inventory, cashflow, credit, supplier, staffing, expansion).
+- Do NOT make accounting, banking, payroll, tax-filing, or ERP claims.
+- Do NOT invent facts. If records or numbers are needed, say so.
+- Do NOT include hidden chain-of-thought or a <think> block. Answer directly.
+- Answer as a short checklist.
+- Where the operator should verify their own records before acting, say so explicitly.
+
+Answer: /no_think
+</think>
+
+- Evaluate cash flow timing and availability to ensure funds can cover operations and expansion costs.  
+- Assess staff delegation risks, ensuring trusted personnel can cover seasonal demand and daily operations.  
+- Review inventory stock levels and fast-moving item stockouts to avoid sales and trust loss.  
+- Verify cash records and working capital limits to ensure readiness for two locations.  
+- Confirm seasonal customer demand patterns and adjust staffing and inventory accordingly.  
+- Identify pressure points for overstocking or stockouts and develop a mitigation plan. [end of text]
+
+
+0.47.009.008 I common_perf_print:    sampling time =      43.88 ms
+0.47.009.018 I common_perf_print:    samplers time =      20.50 ms /   620 tokens
+0.47.009.022 I common_perf_print:        load time =    2663.06 ms
+0.47.009.024 I common_perf_print: prompt eval time =   12304.63 ms /   514 tokens (   23.94 ms per token,    41.77 tokens per second)
+0.47.009.026 I common_perf_print:        eval time =   31306.41 ms /   105 runs   (  298.16 ms per token,     3.35 tokens per second)
+0.47.009.030 I common_perf_print:       total time =   43660.89 ms /   619 tokens
+0.47.009.031 I common_perf_print: unaccounted time =       5.98 ms /   0.0 %      (total - sampling - prompt eval - eval) / (total)
+0.47.009.032 I common_perf_print:    graphs reused =        104

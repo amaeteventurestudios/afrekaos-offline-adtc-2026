@@ -1,0 +1,55 @@
+0.00.021.119 I llama_completion: llama backend init
+0.00.021.128 I llama_completion: load the model and apply lora adapter, if any
+0.00.021.135 I common_init_result: fitting params to device memory ...
+0.00.021.136 I common_init_result: (for bugs during this step try to reproduce them with -fit off, or provide --verbose logs if the bug only occurs with -fit on)
+0.00.468.396 I common_params_fit_impl: projected to use 5410 MiB of host memory vs. 32768 MiB of total host memory
+0.00.723.944 W load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.02.494.004 I common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
+0.03.224.461 I llama_completion: llama threadpool init, n_threads = 4
+0.03.224.522 I 
+0.03.224.556 I system_info: n_threads = 4 (n_threads_batch = 4) / 8 | CPU : SSE3 = 1 | SSSE3 = 1 | ACCELERATE = 1 | OPENMP = 1 | REPACK = 1 | 
+0.03.224.559 I 
+0.03.225.376 I sampler seed: 1016079626
+0.03.225.385 I sampler params: 
+	repeat_last_n = 64, repeat_penalty = 1.000, frequency_penalty = 0.000, presence_penalty = 0.000
+	dry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = -1
+	top_k = 40, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, top_n_sigma = -1.000, temp = 0.700
+	mirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000, adaptive_target = -1.000, adaptive_decay = 0.900
+0.03.225.395 I sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+0.03.225.396 I generate: n_ctx = 32768, n_batch = 2048, n_predict = 200, n_keep = 0
+0.03.225.396 I 
+You are AfrekaOS, an offline SME operations copilot for African small business operators.
+
+Operator question:
+A market operator wants to expand from one location to two locations but has irregular cash records, one trusted staff member, seasonal customer demand, and limited working capital. What risks and readiness factors should they evaluate before expanding?
+
+Answer rules:
+- Give practical, concrete operating steps.
+- Stay strictly on SME operations (inventory, cashflow, credit, supplier, staffing, expansion).
+- Do NOT make accounting, banking, payroll, tax-filing, or ERP claims.
+- Do NOT invent facts. If records or numbers are needed, say so.
+- Do NOT include hidden chain-of-thought or a <think> block. Answer directly.
+- Answer as a short checklist.
+- Where the operator should verify their own records before acting, say so explicitly.
+
+Answer: /no_think
+</think>
+
+- Verify cash records and balances to ensure sufficient liquidity for expansion.  
+- Assess seasonal customer demand to plan inventory and staffing needs.  
+- Confirm trusted staff member's role and responsibilities to maintain operations.  
+- Evaluate supplier relationships and terms for consistent supply chain support.  
+- Review credit policies and customer payment terms to manage cash flow.  
+- Identify key performance indicators (KPIs) to monitor expansion success.  
+- Establish contingency plans for cash shortfalls or supply disruptions.  
+- Review expansion plan against existing operational protocols and risk management framework. [end of text]
+
+
+0.37.195.035 I common_perf_print:    sampling time =      48.56 ms
+0.37.195.040 I common_perf_print:    samplers time =      23.34 ms /   291 tokens
+0.37.195.041 I common_perf_print:        load time =    2622.38 ms
+0.37.195.055 I common_perf_print: prompt eval time =    4212.07 ms /   177 tokens (   23.80 ms per token,    42.02 tokens per second)
+0.37.195.057 I common_perf_print:        eval time =   29705.55 ms /   113 runs   (  262.88 ms per token,     3.80 tokens per second)
+0.37.195.058 I common_perf_print:       total time =   33970.58 ms /   290 tokens
+0.37.195.059 I common_perf_print: unaccounted time =       4.40 ms /   0.0 %      (total - sampling - prompt eval - eval) / (total)
+0.37.195.060 I common_perf_print:    graphs reused =        111

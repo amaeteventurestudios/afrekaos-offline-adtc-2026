@@ -60,3 +60,22 @@ No output — candidate GGUF **not present locally**. Not scored.
 - No `model.lock.json` is created. A winner is locked only after re-running
   with thinking disabled (or a higher budget) AND acquiring + running at least
   one alternative for comparison.
+
+---
+
+## Task 003B note (grounded retest)
+
+- qwen3-1.7b direct mode was retested with **retrieval-grounded prompts**
+  (SQLite FTS5 context + answer rules) vs ungrounded (role + rules only).
+- **The prompt-1 derailment is resolved.** Neither grounded nor ungrounded
+  prompt-1 produced chemistry/multiple-choice derailment — the answer rules +
+  AfrekaOS role (present in both modes) kept the model on SME operations.
+- Grounding further improved specificity: grounded prompt-1 referenced concrete
+  checks (stock counts, expiration dates, supplier delivery status) from
+  retrieved notes; ungrounded was correct but more generic.
+- Analyzer verdict on prompt-1 grounding: **PASS** (visible answer, no think
+  trap, no derailment, ≥2 SME terms).
+- This does **not** erase the Task 002C notes above — those recorded the
+  thinking-mode failure as originally observed. Task 002C's direct-mode fix and
+  Task 003B's grounding together resolved it. See
+  `artifacts/eval/task-003B-grounded-inference.md` for full evidence.

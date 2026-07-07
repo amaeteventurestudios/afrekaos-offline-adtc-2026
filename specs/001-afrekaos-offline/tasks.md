@@ -106,11 +106,29 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
       `artifacts/eval/task-003A-grounded-prompt-preview.md`.
 - [x] README / REPORT / SCORING updated.
 
-### 003B — Connect grounded prompts to model inference (open)
+### 003B — Connect grounded prompts to model inference (complete)
 
-- [ ] Run grounded prompts through `qwen3-1.7b` (direct mode) and capture outputs.
-- [ ] Re-score prompt-1 to confirm retrieval reduces derailment.
-- [ ] Compare grounded vs. ungrounded SME answer quality.
+- [x] `app/model_inference.py` — inference helper: `build_ungrounded_prompt`,
+      `run_model`, `run_ungrounded`, `run_grounded`, `inference_summary`;
+      prefers `llama-completion`; Qwen direct mode (`/no_think` + template +
+      `-no-cnv`); stdin DEVNULL; bounded generation + subprocess timeout;
+      structured result dicts. Standard library only.
+- [x] `scripts/run_grounded_inference.py` — 6-run comparison (3 prompts ×
+      grounded/ungrounded); bounded; writes outputs + runtime notes + comparison.
+- [x] `scripts/analyze_grounded_outputs.py` — `<think>` trap detection (refined:
+      empty template block ≠ trap), derailment terms, SME-term presence,
+      PASS/FAIL/INCONCLUSIVE verdict.
+- [x] `tests/test_model_inference.py`, `tests/test_grounded_output_analyzer.py`.
+- [x] Real inference ran (all 6 runs); prompt-1 derailment resolved; analyzer
+      verdict PASS. Grounded adds specificity + "stockout" term.
+- [x] Evidence: `artifacts/eval/task-003B-grounded-inference.md` + outputs;
+      scorecard updated (Task 003B note appended, 002C notes preserved).
+
+### 003C — Corpus expansion and answer-quality tightening (open)
+
+- [ ] Expand the public SME corpus for richer retrieval grounding.
+- [ ] Tighten system prompt / stop tokens for more actionable checklists.
+- [ ] Re-profile on target Ubuntu 22.04 / 8 GB hardware.
 
 ### 004 — Local browser app (open)
 

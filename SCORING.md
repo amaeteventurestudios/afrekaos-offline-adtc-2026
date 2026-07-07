@@ -84,3 +84,15 @@ a correct, fast, offline model scores well and is easy to defend.
   as a win until grounded prompts are actually run through the model.
 - **Prompt previews are not benchmark answers.** They are inputs; only real
   inference produces scorable outputs.
+
+## Grounded inference note (Task 003B)
+
+- Grounded inference (retrieval context + answer rules before model call)
+  supports **demo quality and answer discipline**.
+- The automated score still depends on **model/runtime metadata behavior**
+  (Layer 1) — grounded outputs do not change the RAM/TPS/model-path score.
+- **Retrieval-grounded outputs should be evaluated separately** from raw model
+  benchmark outputs. A grounded answer that stays on-topic is a demo-quality
+  win, not a model-speed win.
+- **Do not count prompt previews as model answers.** Task 003B ran real
+  inference; only those outputs are scorable. The Task 003A previews were inputs.

@@ -1,0 +1,71 @@
+0.00.021.203 I llama_completion: llama backend init
+0.00.021.214 I llama_completion: load the model and apply lora adapter, if any
+0.00.021.221 I common_init_result: fitting params to device memory ...
+0.00.021.221 I common_init_result: (for bugs during this step try to reproduce them with -fit off, or provide --verbose logs if the bug only occurs with -fit on)
+0.00.475.531 I common_params_fit_impl: projected to use 5410 MiB of host memory vs. 32768 MiB of total host memory
+0.00.749.298 W load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.02.472.643 I common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
+0.03.269.144 I llama_completion: llama threadpool init, n_threads = 4
+0.03.269.172 I 
+0.03.269.191 I system_info: n_threads = 4 (n_threads_batch = 4) / 8 | CPU : SSE3 = 1 | SSSE3 = 1 | ACCELERATE = 1 | OPENMP = 1 | REPACK = 1 | 
+0.03.269.192 I 
+0.03.270.781 I sampler seed: 989763678
+0.03.270.826 I sampler params: 
+	repeat_last_n = 64, repeat_penalty = 1.000, frequency_penalty = 0.000, presence_penalty = 0.000
+	dry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = -1
+	top_k = 40, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, top_n_sigma = -1.000, temp = 0.700
+	mirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000, adaptive_target = -1.000, adaptive_decay = 0.900
+0.03.270.840 I sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+0.03.270.842 I generate: n_ctx = 32768, n_batch = 2048, n_predict = 200, n_keep = 0
+0.03.270.843 I 
+You are AfrekaOS, an offline SME operations copilot for African small business operators.
+
+Local SME operations context (retrieved offline):
+
+1. [sme_operations] Supplier (SME operations)
+   source: data/sme_operations/supplier.md
+   ... - Typical and worst-case lead time for that supplier. - Whether an alternative supplier exists for fast-moving items. - Current stock cover (how many days of demand remain in stoc...
+
+2. [sme_operations] Inventory (SME operations)
+   source: data/sme_operations/inventory.md
+   ...isible operational pressure point for a small shop or market operator. Stockouts of fast-moving items directly cost sales and trust; overstock ties up limited working capital. ## W...
+
+3. [sme_operations] Cashflow (SME operations)
+   source: data/sme_operations/cashflow.md
+   ...vs. when cash arrives. - Which expenses are fixed vs. variable. ## What to avoid - Extending more credit when cash is already thin. - Committing to new fixed costs before confirmin...
+
+4. [language] Yoruba mode — design placeholder
+   source: data/language/yoruba_mode.md
+   ...imum viable vocabulary coverage for the two test-prompt families (daily triage, expansion readiness)? ## Status Placeholder. Deferred to a later task. The `data/language/` director...
+
+5. [sme_operations] Staffing (SME operations)
+   source: data/sme_operations/staffing.md
+   ...stomer or private data. ## Concept Most small operators rely on a very small number of trusted staff. Coverage, delegation, and trust are the real constraints — not headcount. Expa...
+
+Operator question:
+A small shop owner reports that sales are lower than usual, two fast-moving items are out of stock, customers are asking for credit, and the supplier delivery is delayed. What should they check first, and what should they avoid doing immediately?
+
+Answer rules:
+- Give practical, concrete operating steps.
+- Stay strictly on SME operations (inventory, cashflow, credit, supplier, staffing, expansion).
+- Do NOT make accounting, banking, payroll, tax-filing, or ERP claims.
+- Do NOT invent facts. If records or numbers are needed, say so.
+- Do NOT include hidden chain-of-thought or a <think> block. Answer directly.
+- Answer as a short checklist.
+- Where the operator should verify their own records before acting, say so explicitly.
+
+Answer: /no_think
+
+</think>
+
+Check inventory levels for the two fast-moving items first. Verify stock counts and expiration dates. Avoid extending credit immediately without confirming the supplier's delivery status and current stock availability. [end of text]
+
+
+0.25.913.461 I common_perf_print:    sampling time =      16.42 ms
+0.25.913.466 I common_perf_print:    samplers time =       8.05 ms /   554 tokens
+0.25.913.467 I common_perf_print:        load time =    2644.47 ms
+0.25.913.468 I common_perf_print: prompt eval time =   11988.34 ms /   516 tokens (   23.23 ms per token,    43.04 tokens per second)
+0.25.913.470 I common_perf_print:        eval time =   10635.92 ms /    37 runs   (  287.46 ms per token,     3.48 tokens per second)
+0.25.913.470 I common_perf_print:       total time =   22644.33 ms /   553 tokens
+0.25.913.474 I common_perf_print: unaccounted time =       3.64 ms /   0.0 %      (total - sampling - prompt eval - eval) / (total)
+0.25.913.475 I common_perf_print:    graphs reused =         36

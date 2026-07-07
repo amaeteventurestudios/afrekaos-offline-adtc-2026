@@ -186,6 +186,26 @@ cash-on-hand checks) and adds answer rules that forbid off-topic, chain-of-thoug
 and financial-software claims. This is intended to reduce the prompt-1 derailment
 seen in Task 002C.
 
+## Grounded Inference (Task 003B)
+
+Grounded inference injects local SQLite FTS5 context (retrieved SME notes)
+before calling the locked Qwen model, then compares grounded vs ungrounded
+outputs. This is **still local-only** — no cloud model or cloud database is
+used. Task 003B tests whether retrieval reduces off-topic answers before UI
+work begins.
+
+```bash
+python3 scripts/build_retrieval_index.py
+AFREKAOS_QWEN_NO_THINK=1 python3 scripts/run_grounded_inference.py
+python3 scripts/analyze_grounded_outputs.py
+```
+
+Result: the Task 002C prompt-1 derailment (chemistry/multiple-choice) is
+**resolved**. Both grounded and ungrounded prompt-1 now stay on SME operations
+(answer rules + role), and grounding further improves specificity (concrete
+stock/supplier/credit checks from retrieved notes). Analyzer verdict: **PASS**.
+See `artifacts/eval/task-003B-grounded-inference.md`.
+
 ## Repository layout
 
 ```

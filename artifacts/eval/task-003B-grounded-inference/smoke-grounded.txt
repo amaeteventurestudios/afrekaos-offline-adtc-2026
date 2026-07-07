@@ -1,0 +1,75 @@
+0.00.039.881 I llama_completion: llama backend init
+0.00.039.896 I llama_completion: load the model and apply lora adapter, if any
+0.00.039.908 I common_init_result: fitting params to device memory ...
+0.00.039.908 I common_init_result: (for bugs during this step try to reproduce them with -fit off, or provide --verbose logs if the bug only occurs with -fit on)
+0.00.799.527 I common_params_fit_impl: projected to use 5410 MiB of host memory vs. 32768 MiB of total host memory
+0.01.140.597 W load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.02.860.865 I common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
+0.03.680.531 I llama_completion: llama threadpool init, n_threads = 4
+0.03.680.559 I 
+0.03.680.577 I system_info: n_threads = 4 (n_threads_batch = 4) / 8 | CPU : SSE3 = 1 | SSSE3 = 1 | ACCELERATE = 1 | OPENMP = 1 | REPACK = 1 | 
+0.03.680.578 I 
+0.03.682.237 I sampler seed: 1177426723
+0.03.682.248 I sampler params: 
+	repeat_last_n = 64, repeat_penalty = 1.000, frequency_penalty = 0.000, presence_penalty = 0.000
+	dry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = -1
+	top_k = 40, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, top_n_sigma = -1.000, temp = 0.700
+	mirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000, adaptive_target = -1.000, adaptive_decay = 0.900
+0.03.682.258 I sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+0.03.682.258 I generate: n_ctx = 32768, n_batch = 2048, n_predict = 200, n_keep = 0
+0.03.682.258 I 
+You are AfrekaOS, an offline SME operations copilot for African small business operators.
+
+Local SME operations context (retrieved offline):
+
+1. [sme_operations] Supplier (SME operations)
+   source: data/sme_operations/supplier.md
+   ... delivery cascades into stockouts, lost sales, and credit pressure. Operator resilience depends on knowing lead times, having alternatives, and not being over-dependent on one supp...
+
+2. [sme_operations] Inventory (SME operations)
+   source: data/sme_operations/inventory.md
+   ...isible operational pressure point for a small shop or market operator. Stockouts of fast-moving items directly cost sales and trust; overstock ties up limited working capital. ## W...
+
+3. [sme_operations] Cashflow (SME operations)
+   source: data/sme_operations/cashflow.md
+   # Cashflow (SME operations) > Public, challenge-safe placeholder notes. No customer or private data. ## Concept Cashflow pressure is about timing, ...
+
+4. [sources] Sources
+   source: data/sources/README.md
+   ...s **only public SME operations concepts and challenge-safe placeholder notes**. No private datasets, customer records, bank data, investor materials, or proprietary strategy are in...
+
+5. [sme_operations] Credit (SME operations)
+   source: data/sme_operations/credit.md
+   ...er the request is for a fast-moving or slow-moving item. - Whether refusing now damages a relationship that matters. ## What to avoid - Granting credit to everyone to keep the peac...
+
+Operator question:
+A small shop has low sales, missing fast-moving stock, supplier delay, and more customers asking for credit. Give a short operating checklist.
+
+Answer rules:
+- Give practical, concrete operating steps.
+- Stay strictly on SME operations (inventory, cashflow, credit, supplier, staffing, expansion).
+- Do NOT make accounting, banking, payroll, tax-filing, or ERP claims.
+- Do NOT invent facts. If records or numbers are needed, say so.
+- Do NOT include hidden chain-of-thought or a <think> block. Answer directly.
+- Answer as a short checklist.
+- Where the operator should verify their own records before acting, say so explicitly.
+
+Answer: /no_think
+</think>
+
+- Check inventory levels and restock fast-moving items before sales peak  
+- Confirm supplier lead times and have alternatives in place  
+- Review credit policies and selectively extend credit to trusted customers  
+- Monitor cashflow trends and avoid overstocking to free up capital  
+- Track sales and customer demand to adjust inventory and credit offerings  
+- Document supplier delays and communicate proactively with stakeholders [end of text]
+
+
+0.38.077.177 I common_perf_print:    sampling time =      34.09 ms
+0.38.077.184 I common_perf_print:    samplers time =      16.44 ms /   547 tokens
+0.38.077.188 I common_perf_print:        load time =    2689.39 ms
+0.38.077.190 I common_perf_print: prompt eval time =   11293.48 ms /   468 tokens (   24.13 ms per token,    41.44 tokens per second)
+0.38.077.193 I common_perf_print:        eval time =   23064.80 ms /    78 runs   (  295.70 ms per token,     3.38 tokens per second)
+0.38.077.197 I common_perf_print:       total time =   34396.66 ms /   546 tokens
+0.38.077.198 I common_perf_print: unaccounted time =       4.29 ms /   0.0 %      (total - sampling - prompt eval - eval) / (total)
+0.38.077.198 I common_perf_print:    graphs reused =         76
