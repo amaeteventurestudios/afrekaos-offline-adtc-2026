@@ -97,6 +97,19 @@ class TestRouteHandling(unittest.TestCase):
         self.assertIn("Daily Operations Advisor", html)
         self.assertIn(web_app.DEFAULT_DAILY, html)
 
+    def test_demo_route_renders(self) -> None:
+        from app import web_templates as T
+
+        html = T.render_demo()
+        self.assertIn("Demo Scenarios", html)
+
+    def test_status_includes_no_cloud_language(self) -> None:
+        from app import web_templates as T
+
+        html = T.render_status(web_app.status_payload())
+        self.assertIn("cloud", html.lower())
+        self.assertIn("none", html.lower())
+
 
 class TestExtractAnswer(unittest.TestCase):
     def test_strips_think_block(self) -> None:

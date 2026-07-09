@@ -350,3 +350,33 @@ inference per request, no Yoruba-mode UI toggle yet, dev-machine timing.
 
 **This is not cloud software.** No private data, banking workflow, payroll
 workflow, tax workflow, or ERP behavior was added.
+
+## Task 004B — UI Polish and Evidence
+
+This task polished the standard-library local browser UI and added demo +
+evidence tooling.
+
+**What was added:** offline status banner, top navigation bar, stronger card
+layout, improved form/answer/error layouts, unified boundary warning on every
+advisor result, a new `GET /demo` route with four demo-scenario cards (low
+sales/stockout, expansion readiness, inventory pressure, cash/credit), and
+`scripts/capture_ui_evidence.py` (fetches all routes, saves HTML/JSON snapshots,
+verifies labels; optional bounded inference via
+`AFREKAOS_CAPTURE_INFERENCE=1`).
+
+**`/demo`:** four ready-made SME scenarios, each with a one-click form that
+submits to the matching advisor endpoint.
+
+**Evidence capture:** `capture_ui_evidence.py` captured 7 files (home, demo, 3
+advisors, status, health.json) — all routes returned 200, all labels verified.
+Inference was not run during capture (by design); it can be enabled optionally.
+
+**Was inference captured?** Not during evidence capture (default off). Inference
+through the UI was verified in Task 004A.
+
+**Limitations:** screenshots are optional (instructions only, no GUI capture in
+this environment); minimal styling; standard library only.
+
+**This is standard-library local UI.** No cloud database, private data, banking
+workflow, payroll workflow, tax workflow, lending workflow, or ERP behavior was
+added.

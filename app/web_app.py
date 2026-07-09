@@ -238,6 +238,8 @@ class Handler(BaseHTTPRequestHandler):
             path = self.path.split("?")[0]
             if path == "/":
                 self._send_html(200, T.render_home())
+            elif path == "/demo":
+                self._send_html(200, T.render_demo())
             elif path == "/advisor/daily":
                 self._send_html(
                     200,
@@ -247,6 +249,7 @@ class Handler(BaseHTTPRequestHandler):
                         "Triage low sales, stockouts, supplier delays, and credit pressure.",
                         DEFAULT_DAILY,
                         "Describe your daily operations problem...",
+                        active="daily",
                     ),
                 )
             elif path == "/advisor/inventory":
@@ -258,6 +261,7 @@ class Handler(BaseHTTPRequestHandler):
                         "Check fast-moving items, slow stock, reorder points, and supplier lead times.",
                         DEFAULT_INVENTORY,
                         "Describe your inventory / stockout problem...",
+                        active="daily",
                     ),
                 )
             elif path == "/advisor/cashflow":
@@ -269,6 +273,7 @@ class Handler(BaseHTTPRequestHandler):
                         "Reason through cash pressure, credit requests, and record gaps. Not accounting/banking/lending/tax/payroll advice.",
                         DEFAULT_CASHFLOW,
                         "Describe your cashflow / credit problem...",
+                        active="daily",
                     ),
                 )
             elif path == "/status":
@@ -310,6 +315,7 @@ class Handler(BaseHTTPRequestHandler):
                         "(empty)",
                         "Please enter an operations question.",
                         "retrieval-grounded, direct-answer",
+                        active="daily",
                     ),
                 )
                 return
@@ -318,7 +324,8 @@ class Handler(BaseHTTPRequestHandler):
             self._send_html(
                 200,
                 T.render_advisor_result(
-                    heading, question, answer, mode_label, runtime_notes=notes
+                    heading, question, answer, mode_label, runtime_notes=notes,
+                    active="daily",
                 ),
             )
         except Exception:

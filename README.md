@@ -227,6 +227,35 @@ Offline System Status.
 python3 scripts/smoke_web.py   # non-inference smoke test (no model required)
 ```
 
+## Demo UI Evidence (Task 004B)
+
+The UI now has a **Demo Scenarios** page (`/demo`) with four ready-made SME
+operations scenarios, plus an evidence capture script that saves HTML/JSON
+snapshots of every route.
+
+```bash
+./scripts/run_local_web.sh
+```
+
+Then visit:
+- http://127.0.0.1:8787/
+- http://127.0.0.1:8787/demo
+- http://127.0.0.1:8787/status
+
+Evidence command (no inference by default):
+```bash
+python3 scripts/capture_ui_evidence.py
+```
+
+Optional real inference capture:
+```bash
+AFREKAOS_CAPTURE_INFERENCE=1 python3 scripts/capture_ui_evidence.py
+```
+
+Evidence snapshots are local HTML/JSON captures. Screenshots are optional
+(see `artifacts/eval/task-004B-screenshot-instructions.md`). No private business
+data should be used in screenshots or demo prompts.
+
 ## Repository layout
 
 ```

@@ -107,3 +107,13 @@ a correct, fast, offline model scores well and is easy to defend.
 - **Browser answers should be grounded and bounded.** Inference through the UI
   uses retrieval-grounded prompts, bounded generation, and a subprocess timeout
   to avoid runaway output.
+
+## UI evidence note (Task 004B)
+
+- UI evidence (HTML/JSON snapshots, demo scenarios) supports **demo review and
+  operator experience**.
+- Automated scoring still depends on the **model/runtime metadata path**
+  (Layer 1). UI snapshots are not performance benchmarks.
+- **Inference evidence must be labeled separately** from static page evidence.
+  A static HTML capture of `/advisor/daily` (the form) is not the same as a
+  captured model answer; only the latter is scorable output.

@@ -144,10 +144,25 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [x] Smoke test passed; manual real-inference POST verified.
 - [x] Evidence: `artifacts/eval/task-004A-local-web-ui.md`.
 
-### 004B — UI polish and demo evidence (open)
+### 004B — UI polish and demo evidence (complete)
 
+- [x] `app/web_templates.py` polished — offline status banner, top nav,
+      stronger cards, improved layouts, unified boundary warning,
+      `render_demo()` with 4 demo scenarios.
+- [x] `app/web_app.py` updated — `GET /demo` route; advisor nav links.
+- [x] `scripts/capture_ui_evidence.py` — captures all routes as HTML/JSON
+      snapshots; verifies labels; optional bounded inference.
+- [x] `tests/test_web_templates.py` (banner, demo, warning, nav),
+      `tests/test_web_app.py` (demo route, no-cloud), `tests/test_ui_evidence.py`.
+- [x] Evidence captured (7 files); smoke test passed.
+- [x] Artifacts: `task-004B-ui-polish.md`, `task-004B-screenshot-instructions.md`,
+      `task-004B-ui-evidence/` snapshots.
+
+### 004C — Visual screenshots / target-hardware UI validation (open)
+
+- [ ] Capture screenshots if GUI is available (instructions in
+      `task-004B-screenshot-instructions.md`).
 - [ ] Loading state for blocking inference.
-- [ ] Screenshot / demo evidence.
 - [ ] Yoruba-mode UI toggle.
 - [ ] Re-validate on target Ubuntu 22.04 / 8 GB hardware.
 

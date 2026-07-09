@@ -126,12 +126,78 @@ class TestNoExternalDeps(unittest.TestCase):
             lambda: T.render_advisor_form("/x", "H", "d", "q"),
             lambda: T.render_advisor_result("H", "q", "a", "m"),
             lambda: T.render_status({"k": "v"}),
+            lambda: T.render_demo(),
         ):
             html_out = renderer()
             # No external src/href to http resources or cdn.
             self.assertNotIn("src=\"http", html_out)
             self.assertNotIn("href=\"http", html_out)
             self.assertNotIn("cdn", html_out.lower())
+
+
+class TestBanner(unittest.TestCase):
+    def test_home_has_offline_banner(self) -> None:
+        html_out = T.render_home()
+        self.assertIn("Offline mode", html_out)
+        self.assertIn("Local model", html_out)
+        self.assertIn("SQLite retrieval", html_out)
+        self.assertIn("No cloud dependency", html_out)
+
+    def test_all_pages_have_banner(self) -> None:
+        for renderer in (
+            lambda: T.render_home(),
+            lambda: T.render_demo(),
+            lambda: T.render_advisor_form("/x", "H", "d", "q"),
+            lambda: T.render_advisor_result("H", "q", "a", "m"),
+            lambda: T.render_status({"k": "v"}),
+        ):
+            self.assertIn("Offline mode", renderer())
+
+
+class TestUnifiedWarning(unittest.TestCase):
+    def test_warning_text_constant(self) -> None:
+        self.assertIn("not accounting", T.WARNING_TEXT.lower())
+        self.assertIn("banking", T.WARNING_TEXT.lower())
+        self.assertIn("payroll", T.WARNING_TEXT.lower())
+        self.assertIn("tax", T.WARNING_TEXT.lower())
+        self.assertIn("lending", T.WARNING_TEXT.lower())
+        self.assertIn("erp", T.WARNING_TEXT.lower())
+
+    def test_advisor_result_includes_unified_warning(self) -> None:
+        html_out = T.render_advisor_result("H", "q", "a", "m")
+        self.assertIn(T.WARNING_TEXT, html_out)
+
+
+class TestDemoPage(unittest.TestCase):
+    def test_demo_includes_heading(self) -> None:
+        html_out = T.render_demo()
+        self.assertIn("Demo Scenarios", html_out)
+
+    def test_demo_includes_all_scenario_titles(self) -> None:
+        html_out = T.render_demo()
+        for title, _, _, _ in T.DEMO_SCENARIOS:
+            self.assertIn(title, html_out)
+
+    def test_demo_has_four_scenarios(self) -> None:
+        self.assertEqual(len(T.DEMO_SCENARIOS), 4)
+
+    def test_demo_scenarios_have_forms(self) -> None:
+        html_out = T.render_demo()
+        self.assertIn("<form", html_out)
+        self.assertIn("Run this scenario", html_out)
+
+    def test_demo_includes_nav_links(self) -> None:
+        html_out = T.render_demo()
+        self.assertIn("Mission Control", html_out)
+        self.assertIn("Offline Status", html_out)
+
+
+class TestNavLinks(unittest.TestCase):
+    def test_advisor_result_has_nav(self) -> None:
+        html_out = T.render_advisor_result("H", "q", "a", "m")
+        self.assertIn('href="/"', html_out)
+        self.assertIn('href="/demo"', html_out)
+        self.assertIn('href="/status"', html_out)
 
 
 if __name__ == "__main__":
