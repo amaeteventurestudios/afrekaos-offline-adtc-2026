@@ -96,3 +96,14 @@ a correct, fast, offline model scores well and is easy to defend.
   win, not a model-speed win.
 - **Do not count prompt previews as model answers.** Task 003B ran real
   inference; only those outputs are scorable. The Task 003A previews were inputs.
+
+## UI note (Task 004A)
+
+- The local browser UI supports the **demo and local operator experience**.
+- Automated scoring still depends on the **model/runtime path and metadata
+  prompts** (Layer 1). The UI does not change the model/TPS/RAM score.
+- **UI should not be optimized at the expense of runtime reliability.** A slick
+  UI on a broken or slow model scores badly; the runtime baseline comes first.
+- **Browser answers should be grounded and bounded.** Inference through the UI
+  uses retrieval-grounded prompts, bounded generation, and a subprocess timeout
+  to avoid runaway output.

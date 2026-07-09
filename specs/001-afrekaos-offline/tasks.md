@@ -130,14 +130,28 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [ ] Tighten system prompt / stop tokens for more actionable checklists.
 - [ ] Re-profile on target Ubuntu 22.04 / 8 GB hardware.
 
-### 004 — Local browser app (open)
+### 004A — Local browser UI (complete)
 
-- [ ] Localhost server scaffolding (no external deps).
-- [ ] Operator flows: inventory, cashflow, credit, supplier, staffing,
-      expansion.
-- [ ] Yoruba mode (language target).
+- [x] `app/web_app.py` — `http.server.ThreadingHTTPServer` at 127.0.0.1:8787;
+      routes: `/`, `/advisor/{daily,inventory,cashflow}` (GET+POST),
+      `/status`, `/health`; standard library only; bounded inference.
+- [x] `app/web_templates.py` — HTML render helpers, embedded CSS, all user
+      content escaped; no external CSS/JS/fonts/CDNs/images.
+- [x] `scripts/run_local_web.sh` — executable; sets
+      `AFREKAOS_QWEN_NO_THINK=1`; runs `python3 -m app.web_app`.
+- [x] `scripts/smoke_web.py` — non-inference smoke test (no model required).
+- [x] `tests/test_web_templates.py`, `tests/test_web_app.py`.
+- [x] Smoke test passed; manual real-inference POST verified.
+- [x] Evidence: `artifacts/eval/task-004A-local-web-ui.md`.
 
-### 005 — Evaluation and submission
+### 004B — UI polish and demo evidence (open)
+
+- [ ] Loading state for blocking inference.
+- [ ] Screenshot / demo evidence.
+- [ ] Yoruba-mode UI toggle.
+- [ ] Re-validate on target Ubuntu 22.04 / 8 GB hardware.
+
+### 005 — Final evaluation and submission (open)
 
 - [ ] Run the two test prompts and capture outputs.
 - [ ] Package submission artifacts under `artifacts/submission/`.

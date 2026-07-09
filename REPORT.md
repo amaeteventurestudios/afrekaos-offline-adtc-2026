@@ -320,3 +320,33 @@ than derailment prevention per se.
 
 **This is still not UI.** No cloud database, private data, banking workflow,
 payroll workflow, tax workflow, or ERP behavior was added.
+
+## Task 004A — Local Browser UI
+
+This task added the **first local browser UI** using Python standard library
+only.
+
+**What was added:** `app/web_app.py` (`http.server.ThreadingHTTPServer` at
+`127.0.0.1:8787`), `app/web_templates.py` (HTML render helpers with embedded
+CSS, all user content escaped), `scripts/run_local_web.sh` (sets
+`AFREKAOS_QWEN_NO_THINK=1`, runs `python3 -m app.web_app`),
+`scripts/smoke_web.py` (non-inference smoke test), and tests.
+
+**Routes:** `/` (Mission Control), `/advisor/daily`|`/inventory`|`/cashflow`
+(GET forms + POST grounded inference), `/status` (offline system status),
+`/health` (JSON). The UI calls `app.model_inference.run_grounded()` with bounded
+generation and a subprocess timeout; missing model/runtime renders a
+browser-friendly error.
+
+**Standard library only.** No FastAPI, Flask, Node, npm, React, Tailwind, CDNs,
+or any external CSS/JS/fonts/images. No network calls.
+
+**Was UI inference tested?** Yes — `scripts/smoke_web.py` passed (all routes
+200, `/health` valid JSON), and a manual `POST /advisor/daily` returned
+operating guidance with the accounting/banking warning. Generation was bounded.
+
+**Limitations:** minimal styling, single-user localhost (no auth/HTTPS), blocking
+inference per request, no Yoruba-mode UI toggle yet, dev-machine timing.
+
+**This is not cloud software.** No private data, banking workflow, payroll
+workflow, tax workflow, or ERP behavior was added.

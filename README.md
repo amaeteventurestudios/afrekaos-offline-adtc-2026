@@ -206,6 +206,27 @@ Result: the Task 002C prompt-1 derailment (chemistry/multiple-choice) is
 stock/supplier/credit checks from retrieved notes). Analyzer verdict: **PASS**.
 See `artifacts/eval/task-003B-grounded-inference.md`.
 
+## Local Browser UI (Task 004A)
+
+AfrekaOS Offline has a **local-only browser UI** built with the Python standard
+library (`http.server`). No internet is required during runtime. No cloud model
+or cloud database is used. The UI calls retrieval-grounded inference when the
+model and llama runtime are available; if they are missing, it shows a clear
+local error.
+
+```bash
+python3 scripts/build_retrieval_index.py
+./scripts/run_local_web.sh
+```
+
+Then visit **http://127.0.0.1:8787** — Mission Control links to the Daily
+Operations Advisor, Inventory and Stock Check, Cashflow Pressure Coach, and
+Offline System Status.
+
+```bash
+python3 scripts/smoke_web.py   # non-inference smoke test (no model required)
+```
+
 ## Repository layout
 
 ```
