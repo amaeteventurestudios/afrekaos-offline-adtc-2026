@@ -166,7 +166,24 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [ ] Yoruba-mode UI toggle.
 - [ ] Re-validate on target Ubuntu 22.04 / 8 GB hardware.
 
-### 005 — Final evaluation and submission (open)
+### 005A — Final evaluation package (complete)
 
-- [ ] Run the two test prompts and capture outputs.
-- [ ] Package submission artifacts under `artifacts/submission/`.
+- [x] `scripts/final_validation.py` — runs all checks + unittest; writes
+      `artifacts/submission/final-validation-log.md`.
+- [x] `artifacts/submission/final-evaluation-package.md` — product/runtime/
+      retrieval/UI/evidence/limitations/boundaries.
+- [x] `artifacts/submission/final-demo-script.md` — 2–3 min demo script.
+- [x] `artifacts/submission/final-runbook.md` — clone → validate → run.
+- [x] `artifacts/submission/final-risk-register.md` — 8-row risk table.
+- [x] `artifacts/submission/final-artifact-index.md` — evidence index.
+- [x] README / REPORT / SCORING updated.
+
+### 005B — Optional screenshots / demo video (open)
+
+- [ ] Capture screenshots if GUI available.
+- [ ] Optional demo video.
+
+### 005C — Target Ubuntu 22.04 / 8 GB hardware retest (open)
+
+- [ ] Re-profile model on target hardware.
+- [ ] Re-validate UI + inference on target.

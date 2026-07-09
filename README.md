@@ -256,6 +256,32 @@ Evidence snapshots are local HTML/JSON captures. Screenshots are optional
 (see `artifacts/eval/task-004B-screenshot-instructions.md`). No private business
 data should be used in screenshots or demo prompts.
 
+## Final Evaluation (Task 005A)
+
+Run the full validation suite (metadata, candidates, retrieval, prompt preview,
+grounded-output analyzer, web smoke test, UI evidence capture, unittest):
+
+```bash
+python3 scripts/final_validation.py
+```
+
+The log is written to `artifacts/submission/final-validation-log.md`. No model
+inference is required for validation. See `artifacts/submission/` for the full
+package (evaluation summary, demo script, runbook, risk register, artifact index).
+
+## Demo Run
+
+```bash
+python3 scripts/build_retrieval_index.py
+./scripts/run_local_web.sh
+```
+
+Then visit: **http://127.0.0.1:8787** — start at Mission Control or Demo Scenarios.
+
+> The GGUF model is **not committed** (`model/` is gitignored). `model/afrekaos.gguf`
+> must exist locally for inference; without it, the UI renders but advisor
+> answers show a clear local error.
+
 ## Repository layout
 
 ```

@@ -117,3 +117,14 @@ a correct, fast, offline model scores well and is easy to defend.
 - **Inference evidence must be labeled separately** from static page evidence.
   A static HTML capture of `/advisor/daily` (the form) is not the same as a
   captured model answer; only the latter is scorable output.
+
+## Final evaluation note (Task 005A)
+
+- Final validation (`scripts/final_validation.py`) confirms **repo health and
+  demo readiness** — all checks pass, all routes render, tests are green.
+- UI and retrieval evidence support the **demo story**; they are not
+  performance benchmarks.
+- Automated scoring still depends on the **model/runtime metadata behavior**
+  (Layer 1) — the final package does not change that.
+- **The final package does not replace target-hardware benchmarking.** Dev-machine
+  TPS/RAM numbers must be re-validated on the Ubuntu 22.04 / 8 GB target.

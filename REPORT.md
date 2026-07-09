@@ -380,3 +380,34 @@ this environment); minimal styling; standard library only.
 **This is standard-library local UI.** No cloud database, private data, banking
 workflow, payroll workflow, tax workflow, lending workflow, or ERP behavior was
 added.
+
+## Task 005A — Final Evaluation Package
+
+This task created the final evaluation package, validation runner, and
+submission evidence.
+
+**What was added:**
+- `scripts/final_validation.py` — runs every repo check (metadata, candidates,
+  retrieval build/query, prompt preview, grounded analyzer, web smoke test, UI
+  evidence capture, unittest discover), captures pass/fail, writes a markdown
+  log to `artifacts/submission/final-validation-log.md`.
+- `artifacts/submission/final-evaluation-package.md` — product, runtime,
+  retrieval, UI, evidence, limitations, boundaries.
+- `artifacts/submission/final-demo-script.md` — 2–3 minute demo script.
+- `artifacts/submission/final-runbook.md` — clone → validate → run instructions.
+- `artifacts/submission/final-risk-register.md` — 8-row risk table.
+- `artifacts/submission/final-artifact-index.md` — evidence file index.
+
+**Validation script:** runs all checks non-interactively; no model inference
+required (smoke/evidence captures point the model path at a nonexistent file so
+pages render without a model). Writes overall PASS/FAIL + per-check exit codes.
+
+**Was real inference required?** No — `final_validation.py` does not call the
+model. Inference evidence already exists from Tasks 002C/003B/004A.
+
+**Limitations:** dev-machine timing (not target hardware); qwen3-1.7b is a first
+baseline; small corpus; standard-library UI.
+
+**No cloud database, no cloud inference, no private data, no banking workflow,
+no payroll workflow, no tax workflow, no lending workflow, and no ERP behavior
+was added.**
