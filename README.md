@@ -282,6 +282,19 @@ Then visit: **http://127.0.0.1:8787** — start at Mission Control or Demo Scena
 > must exist locally for inference; without it, the UI renders but advisor
 > answers show a clear local error.
 
+## Target Hardware Retest (Task 005C)
+
+```bash
+python3 scripts/target_hardware_profile.py
+AFREKAOS_QWEN_NO_THINK=1 python3 scripts/target_inference_benchmark.py
+python3 scripts/analyze_target_benchmark.py
+```
+
+This validates the **current machine**, not a universal benchmark. The target is
+Ubuntu 22.04 / 8 GB RAM / integrated graphics. Results must not be fabricated.
+If the current machine is not the target hardware, the artifact says so
+explicitly (see `artifacts/submission/task-005C-target-hardware-retest.md`).
+
 ## Repository layout
 
 ```

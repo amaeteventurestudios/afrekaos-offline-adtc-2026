@@ -42,3 +42,12 @@
 | `artifacts/submission/final-runbook.md` | Clone → validate → run instructions. |
 | `artifacts/submission/final-risk-register.md` | Risk table with mitigations and statuses. |
 | `artifacts/submission/final-artifact-index.md` | This index. |
+
+## Target hardware retest (Task 005C)
+
+| File | What it proves |
+|------|---------------|
+| `artifacts/submission/target-hardware-profile.md` | Live machine profile: OS, CPU, memory, model, retrieval, FTS5. |
+| `artifacts/submission/target-hardware-benchmark/` | Real grounded inference outputs + timing (3 prompts). |
+| `artifacts/submission/target-hardware-benchmark-analysis.md` | Analyzer verdict: PASS (no traps, no derailment, SME terms present). |
+| `artifacts/submission/task-005C-target-hardware-retest.md` | Full retest report with honest hardware-gap documentation. |

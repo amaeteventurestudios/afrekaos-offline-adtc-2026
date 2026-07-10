@@ -183,7 +183,16 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [ ] Capture screenshots if GUI available.
 - [ ] Optional demo video.
 
-### 005C — Target Ubuntu 22.04 / 8 GB hardware retest (open)
+### 005C — Target hardware retest (complete on closest available machine)
 
-- [ ] Re-profile model on target hardware.
-- [ ] Re-validate UI + inference on target.
+- [x] `scripts/target_hardware_profile.py` — collects OS/CPU/memory/disk/model/
+      retrieval/FTS5; writes `target-hardware-profile.md`.
+- [x] `scripts/target_inference_benchmark.py` — 3 bounded grounded prompts with
+      wall-clock timing + TPS scraping; writes outputs + notes + summary.
+- [x] `scripts/analyze_target_benchmark.py` — think-trap/derailment/forbidden-
+      claim/SME-term analyzer; writes `target-hardware-benchmark-analysis.md`.
+- [x] `tests/test_target_hardware_scripts.py` (14 tests).
+- [x] Benchmark ran (3/3 PASS, no traps, real TPS captured).
+- [x] **Gap documented:** current machine is macOS 12.7.6 / 32 GB, NOT Ubuntu
+      22.04 / 8 GB. True target run still needed on actual hardware.
+- [x] Evidence: `artifacts/submission/task-005C-target-hardware-retest.md`.

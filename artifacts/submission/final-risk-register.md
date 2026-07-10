@@ -5,7 +5,7 @@
 | # | Risk | Why it matters | Mitigation | Status |
 |---|------|----------------|------------|--------|
 | 1 | Model file not committed (GGUF is large, `model/` gitignored) | The repo does not contain the actual model; judges/ops must acquire it locally. | `download_model.sh` + `model.lock.json` record the source and lock; runbook documents acquisition. | Open (by design) |
-| 2 | Target 8 GB Ubuntu 22.04 hardware not independently validated in this task | All TPS/RAM numbers are from the dev machine (Darwin x86_64), not the target. | Numbers are labeled "dev machine" throughout; Task 005C deferred for target retest. | Open |
+| 2 | Target 8 GB Ubuntu 22.04 hardware not independently validated | TPS/RAM on the actual target is unknown; dev machine has 32 GB. | Task 005C ran a full benchmark on macOS (PASS, real TPS captured), but the machine is not Ubuntu 22.04 / 8 GB. Gap remains for a true target run. | Partially mitigated — open |
 | 3 | Qwen 1.7B may be shallow on complex business questions | A small model can derail (Task 002C prompt-1 derailed into chemistry before the fix). | Direct-answer mode + answer rules + retrieval grounding resolved the derailment (Task 003B PASS); `model.lock.json` records it as a "first baseline", not final. | Mitigated; monitor |
 | 4 | Retrieval corpus is small (8 documents) | Grounding is only as good as the notes; thin corpus → thinner context. | Public corpus is structured by domain; expansion deferred to Task 003C. | Open |
 | 5 | UI is standard-library and intentionally simple | No framework, no loading state, blocking inference per request, no auth/HTTPS. | Deliberate (no deps); loading state + polish deferred to Task 004C. | Accepted |

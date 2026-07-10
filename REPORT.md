@@ -411,3 +411,30 @@ baseline; small corpus; standard-library UI.
 **No cloud database, no cloud inference, no private data, no banking workflow,
 no payroll workflow, no tax workflow, no lending workflow, and no ERP behavior
 was added.**
+
+## Task 005C — Target Hardware Retest
+
+This task ran the target hardware retest package: a profiler, a bounded
+inference benchmark, and an output analyzer.
+
+**What was added:** `scripts/target_hardware_profile.py` (collects OS/CPU/memory/
+disk/model/retrieval/FTS5 info), `scripts/target_inference_benchmark.py` (runs
+3 grounded prompts with wall-clock timing + TPS scraping),
+`scripts/analyze_target_benchmark.py` (think-trap/derailment/forbidden-claim/
+SME-term analyzer), and `tests/test_target_hardware_scripts.py`.
+
+**Does the current machine match target constraints?** **No.** It is macOS 12.7.6
+(Darwin x86_64, Intel i7-6700K, 32 GB RAM) — not Ubuntu 22.04, and 4× the target
+RAM. The artifact documents this gap explicitly.
+
+**Did inference run?** **Yes** — all 3 grounded prompts completed (no timeouts,
+no think traps). Real timing: wall-clock 45–64s per prompt, generation
+2.6–2.9 tok/s. Analyzer verdict: **PASS** (visible answers, no derailment, no
+forbidden claims, all 8 SME terms present).
+
+**Limitations:** not Ubuntu 22.04; 32 GB not 8 GB; single run per prompt (TPS
+variance is real); true target-hardware run still needed.
+
+**No cloud database, no cloud inference, no private data, no banking workflow,
+no payroll workflow, no tax workflow, no lending workflow, and no ERP behavior
+was added.**

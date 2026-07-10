@@ -128,3 +128,14 @@ a correct, fast, offline model scores well and is easy to defend.
   (Layer 1) — the final package does not change that.
 - **The final package does not replace target-hardware benchmarking.** Dev-machine
   TPS/RAM numbers must be re-validated on the Ubuntu 22.04 / 8 GB target.
+
+## Target hardware retest note (Task 005C)
+
+- Target hardware retest is **stronger evidence** than dev-machine timing — it
+  captures real wall-clock + TPS on the actual (closest available) machine.
+- **Results are machine-specific.** The Task 005C run was on macOS (32 GB), not
+  Ubuntu 22.04 / 8 GB, so it is real evidence but **not** final target evidence.
+- Automated scoring still depends on the **challenge runtime and metadata
+  behavior** — the retest does not change the scoring path.
+- **Do not mix static UI evidence with runtime performance evidence.** A UI
+  snapshot is not a benchmark; a benchmark output is not a UI screenshot.
