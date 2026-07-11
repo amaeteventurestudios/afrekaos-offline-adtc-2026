@@ -381,6 +381,76 @@ this environment); minimal styling; standard library only.
 workflow, payroll workflow, tax workflow, lending workflow, or ERP behavior was
 added.
 
+## Task 004C — Advisor Submit & Runtime Feedback Fix
+
+This task fixed the broken advisor submit experience so the local model never
+leaves the user staring at a frozen form or a vague "500" page.
+
+**What was broken.** (1) `do_POST` ran grounded inference **synchronously inside
+the request handler** — ~43–69s per prompt (see Task 005D timings) with **no
+progress feedback**, so the button looked like it did nothing. (2) The global
+error handler rendered only `<h2>500 — Server error</h2>` with no diagnostics.
+(3) The status banner relied on a CSS `content:"\2713 "` pseudo-element that
+rendered as a stray marker, observed externally as "13 Offline mode".
+
+**Was the 500 reproduced?** **Partially.** With a deliberately broken model path
+the failure path returns HTTP 200 with a folded "Could not run local inference"
+message (not a 500); the bare 500 only appears when an unexpected exception
+escapes the handler. The **primary confirmed defect** was the silent blocking
+POST with no loading state — reproduced by code inspection and the real 43–69s
+timings. See `artifacts/eval/task-004C-ui-submit-fix.md` for the root-cause
+analysis (no guessing).
+
+**What was fixed.**
+- **In-memory job system.** `POST /advisor/<name>` now creates a job, starts a
+  background thread, and **immediately returns 303 → `/job/<id>`**. Jobs live in
+  memory only, are never persisted, and the full question is never logged.
+- **Progress page.** `GET /job/<id>` auto-refreshes every 3s while queued/
+  running, shows the ordered steps (Request received → … → Running local Qwen
+  model → Complete), the runtime status panel, and the final answer or a
+  browser-friendly error.
+- **Client-side loading feedback.** Advisor + demo forms include a tiny inline
+  `<script>` (no external files) that disables the button and shows "Running
+  local model…" on submit. Plain POST still works with JavaScript off.
+- **Friendly error page.** The global handlers render diagnostics: error summary,
+  current route, suggested checks (model path, llama binary, timeout, terminal
+  logs), and nav links — never a bare "500".
+- **Banner fix.** Explicit `✓` text in the HTML (the CSS pseudo-element was
+  removed). Tests assert the page no longer contains `13 Offline mode`.
+- **Status detail panel** on job pages (model path exists, llama binary,
+  retrieval index, locked candidate, local-only mode).
+- **Server logging** of the POST + job lifecycle (no full question).
+- The web port is now configurable via `AFREKAOS_WEB_PORT` (default 8787).
+
+**Does the advisor button now redirect to the job progress page?** **Yes.**
+Verified live: `POST /advisor/daily → 303 /job/<id>`, and the job page renders
+progress steps, the runtime status panel, and the final result/error.
+`scripts/smoke_submit_flow.py` automates this check.
+
+**Does the loading/progress state appear?** **Yes** — client-side button-disable
++ "Running local model…" message, and the server-side progress page with
+auto-refresh and step indicators.
+
+**Does the banner still show "13"?** **No.** Banner now renders literal
+`✓ Offline mode · ✓ Local model · ✓ SQLite retrieval · ✓ No cloud dependency`;
+tests assert `13 Offline mode` is absent on every page.
+
+**Was real inference manually tested?** **Yes** (with the real model present):
+the job completes and the answer renders on the job page. The automated
+tests/smoke use a deliberately nonexistent model so they fail fast without real
+inference.
+
+**Limitations.** Jobs are in-memory only (lost on restart, by design — no
+private questions persisted); the soft job cap is 50 (oldest evicted first); the
+job page polls via meta-refresh (no WebSockets, keeping the stdlib-only
+constraint); TPS variance and the open Ubuntu/8 GB risk are unchanged by this UI
+fix.
+
+**No new product features or dependencies were added.** Everything is Python
+standard library only. **No cloud database, no cloud inference, no private data,
+no banking workflow, no payroll workflow, no tax workflow, no lending workflow,
+and no ERP behavior was added.**
+
 ## Task 005A — Final Evaluation Package
 
 This task created the final evaluation package, validation runner, and

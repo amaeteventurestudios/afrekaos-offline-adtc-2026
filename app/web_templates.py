@@ -27,7 +27,7 @@ header .tagline { color:var(--muted); font-size:.9rem; }
           border-radius:10px; padding:.6rem 1rem; margin-bottom:1.2rem;
           display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; }
 .banner .b-item { font-size:.78rem; color:var(--accent); }
-.banner .b-item::before { content:"\2713 "; }
+.banner .b-mark { font-weight:700; margin-right:.2rem; }
 .banner .b-sep { color:var(--muted); font-size:.78rem; }
 nav.topnav { display:flex; flex-wrap:wrap; gap:.7rem; margin-bottom:1.5rem;
              font-size:.88rem; }
@@ -77,6 +77,13 @@ section.result { background:var(--card); border:1px solid var(--border);
 .pill.ok { background:rgba(74,222,128,.15); color:var(--accent); }
 .pill.no { background:rgba(248,113,113,.15); color:var(--err); }
 .result-nav { display:flex; flex-wrap:wrap; gap:1rem; margin-top:1rem; font-size:.88rem; }
+ol.steps { list-style:none; padding-left:0; margin:.4rem 0 1rem; }
+ol.steps li { padding:.35rem .6rem; border-radius:6px; margin-bottom:.3rem;
+              font-size:.88rem; border:1px solid var(--border); }
+ol.steps li.step-done { color:var(--muted); }
+ol.steps li.step-current { color:var(--accent); border-color:var(--accent);
+                           font-weight:600; }
+ol.steps li.step-todo { color:var(--muted); opacity:.6; }
 footer { margin-top:2rem; color:var(--muted); font-size:.8rem;
          border-top:1px solid var(--border); padding-top:1rem; }
 """
@@ -86,6 +93,48 @@ WARNING_TEXT = (
     "AfrekaOS provides operational guidance only. It is not accounting, "
     "banking, payroll, tax, lending, or ERP software."
 )
+
+# Loading message shown client-side when an advisor form is submitted.
+LOADING_MESSAGE = (
+    "AfrekaOS received your question. It is building local retrieval context "
+    "and running the local model. This can take 30 to 90 seconds on CPU-only "
+    "hardware."
+)
+LOADING_BUTTON_TEXT = "Running local model..."
+
+# Ordered progress steps shown on the job page. A job stores a 1-based index
+# into this list as its current step.
+JOB_STEPS = [
+    "Request received",
+    "Building local retrieval index",
+    "Retrieving SME context",
+    "Building grounded prompt",
+    "Running local Qwen model",
+    "Formatting answer",
+    "Complete",
+]
+
+
+def _loading_script(button_id: str = "submitBtn") -> str:
+    """Inline JS that disables the submit button and shows a loading message.
+
+    No external files or dependencies. If JavaScript is disabled, the form
+    submits normally as a plain POST. The script is intentionally tiny.
+    """
+    return (
+        "<script>\n"
+        "(function(){\n"
+        f"  var btn = document.getElementById({button_id!r});\n"
+        "  if(!btn || !btn.form){ return; }\n"
+        "  btn.form.addEventListener('submit', function(){\n"
+        f"    btn.disabled = true;\n"
+        f"    btn.textContent = {_esc(LOADING_BUTTON_TEXT)!r};\n"
+        "    var msg = document.getElementById('loadingMsg');\n"
+        "    if(msg){ msg.style.display = 'block'; }\n"
+        "  });\n"
+        "})();\n"
+        "</script>\n"
+    )
 
 
 def _esc(s: object) -> str:
@@ -109,28 +158,40 @@ def _topnav(active: str = "") -> str:
 
 
 def _banner() -> str:
-    """Render the offline status banner."""
+    """Render the offline status banner.
+
+    The marker is explicit text in the HTML (\u2713 = checkmark), not a CSS
+    pseudo-element, so it never renders as a stray "13" if a renderer mishandles
+    a CSS Unicode escape. Each item reads "OK <label>" if rendered without the
+    checkmark glyph.
+    """
+    mark = "\u2713"  # U+2713 CHECK MARK
     items = [
-        ("Offline mode",),
-        ("Local model",),
-        ("SQLite retrieval",),
-        ("No cloud dependency",),
+        "Offline mode",
+        "Local model",
+        "SQLite retrieval",
+        "No cloud dependency",
     ]
     parts = []
-    for i, (label,) in enumerate(items):
+    for i, label in enumerate(items):
         if i > 0:
             parts.append('<span class="b-sep">\u00b7</span>')
-        parts.append(f'<span class="b-item">{_esc(label)}</span>')
+        parts.append(
+            f'<span class="b-item"><span class="b-mark">{mark}</span>'
+            f"{_esc(label)}</span>"
+        )
     return '<div class="banner">' + "".join(parts) + "</div>\n"
 
 
-def _page(title: str, body: str, active: str = "") -> str:
+def _page(title: str, body: str, active: str = "",
+          head_extra: str = "") -> str:
     """Wrap body in a full HTML document with embedded CSS."""
     return (
         "<!DOCTYPE html>\n"
         '<html lang="en">\n<head>\n'
         '<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+        f"{head_extra}"
         f"<title>{_esc(title)}</title>\n"
         f"<style>{_CSS}</style>\n"
         "</head>\n<body>\n"
@@ -192,8 +253,11 @@ def render_advisor_form(
         f'<div class="label">Your operations question</div>\n'
         f'<textarea name="question" placeholder="{_esc(placeholder)}">'
         f"{_esc(default_question)}</textarea>\n"
-        "<button type=\"submit\">Get operating guidance</button>\n"
+        '<button id="submitBtn" type="submit">Get operating guidance</button>\n'
+        f'<div id="loadingMsg" class="meta" style="display:none;'
+        f'margin-top:.8rem;">{_esc(LOADING_MESSAGE)}</div>\n'
         "</form>\n"
+        f"{_loading_script()}"
     )
     return _page(heading, body, active=active)
 
@@ -306,6 +370,7 @@ DEMO_SCENARIOS = [
 def render_demo() -> str:
     cards = []
     for i, (title, action, advisor, prompt) in enumerate(DEMO_SCENARIOS, 1):
+        btn_id = f"demoBtn{i}"
         cards.append(
             f'<div class="card">'
             f'<span class="card-tag">Scenario {i}</span>'
@@ -314,16 +379,41 @@ def render_demo() -> str:
             f'<p>{_esc(prompt)}</p>'
             f'<form method="POST" action="{_esc(action)}">'
             f'<textarea name="question" style="display:none;">{_esc(prompt)}</textarea>'
-            f'<button type="submit">Run this scenario</button>'
+            f'<button id="{btn_id}" type="submit">Run this scenario</button>'
+            f'<div id="loadingMsg{i}" class="meta" style="display:none;'
+            f'margin-top:.6rem;font-size:.8rem;">{_esc(LOADING_MESSAGE)}</div>'
             f"</form>"
             f"</div>"
         )
+    # One small script that wires up every demo button by id.
+    wire = "".join(
+        f"  _wire('demoBtn{i}','loadingMsg{i}');\n"
+        for i in range(1, len(DEMO_SCENARIOS) + 1)
+    )
+    script = (
+        "<script>\n"
+        "(function(){\n"
+        "  function _wire(btnId, msgId){\n"
+        "    var btn = document.getElementById(btnId);\n"
+        "    if(!btn || !btn.form){ return; }\n"
+        "    btn.form.addEventListener('submit', function(){\n"
+        f"      btn.disabled = true;\n"
+        f"      btn.textContent = {_esc(LOADING_BUTTON_TEXT)!r};\n"
+        "      var msg = document.getElementById(msgId);\n"
+        "      if(msg){ msg.style.display = 'block'; }\n"
+        "    });\n"
+        "  }\n"
+        f"{wire}"
+        "})();\n"
+        "</script>\n"
+    )
     body = (
         '<h2 style="margin-top:0">Demo Scenarios</h2>\n'
         '<p class="meta">Ready-made SME operations scenarios. Click '
         '"Run this scenario" to submit the prompt to the matching advisor. '
         "Answers are retrieval-grounded and local-only.</p>\n"
         f'<div class="cards">\n{"".join(cards)}\n</div>\n'
+        f"{script}"
         '<div class="result-nav">'
         '<a href="/">&#8592; Mission Control</a>'
         '<a href="/status">Offline Status</a>'
@@ -339,13 +429,198 @@ def health_json(payload: dict) -> str:
     return json.dumps(payload, indent=2)
 
 
+def _status_detail_panel(detail: dict) -> str:
+    """Render the small status-detail panel used on job pages.
+
+    Keys (all optional, booleans rendered as yes/no pills):
+      model_path_exists, llama_binary, retrieval_index_exists,
+      locked_candidate, mode
+    """
+    rows = []
+
+    def _row(k: str, v) -> str:
+        if isinstance(v, bool):
+            v_html = _pill(v, "yes" if v else "no")
+        else:
+            v_html = f'<span class="v">{_esc(v)}</span>'
+        return f'<div class="row"><span class="k">{_esc(k)}</span>{v_html}</div>'
+
+    rows.append(_row("Model path exists",
+                     detail.get("model_path_exists", "not available")))
+    rows.append(_row("Llama binary",
+                     detail.get("llama_binary", "not detected")))
+    rows.append(_row("Retrieval index",
+                     detail.get("retrieval_index_exists", "not available")))
+    rows.append(_row("Locked candidate",
+                     detail.get("locked_candidate", "unknown")))
+    rows.append(_row("Mode", detail.get("mode", "local-only, no cloud")))
+    return (
+        '<section class="result" style="margin-top:1rem;">'
+        '<div class="label">Runtime status</div>'
+        f'<div class="status-grid">{"".join(rows)}</div>'
+        "</section>\n"
+    )
+
+
+def render_job(
+    job: dict,
+    detail: Optional[dict] = None,
+    active: str = "",
+) -> str:
+    """Render the job progress/result page.
+
+    job keys:
+      job_id, advisor, status ('queued'|'running'|'complete'|'failed'),
+      step (1-based index into JOB_STEPS), question, answer, error,
+      mode_label, runtime_notes, created_iso
+    """
+    status = job.get("status", "queued")
+    step = int(job.get("step", 1))
+    steps = JOB_STEPS
+    # Clamp step index into range for display.
+    disp_step = max(1, min(step, len(steps)))
+
+    parts = [f'<h2 style="margin-top:0">{_esc(job.get("advisor", "Advisor"))}</h2>\n']
+
+    # Status pill.
+    status_pill = {
+        "queued": _pill(True, "queued"),
+        "running": _pill(True, "running"),
+        "complete": _pill(True, "complete"),
+        "failed": _pill(False, "failed"),
+    }.get(status, _pill(False, status))
+    parts.append(
+        f'<div class="label">Job {job.get("job_id", "")} · {status_pill}</div>\n'
+    )
+
+    # Step list with current highlighted.
+    parts.append('<ol class="steps">\n')
+    for i, label in enumerate(steps, 1):
+        cls = "step-done" if i < disp_step else (
+            "step-current" if i == disp_step else "step-todo"
+        )
+        parts.append(f'<li class="{cls}">{_esc(label)}</li>\n')
+    parts.append("</ol>\n")
+
+    # Runtime message while in progress.
+    if status in ("queued", "running"):
+        parts.append(
+            '<div class="warn">Local inference may take 30 to 90 seconds on '
+            "CPU-only hardware.</div>\n"
+        )
+
+    # The question (demo only; still escaped).
+    q = job.get("question", "")
+    if q:
+        parts.append('<div class="label">Your question</div>\n')
+        parts.append(f'<section class="result">{_esc(q)}</section>\n')
+
+    # Answer or error.
+    if status == "complete":
+        parts.append(
+            f'<div class="label">Operating guidance '
+            f'({_esc(job.get("mode_label", "retrieval-grounded"))})</div>\n'
+        )
+        answer = job.get("answer", "") or "(model produced no visible answer text)"
+        parts.append(f'<section class="result">{_esc(answer)}</section>\n')
+        parts.append('<div class="warn">{}</div>\n'.format(_esc(WARNING_TEXT)))
+        notes = job.get("runtime_notes", "")
+        if notes:
+            parts.append('<div class="label">Runtime summary</div>\n')
+            parts.append(f'<section class="result">{_esc(notes)}</section>\n')
+    elif status == "failed":
+        err = job.get("error", "Unknown error")
+        parts.append(
+            '<div class="err">AfrekaOS hit a local runtime error while running '
+            "this job.</div>\n"
+        )
+        parts.append('<div class="label">Error summary</div>\n')
+        parts.append(f'<section class="result">{_esc(err)}</section>\n')
+
+    # Status detail panel.
+    if detail:
+        parts.append(_status_detail_panel(detail))
+
+    parts.append(
+        '<div class="result-nav">'
+        '<a href="/">&#8592; Mission Control</a>'
+        '<a href="/advisor/daily">Daily Advisor</a>'
+        '<a href="/status">Offline Status</a>'
+        "</div>\n"
+    )
+
+    # Auto-refresh while in progress.
+    head_extra = ""
+    if status in ("queued", "running"):
+        head_extra = '<meta http-equiv="refresh" content="3">\n'
+
+    return _page("Advisor result", "".join(parts), active=active,
+                 head_extra=head_extra)
+
+
+def render_error(
+    summary: str,
+    route: str = "",
+    detail: Optional[dict] = None,
+) -> str:
+    """Browser-friendly error page. Does not expose long private tracebacks."""
+    parts = ['<h2 style="margin-top:0">AfrekaOS hit a local runtime error.</h2>\n']
+    parts.append(f'<div class="err">{_esc(summary)}</div>\n')
+    if route:
+        parts.append(
+            f'<p class="meta">Current route: <code>{_esc(route)}</code></p>\n'
+        )
+    parts.append('<div class="label">Suggested checks</div>\n')
+    parts.append(
+        "<section class=\"result\">"
+        "<ul>"
+        "<li>Is <code>model/afrekaos.gguf</code> present?</li>"
+        "<li>Is <code>llama-completion</code> available?</li>"
+        "<li>Did the request time out?</li>"
+        "<li>Check terminal logs for details.</li>"
+        "</ul>"
+        "</section>\n"
+    )
+    if detail:
+        parts.append(_status_detail_panel(detail))
+    parts.append(
+        '<div class="result-nav">'
+        '<a href="/">&#8592; Mission Control</a>'
+        '<a href="/advisor/daily">Daily Advisor</a>'
+        '<a href="/status">Offline Status</a>'
+        "</div>\n"
+    )
+    return _page("Error", "".join(parts))
+
+
+def render_job_missing(job_id: str) -> str:
+    """Page shown when a job id is unknown (expired or invalid)."""
+    parts = [
+        '<h2 style="margin-top:0">Job not found</h2>\n',
+        f'<div class="err">Job <code>{_esc(job_id)}</code> was not found. It may '
+        "have expired (jobs are kept in memory only).</div>\n",
+        '<div class="result-nav">'
+        '<a href="/">&#8592; Mission Control</a>'
+        '<a href="/advisor/daily">Daily Advisor</a>'
+        '<a href="/status">Offline Status</a>'
+        "</div>\n",
+    ]
+    return _page("Job not found", "".join(parts))
+
+
 __all__ = [
     "WARNING_TEXT",
+    "LOADING_MESSAGE",
+    "LOADING_BUTTON_TEXT",
+    "JOB_STEPS",
     "DEMO_SCENARIOS",
     "render_home",
     "render_advisor_form",
     "render_advisor_result",
     "render_status",
     "render_demo",
+    "render_job",
+    "render_error",
+    "render_job_missing",
     "health_json",
 ]

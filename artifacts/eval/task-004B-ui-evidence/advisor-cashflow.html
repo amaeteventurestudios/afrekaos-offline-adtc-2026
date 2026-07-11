@@ -20,7 +20,7 @@ header .tagline { color:var(--muted); font-size:.9rem; }
           border-radius:10px; padding:.6rem 1rem; margin-bottom:1.2rem;
           display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; }
 .banner .b-item { font-size:.78rem; color:var(--accent); }
-.banner .b-item::before { content:"¹3 "; }
+.banner .b-mark { font-weight:700; margin-right:.2rem; }
 .banner .b-sep { color:var(--muted); font-size:.78rem; }
 nav.topnav { display:flex; flex-wrap:wrap; gap:.7rem; margin-bottom:1.5rem;
              font-size:.88rem; }
@@ -70,6 +70,13 @@ section.result { background:var(--card); border:1px solid var(--border);
 .pill.ok { background:rgba(74,222,128,.15); color:var(--accent); }
 .pill.no { background:rgba(248,113,113,.15); color:var(--err); }
 .result-nav { display:flex; flex-wrap:wrap; gap:1rem; margin-top:1rem; font-size:.88rem; }
+ol.steps { list-style:none; padding-left:0; margin:.4rem 0 1rem; }
+ol.steps li { padding:.35rem .6rem; border-radius:6px; margin-bottom:.3rem;
+              font-size:.88rem; border:1px solid var(--border); }
+ol.steps li.step-done { color:var(--muted); }
+ol.steps li.step-current { color:var(--accent); border-color:var(--accent);
+                           font-weight:600; }
+ol.steps li.step-todo { color:var(--muted); opacity:.6; }
 footer { margin-top:2rem; color:var(--muted); font-size:.8rem;
          border-top:1px solid var(--border); padding-top:1rem; }
 </style>
@@ -77,7 +84,7 @@ footer { margin-top:2rem; color:var(--muted); font-size:.8rem;
 <body>
 <div class="container">
 <header><h1>AfrekaOS Offline</h1><div class="tagline">Offline SME operations copilot</div></header>
-<div class="banner"><span class="b-item">Offline mode</span><span class="b-sep">·</span><span class="b-item">Local model</span><span class="b-sep">·</span><span class="b-item">SQLite retrieval</span><span class="b-sep">·</span><span class="b-item">No cloud dependency</span></div>
+<div class="banner"><span class="b-item"><span class="b-mark">✓</span>Offline mode</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>Local model</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>SQLite retrieval</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>No cloud dependency</span></div>
 <nav class="topnav"><a href="/">Mission Control</a>
 <a href="/demo">Demo Scenarios</a>
 <a href="/advisor/daily" style="color:var(--accent);font-weight:600;">Daily Advisor</a>
@@ -87,8 +94,21 @@ footer { margin-top:2rem; color:var(--muted); font-size:.8rem;
 <form method="POST" action="/advisor/cashflow">
 <div class="label">Your operations question</div>
 <textarea name="question" placeholder="Describe your cashflow / credit problem...">Customers are asking for credit and my cash records are irregular. What should I check before extending credit, and what should I avoid?</textarea>
-<button type="submit">Get operating guidance</button>
+<button id="submitBtn" type="submit">Get operating guidance</button>
+<div id="loadingMsg" class="meta" style="display:none;margin-top:.8rem;">AfrekaOS received your question. It is building local retrieval context and running the local model. This can take 30 to 90 seconds on CPU-only hardware.</div>
 </form>
+<script>
+(function(){
+  var btn = document.getElementById('submitBtn');
+  if(!btn || !btn.form){ return; }
+  btn.form.addEventListener('submit', function(){
+    btn.disabled = true;
+    btn.textContent = 'Running local model...';
+    var msg = document.getElementById('loadingMsg');
+    if(msg){ msg.style.display = 'block'; }
+  });
+})();
+</script>
 
 <footer>AfrekaOS Offline — local-only. No cloud. Operational guidance, not accounting/banking/payroll/tax/ERP software.</footer>
 </div>

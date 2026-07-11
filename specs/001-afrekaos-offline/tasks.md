@@ -158,11 +158,42 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [x] Artifacts: `task-004B-ui-polish.md`, `task-004B-screenshot-instructions.md`,
       `task-004B-ui-evidence/` snapshots.
 
-### 004C — Visual screenshots / target-hardware UI validation (open)
+### 004C — Advisor submit & runtime feedback fix (complete); screenshots still open
 
+- [x] Reproduced the broken submit path and documented root cause in
+      `artifacts/eval/task-004C-ui-submit-fix.md` (synchronous blocking inference
+      in the request handler; vague 500 page; CSS `content:"\2713 "` banner
+      marker rendering as "13").
+- [x] Advisor + demo forms verified: `method="POST"`, correct `action`,
+      `textarea name="question"`, `button type="submit"`, escaped HTML, no
+      external dependencies, work without JavaScript.
+- [x] Client-side loading feedback (inline `<script>`, no external files):
+      disables the submit button, changes text to "Running local model…", shows
+      the 30–90s message; normal POST still works with JS off.
+- [x] In-memory job flow: `POST /advisor/<name>` creates a job, starts a
+      background thread, and immediately redirects (303) to `/job/<id>`.
+      `GET /job/<id>` auto-refreshes every 3s while queued/running, shows
+      ordered progress steps, the runtime status panel, and the final answer or
+      a browser-friendly error. Jobs in memory only; never persisted; full
+      question never logged.
+- [x] Vague "500 — Server error" replaced with a friendly error page (summary,
+      current route, suggested checks: model path / llama binary / timeout /
+      terminal logs, nav links). Full traceback to terminal only.
+- [x] Status banner fixed: explicit `✓` text in the HTML (CSS pseudo-element
+      removed); tests assert `13 Offline mode` is absent on every page.
+- [x] Status detail panel on job pages (model path exists, llama binary,
+      retrieval index, locked candidate, local-only mode).
+- [x] Tests added/updated: `tests/test_ui_submit_flow.py` (POST→303→job page,
+      demo forms, banner, status panel, no real inference),
+      `tests/test_web_templates.py` (loading feedback, job page, error page,
+      banner checkmark, no "13"), `tests/test_web_app.py` (job store,
+      status detail).
+- [x] `scripts/smoke_submit_flow.py` — automated POST→redirect→job-page check;
+      PASSES.
+- [x] Final validation PASS; `smoke_web` PASS; full unittest (182 tests) PASS.
 - [ ] Capture screenshots if GUI is available (instructions in
-      `task-004B-screenshot-instructions.md`).
-- [ ] Loading state for blocking inference.
+      `task-004B-screenshot-instructions.md` and
+      `artifacts/submission/visual-evidence/screenshot-checklist.md`).
 - [ ] Yoruba-mode UI toggle.
 - [ ] Re-validate on target Ubuntu 22.04 / 8 GB hardware.
 

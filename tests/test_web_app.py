@@ -133,6 +133,47 @@ class TestExtractAnswer(unittest.TestCase):
         self.assertEqual(web_app._extract_answer(""), "")
 
 
+class TestJobStore(unittest.TestCase):
+    """Test the in-memory job store (no real inference)."""
+
+    def test_new_job_registers_and_returns_id(self) -> None:
+        job = web_app._new_job("Daily Operations Advisor", "demo q")
+        self.assertTrue(job["job_id"])
+        self.assertEqual(job["status"], "queued")
+        self.assertEqual(job["step"], 1)
+        # get_job returns a copy.
+        got = web_app.get_job(job["job_id"])
+        self.assertIsNotNone(got)
+        self.assertEqual(got["advisor"], "Daily Operations Advisor")
+        # Mutating the copy must not affect the store.
+        got["status"] = "tampered"
+        self.assertEqual(web_app.get_job(job["job_id"])["status"], "queued")
+
+    def test_set_job_updates_fields(self) -> None:
+        job = web_app._new_job("H", "q")
+        web_app._set_job(job["job_id"], status="running", step=3)
+        got = web_app.get_job(job["job_id"])
+        self.assertEqual(got["status"], "running")
+        self.assertEqual(got["step"], 3)
+
+    def test_get_job_unknown_returns_none(self) -> None:
+        self.assertIsNone(web_app.get_job("does-not-exist"))
+
+    def test_advisor_headings_cover_three_advisors(self) -> None:
+        for path in ("/advisor/daily", "/advisor/inventory",
+                     "/advisor/cashflow"):
+            self.assertIn(path, web_app.ADVISOR_HEADINGS)
+
+
+class TestStatusDetail(unittest.TestCase):
+    def test_status_detail_shape(self) -> None:
+        d = web_app._status_detail()
+        for key in ("model_path_exists", "llama_binary",
+                    "retrieval_index_exists", "locked_candidate", "mode"):
+            self.assertIn(key, d)
+        self.assertIn("no cloud", d["mode"].lower())
+
+
 class TestNoInferenceInTests(unittest.TestCase):
     """Ensure importing web_app does not trigger model inference."""
 

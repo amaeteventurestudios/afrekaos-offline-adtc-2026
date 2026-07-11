@@ -354,6 +354,30 @@ afrekaos-offline-adtc-2026/
       quickstart.md
 ```
 
+## Troubleshooting
+
+**If clicking an advisor button appears to do nothing:**
+
+- The UI now redirects to a **job progress page** (`/job/<id>`) immediately after
+  you submit. You should not stare at a frozen form.
+- Local inference can take **30 to 90 seconds on CPU-only hardware**. Watch the
+  progress steps on the job page (it auto-refreshes every 3 seconds).
+- If an error page appears, check the suggested checks shown there:
+  - Verify `model/afrekaos.gguf` exists.
+  - Verify `llama-completion` is available on your `PATH`.
+  - Did the request time out? (Increase `AFREKAOS_UI_TIMEOUT`.)
+- Check the **terminal logs** where `run_local_web.sh` is running — job
+  lifecycle lines like `Job <id>: running local model` / `Job <id>: failed: …`
+  are printed there (the full question is never logged).
+- To run the automated submit-flow check:
+
+  ```bash
+  python3 scripts/smoke_submit_flow.py
+  ```
+
+The web port can be overridden with `AFREKAOS_WEB_PORT` (default 8787), e.g.
+for running checks without clashing with an already-open UI.
+
 ## Basic setup (placeholders)
 
 There is no runnable app yet. For repo hygiene only:

@@ -3,6 +3,12 @@
 Standard-library-only HTTP server (http.server). Runs at http://127.0.0.1:8787.
 No cloud, no external dependencies. Connects to retrieval-grounded inference.
 
+Advisor submissions run as in-memory background jobs: POST /advisor/<name>
+creates a job, starts a worker thread, and redirects (303) to /job/<id>. The
+job page auto-refreshes every 3s while running. This keeps the UI responsive
+during long (30-90s) local inference. Jobs live in memory only and are never
+persisted to disk; full questions are never logged.
+
 Run:
     AFREKAOS_QWEN_NO_THINK=1 python3 -m app.web_app
 """
@@ -12,9 +18,13 @@ from __future__ import annotations
 import json
 import os
 import re
+import secrets
 import shutil
 import sys
+import threading
+import time
 import traceback
+from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs
@@ -27,7 +37,7 @@ from app import model_inference, retrieval, runtime_config  # noqa: E402
 from app import web_templates as T  # noqa: E402
 
 HOST = "127.0.0.1"
-PORT = 8787
+PORT = int(os.environ.get("AFREKAOS_WEB_PORT", "8787"))
 
 DEFAULT_DAILY = (
     "A small shop has low sales, missing fast-moving stock, supplier delay, "
@@ -41,6 +51,70 @@ DEFAULT_CASHFLOW = (
     "Customers are asking for credit and my cash records are irregular. "
     "What should I check before extending credit, and what should I avoid?"
 )
+
+# Maps advisor path -> display heading.
+ADVISOR_HEADINGS = {
+    "/advisor/daily": "Daily Operations Advisor",
+    "/advisor/inventory": "Inventory and Stock Check",
+    "/advisor/cashflow": "Cashflow Pressure Coach",
+}
+
+# --- In-memory job store ----------------------------------------------------
+# Jobs are kept only in process memory. Never persisted. Never logged in full.
+# A small lock guards the dict; each job dict is also guarded on mutation.
+
+_JOB_LOCK = threading.Lock()
+_JOBS: dict[str, dict] = {}
+# Soft cap so the dict cannot grow without bound. Older jobs evicted first.
+_MAX_JOBS = 50
+
+
+def _log(msg: str) -> None:
+    """Best-effort server log line (stderr). Never logs full questions."""
+    sys.stderr.write(f"[afrekaos] {msg}\n")
+    sys.stderr.flush()
+
+
+def _new_job(advisor: str, question: str) -> dict:
+    """Create and register a new job dict. Returns the job."""
+    job_id = secrets.token_hex(6)
+    job = {
+        "job_id": job_id,
+        "advisor": advisor,
+        # Truncate for safety in logs/state; full question kept only in memory
+        # for the duration of the job and never written to disk.
+        "question": question,
+        "status": "queued",
+        "step": 1,  # index into T.JOB_STEPS
+        "answer": "",
+        "error": "",
+        "mode_label": "retrieval-grounded, direct-answer",
+        "runtime_notes": "",
+        "created_iso": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "created_epoch": time.time(),
+    }
+    with _JOB_LOCK:
+        _JOBS[job_id] = job
+        # Evict oldest if over cap.
+        if len(_JOBS) > _MAX_JOBS:
+            oldest = sorted(_JOBS.values(), key=lambda j: j["created_epoch"])
+            for j in oldest[: len(_JOBS) - _MAX_JOBS]:
+                _JOBS.pop(j["job_id"], None)
+    return job
+
+
+def _set_job(job_id: str, **fields) -> None:
+    with _JOB_LOCK:
+        j = _JOBS.get(job_id)
+        if j is not None:
+            j.update(fields)
+
+
+def get_job(job_id: str):
+    """Return a snapshot copy of a job, or None if unknown."""
+    with _JOB_LOCK:
+        j = _JOBS.get(job_id)
+        return dict(j) if j is not None else None
 
 
 # --- Status / health helpers -------------------------------------------------
@@ -118,56 +192,90 @@ def health_payload() -> dict:
 
 # --- Inference through the UI -----------------------------------------------
 
-def _run_advisor(
-    question: str,
-) -> tuple[str, str, str]:
-    """Run grounded inference for an advisor question.
-
-    Returns (answer_text, mode_label, runtime_notes).
-    Handles missing model/binary gracefully with a browser-friendly message
-    folded into answer_text.
-    """
-    # Ensure index exists (best-effort).
+def _status_detail() -> dict:
+    """Return a status-detail dict for the runtime panel on job pages."""
+    model_path = runtime_config.get_model_path()
     db_path = REPO_ROOT / retrieval.DEFAULT_DB_PATH
-    if not db_path.is_file():
-        try:
-            retrieval.build_index()
-        except Exception:
-            pass
+    return {
+        "model_path_exists": model_path.is_file(),
+        "llama_binary": _llama_binary(),
+        "retrieval_index_exists": db_path.is_file(),
+        "locked_candidate": _locked_candidate(),
+        "mode": "local-only, no cloud",
+    }
 
-    result = model_inference.run_grounded(
-        question,
-        max_tokens=int(os.environ.get("AFREKAOS_UI_MAX_TOKENS", "256")),
-        timeout_seconds=int(os.environ.get("AFREKAOS_UI_TIMEOUT", "150")),
-    )
 
-    mode_label = "retrieval-grounded, direct-answer"
-    notes = ""
+def _run_advisor_job(job_id: str, question: str) -> None:
+    """Run grounded inference for a job in a background thread.
 
-    if not result["ok"]:
-        err = result.get("error", "unknown error")
-        return (
-            f"Could not run local inference: {err}",
-            mode_label,
-            notes,
+    Updates the job's status/step as it progresses. Never raises into the
+    caller; failures are recorded on the job.
+    """
+    try:
+        _log(f"Job {job_id}: building retrieval context")
+        _set_job(job_id, status="running", step=2)
+
+        # Ensure index exists (best-effort).
+        db_path = REPO_ROOT / retrieval.DEFAULT_DB_PATH
+        if not db_path.is_file():
+            try:
+                _set_job(job_id, step=2)
+                retrieval.build_index()
+            except Exception:
+                pass
+
+        _set_job(job_id, step=3)  # Retrieving SME context
+
+        _set_job(job_id, step=4)  # Building grounded prompt
+
+        _log(f"Job {job_id}: running local model")
+        _set_job(job_id, step=5)  # Running local Qwen model
+        result = model_inference.run_grounded(
+            question,
+            max_tokens=int(os.environ.get("AFREKAOS_UI_MAX_TOKENS", "256")),
+            timeout_seconds=int(os.environ.get("AFREKAOS_UI_TIMEOUT", "150")),
         )
 
-    # Extract the visible answer from the output file if present.
-    out_path = result.get("output_path")
-    answer_text = ""
-    if out_path and Path(out_path).is_file():
-        raw = Path(out_path).read_text(encoding="utf-8", errors="replace")
-        answer_text = _extract_answer(raw)
-    if not answer_text:
-        answer_text = "(model produced no visible answer text)"
+        _set_job(job_id, step=6)  # Formatting answer
 
-    # Light runtime notes.
-    rc = result.get("return_code")
-    notes = (
-        f"return_code={rc}, visible_chars={result.get('visible_answer_chars', 0)}, "
-        f"think_trap={result.get('contains_think', False)}"
-    )
-    return answer_text, mode_label, notes
+        mode_label = "retrieval-grounded, direct-answer"
+        if not result["ok"]:
+            err = result.get("error", "unknown error")
+            _log(f"Job {job_id}: failed: {err}")
+            _set_job(
+                job_id, status="failed", error=f"Could not run local inference: {err}",
+                step=7,
+            )
+            return
+
+        # Extract the visible answer from the output file if present.
+        out_path = result.get("output_path")
+        answer_text = ""
+        if out_path and Path(out_path).is_file():
+            raw = Path(out_path).read_text(encoding="utf-8", errors="replace")
+            answer_text = _extract_answer(raw)
+        if not answer_text:
+            answer_text = "(model produced no visible answer text)"
+
+        rc = result.get("return_code")
+        notes = (
+            f"return_code={rc}, visible_chars={result.get('visible_answer_chars', 0)}, "
+            f"think_trap={result.get('contains_think', False)}"
+        )
+        _log(f"Job {job_id}: completed")
+        _set_job(
+            job_id, status="complete", step=7, answer=answer_text,
+            mode_label=mode_label, runtime_notes=notes,
+        )
+    except Exception as exc:  # pragma: no cover - defensive
+        # Catch-all so the worker thread never dies silently. Do not expose a
+        # long private traceback in the browser; log a short summary.
+        _log(f"Job {job_id}: failed: {type(exc).__name__}: {exc}")
+        _set_job(
+            job_id, status="failed",
+            error=f"Local runtime error: {type(exc).__name__}: {exc}",
+            step=7,
+        )
 
 
 def _extract_answer(raw: str) -> str:
@@ -231,16 +339,36 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Location", location)
         self.end_headers()
 
+    def _error_page(self, route: str, exc: BaseException) -> None:
+        """Render a browser-friendly error page. Full traceback to terminal
+        only; a short summary to the browser."""
+        summary = f"{type(exc).__name__}: {exc}" if exc else "Unknown error"
+        traceback.print_exc()  # full detail to terminal logs only
+        try:
+            self._send_html(
+                500, T.render_error(summary, route=route, detail=_status_detail())
+            )
+        except Exception:
+            # Last-resort fallback if even rendering the error page fails.
+            self._send_html(
+                500,
+                T._page(
+                    "Error",
+                    '<h2>AfrekaOS hit a local runtime error.</h2>'
+                    f'<div class="err">{summary}</div>',
+                ),
+            )
+
     # --- GET routes ----------------------------------------------------------
 
     def do_GET(self) -> None:
+        route = self.path.split("?")[0]
         try:
-            path = self.path.split("?")[0]
-            if path == "/":
+            if route == "/":
                 self._send_html(200, T.render_home())
-            elif path == "/demo":
+            elif route == "/demo":
                 self._send_html(200, T.render_demo())
-            elif path == "/advisor/daily":
+            elif route == "/advisor/daily":
                 self._send_html(
                     200,
                     T.render_advisor_form(
@@ -252,7 +380,7 @@ class Handler(BaseHTTPRequestHandler):
                         active="daily",
                     ),
                 )
-            elif path == "/advisor/inventory":
+            elif route == "/advisor/inventory":
                 self._send_html(
                     200,
                     T.render_advisor_form(
@@ -264,7 +392,7 @@ class Handler(BaseHTTPRequestHandler):
                         active="daily",
                     ),
                 )
-            elif path == "/advisor/cashflow":
+            elif route == "/advisor/cashflow":
                 self._send_html(
                     200,
                     T.render_advisor_form(
@@ -276,38 +404,54 @@ class Handler(BaseHTTPRequestHandler):
                         active="daily",
                     ),
                 )
-            elif path == "/status":
+            elif route.startswith("/job/"):
+                self._handle_job_get(route)
+            elif route == "/status":
                 self._send_html(200, T.render_status(status_payload()))
-            elif path == "/health":
+            elif route == "/health":
                 self._send_json(200, T.health_json(health_payload()))
             else:
                 self._send_html(404, T._page("Not found", "<h2>404 — Not found</h2><p><a href=\"/\">Home</a></p>"))
-        except Exception:
-            traceback.print_exc()
-            self._send_html(500, T._page("Error", "<h2>500 — Server error</h2>"))
+        except Exception as exc:
+            self._error_page(route, exc)
+
+    def _handle_job_get(self, route: str) -> None:
+        """GET /job/<id> — render progress/result page."""
+        job_id = route[len("/job/"):].strip("/")
+        if not job_id:
+            self._send_html(
+                404,
+                T._page("Not found", "<h2>404 — Not found</h2><p><a href=\"/\">Home</a></p>"),
+            )
+            return
+        job = get_job(job_id)
+        if job is None:
+            self._send_html(404, T.render_job_missing(job_id))
+            return
+        self._send_html(
+            200, T.render_job(job, detail=_status_detail(), active="daily")
+        )
 
     # --- POST routes ---------------------------------------------------------
 
     def do_POST(self) -> None:
+        route = self.path.split("?")[0]
         try:
-            path = self.path.split("?")[0]
             length = int(self.headers.get("Content-Length", 0) or 0)
             raw_body = self.rfile.read(length) if length else b""
             params = parse_qs(raw_body.decode("utf-8", errors="replace"))
             question = (params.get("question", [""])[0] or "").strip()
 
-            if path == "/advisor/daily":
-                heading = "Daily Operations Advisor"
-            elif path == "/advisor/inventory":
-                heading = "Inventory and Stock Check"
-            elif path == "/advisor/cashflow":
-                heading = "Cashflow Pressure Coach"
-            else:
+            heading = ADVISOR_HEADINGS.get(route)
+            if heading is None:
+                # Unknown POST target: go home.
                 self._redirect("/")
                 return
 
+            _log(f"POST {route} received")
+
             if not question:
-                # No question: redisplay the form with a note.
+                # No question: redisplay the form with a note (no job created).
                 self._send_html(
                     200,
                     T.render_advisor_result(
@@ -320,17 +464,18 @@ class Handler(BaseHTTPRequestHandler):
                 )
                 return
 
-            answer, mode_label, notes = _run_advisor(question)
-            self._send_html(
-                200,
-                T.render_advisor_result(
-                    heading, question, answer, mode_label, runtime_notes=notes,
-                    active="daily",
-                ),
+            # Create a job and start a background worker. Redirect immediately.
+            job = _new_job(heading, question)
+            _log(f"Created job {job['job_id']}")
+            t = threading.Thread(
+                target=_run_advisor_job,
+                args=(job["job_id"], question),
+                daemon=True,
             )
-        except Exception:
-            traceback.print_exc()
-            self._send_html(500, T._page("Error", "<h2>500 — Server error</h2>"))
+            t.start()
+            self._redirect(f"/job/{job['job_id']}")
+        except Exception as exc:
+            self._error_page(route, exc)
 
 
 def main() -> int:

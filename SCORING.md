@@ -118,6 +118,20 @@ a correct, fast, offline model scores well and is easy to defend.
   A static HTML capture of `/advisor/daily` (the form) is not the same as a
   captured model answer; only the latter is scorable output.
 
+## Submit feedback note (Task 004C)
+
+- **UI responsiveness matters for demo trust.** A frozen submit button or a blank
+  500 page reads as broken even when the model is working correctly underneath.
+- **Long local inference must show progress feedback.** Local CPU inference can
+  take 30–90 seconds; the job progress page and client-side loading message make
+  that latency visible and explainable rather than silent.
+- **Runtime failures must be visible and diagnosable.** A vague "500 — Server
+  error" is unacceptable; the friendly error page shows the summary, route, and
+  suggested checks (model path, llama binary, timeout, terminal logs).
+- **Static UI polish is secondary to functional submit behavior.** A pretty form
+  that freezes on submit scores worse than a plain form that redirects to a live
+  progress page and returns a grounded answer.
+
 ## Final evaluation note (Task 005A)
 
 - Final validation (`scripts/final_validation.py`) confirms **repo health and

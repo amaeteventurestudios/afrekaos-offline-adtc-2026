@@ -153,6 +153,123 @@ class TestBanner(unittest.TestCase):
         ):
             self.assertIn("Offline mode", renderer())
 
+    def test_banner_does_not_contain_13_marker(self) -> None:
+        for renderer in (
+            lambda: T.render_home(),
+            lambda: T.render_demo(),
+            lambda: T.render_advisor_form("/x", "H", "d", "q"),
+            lambda: T.render_advisor_result("H", "q", "a", "m"),
+            lambda: T.render_status({"k": "v"}),
+        ):
+            self.assertNotIn("13 Offline mode", renderer())
+
+    def test_banner_has_explicit_checkmark(self) -> None:
+        # The checkmark must be literal text in the HTML, not a CSS escape.
+        html_out = T.render_home()
+        self.assertIn("\u2713", html_out)
+
+
+class TestLoadingFeedback(unittest.TestCase):
+    def test_advisor_form_has_loading_message(self) -> None:
+        html_out = T.render_advisor_form("/x", "H", "d", "q")
+        self.assertIn(T.LOADING_MESSAGE, html_out)
+
+    def test_advisor_form_has_submit_button_id(self) -> None:
+        html_out = T.render_advisor_form("/x", "H", "d", "q")
+        self.assertIn('id="submitBtn"', html_out)
+        self.assertIn('type="submit"', html_out)
+
+    def test_advisor_form_has_inline_script(self) -> None:
+        html_out = T.render_advisor_form("/x", "H", "d", "q")
+        self.assertIn("<script>", html_out)
+        self.assertIn(T.LOADING_BUTTON_TEXT, html_out)
+
+    def test_advisor_form_works_without_js(self) -> None:
+        # The form must still be a normal POST even if JS is off: method + action.
+        html_out = T.render_advisor_form("/advisor/daily", "H", "d", "q")
+        self.assertIn('method="POST"', html_out)
+        self.assertIn('action="/advisor/daily"', html_out)
+
+    def test_demo_forms_have_loading_feedback(self) -> None:
+        html_out = T.render_demo()
+        self.assertIn("demoBtn1", html_out)
+        self.assertIn(T.LOADING_BUTTON_TEXT, html_out)
+
+
+class TestJobPage(unittest.TestCase):
+    def _job(self, **over) -> dict:
+        base = {
+            "job_id": "abc123",
+            "advisor": "Daily Operations Advisor",
+            "status": "running",
+            "step": 5,
+            "question": "demo question",
+            "answer": "",
+            "error": "",
+            "mode_label": "retrieval-grounded, direct-answer",
+            "runtime_notes": "",
+        }
+        base.update(over)
+        return base
+
+    def test_running_job_shows_steps_and_message(self) -> None:
+        html_out = T.render_job(self._job())
+        self.assertIn("30 to 90 seconds", html_out)
+        self.assertIn("Running local Qwen model", html_out)  # step text present
+        # Auto-refresh only while in progress.
+        self.assertIn('http-equiv="refresh"', html_out)
+
+    def test_complete_job_shows_answer(self) -> None:
+        html_out = T.render_job(self._job(status="complete", step=7, answer="Restock items."))
+        self.assertIn("Restock items.", html_out)
+        # No auto-refresh once complete.
+        self.assertNotIn('http-equiv="refresh"', html_out)
+
+    def test_failed_job_shows_error(self) -> None:
+        html_out = T.render_job(
+            self._job(status="failed", error="model file not found")
+        )
+        self.assertIn("AfrekaOS hit a local runtime error", html_out)
+        self.assertIn("model file not found", html_out)
+
+    def test_status_detail_panel(self) -> None:
+        detail = {
+            "model_path_exists": True,
+            "llama_binary": "/usr/local/bin/llama-completion",
+            "retrieval_index_exists": True,
+            "locked_candidate": "qwen3-1.7b-q4-k-m",
+            "mode": "local-only, no cloud",
+        }
+        html_out = T.render_job(self._job(), detail=detail)
+        self.assertIn("Locked candidate", html_out)
+        self.assertIn("qwen3-1.7b-q4-k-m", html_out)
+        self.assertIn("local-only, no cloud", html_out)
+
+
+class TestErrorPage(unittest.TestCase):
+    def test_error_page_is_not_bare_500(self) -> None:
+        html_out = T.render_error("boom", route="/advisor/daily")
+        self.assertNotIn("500 — Server error", html_out)
+        self.assertIn("AfrekaOS hit a local runtime error", html_out)
+
+    def test_error_page_includes_route_and_checks(self) -> None:
+        html_out = T.render_error("boom", route="/advisor/daily")
+        self.assertIn("/advisor/daily", html_out)
+        self.assertIn("model/afrekaos.gguf", html_out)
+        self.assertIn("llama-completion", html_out)
+        self.assertIn("time out", html_out.lower())
+
+    def test_error_page_has_nav_links(self) -> None:
+        html_out = T.render_error("boom")
+        self.assertIn('href="/"', html_out)
+        self.assertIn('href="/advisor/daily"', html_out)
+        self.assertIn('href="/status"', html_out)
+
+    def test_job_missing_page(self) -> None:
+        html_out = T.render_job_missing("nope")
+        self.assertIn("Job not found", html_out)
+        self.assertIn("nope", html_out)
+
 
 class TestUnifiedWarning(unittest.TestCase):
     def test_warning_text_constant(self) -> None:

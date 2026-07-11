@@ -1,6 +1,6 @@
 # Final Validation Log — AfrekaOS Offline (Task 005A)
 
-- **Date/time:** 2026-07-11 15:42:16 UTC
+- **Date/time:** 2026-07-11 16:08:20 UTC
 - **Overall:** PASS
 - **pytest available:** False
 - **Model inference required:** no (all checks are non-inference)
@@ -117,8 +117,8 @@ PROMPT-1 GROUNDING VERDICT: PASS
 ### smoke_web — PASS
 ```
 [ok] server is healthy
-[ok] / -> 200 (6248 bytes)
-[ok] /status -> 200 (6417 bytes)
+[ok] / -> 200 (6813 bytes)
+[ok] /status -> 200 (6982 bytes)
 [ok] /health -> 200 (204 bytes)
 [ok] /health is valid JSON: ok=True
 
@@ -130,12 +130,12 @@ SMOKE TEST PASSED
 ```
 [ok] server healthy
 [ok] /health -> 200 (valid JSON)
-[ok] / -> 200 (6248 bytes) -> home.html
-[ok] /demo -> 200 (8257 bytes) -> demo.html
-[ok] /advisor/daily -> 200 (5629 bytes) -> advisor-daily.html
-[ok] /advisor/inventory -> 200 (5653 bytes) -> advisor-inventory.html
-[ok] /advisor/cashflow -> 200 (5673 bytes) -> advisor-cashflow.html
-[ok] /status -> 200 (6417 bytes) -> status.html
+[ok] / -> 200 (6813 bytes) -> home.html
+[ok] /demo -> 200 (10402 bytes) -> demo.html
+[ok] /advisor/daily -> 200 (6791 bytes) -> advisor-daily.html
+[ok] /advisor/inventory -> 200 (6815 bytes) -> advisor-inventory.html
+[ok] /advisor/cashflow -> 200 (6835 bytes) -> advisor-cashflow.html
+[ok] /status -> 200 (6982 bytes) -> status.html
 [inference] skipped (set AFREKAOS_CAPTURE_INFERENCE=1 to enable)
 
 EVIDENCE CAPTURE PASSED (7 files)
@@ -144,9 +144,9 @@ EVIDENCE CAPTURE PASSED (7 files)
 
 ### unittest discover — PASS
 ```
-........................................................................................................................................................
+......................................................................................................................................................................................
 ----------------------------------------------------------------------
-Ran 152 tests in 0.164s
+Ran 182 tests in 1.475s
 
 OK
 
