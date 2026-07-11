@@ -72,6 +72,15 @@ def visible_answer(text: str) -> str:
     return _strip_logs(out)
 
 
+def _think_trap(text: str) -> bool:
+    """Unclosed <think> with real content after the last </think>.
+
+    An empty Qwen non-thinking template (<think>\\n\\n</think>) is NOT a trap.
+    """
+    after = text.rsplit("</think>", 1)[-1]
+    return "<think>" in after and len(after.strip()) > 40
+
+
 def analyze_file(label: str, path: Path) -> dict:
     if not path.is_file():
         return {
@@ -80,6 +89,8 @@ def analyze_file(label: str, path: Path) -> dict:
             "exists": False,
             "think_open": None,
             "think_close": None,
+            "contains_think": False,
+            "think_trap": False,
             "answer_chars": 0,
             "answer_preview": "",
             "useful": False,
@@ -95,6 +106,8 @@ def analyze_file(label: str, path: Path) -> dict:
         "exists": True,
         "think_open": think_open,
         "think_close": think_close,
+        "contains_think": think_open,
+        "think_trap": _think_trap(raw),
         "answer_chars": len(answer),
         "answer_preview": answer[:200],
         "useful": useful,

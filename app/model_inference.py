@@ -27,7 +27,6 @@ _DERAILMENT_RE = re.compile(
     r"electron configuration|period of the elements",
     re.IGNORECASE,
 )
-_THINK_OPEN_RE = re.compile(r"<think>")
 
 
 def _resolve_llama_binary() -> Optional[str]:
@@ -80,26 +79,113 @@ def _qwen_extra_args(binary: str) -> list[str]:
     return args
 
 
-def _visible_answer(text: str) -> str:
-    """Text outside <think> blocks, with llama.cpp log lines removed."""
-    out = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
-    out = re.sub(r"<think>.*", "", out, flags=re.DOTALL)
-    cleaned = []
-    for ln in out.splitlines():
+def extract_visible_answer(raw_stdout: str, raw_stderr: str = "") -> dict:
+    """Extract the user-visible answer from raw model output.
+
+    This is the single source of truth for what counts as the "visible answer".
+    Used by both the UI rendering path and `run_model`'s structured return, so
+    `visible_answer_chars` always equals the length of the answer the user sees.
+
+    Behavior:
+    - Remove llama.cpp log lines (timestamps, I/W/L log prefixes, known log
+      prefixes). This is line-based, so it does NOT strip genuine answer text
+      that merely happens to start with the letters I, W, or L followed by a
+      space — it requires a llama.cpp log timestamp or log-line shape.
+    - Treat an empty Qwen non-thinking template block like
+      ``<think>\\n\\n</think>`` as NON-fatal (the intended direct-mode marker).
+    - Detect a real think trap ONLY when:
+        * ``<think>`` appears without a closing ``</think>``, OR
+        * substantial hidden reasoning appears inside ``<think>`` and no answer
+          exists outside it.
+    - Preserve answer text after a closed ``</think>``.
+    - Preserve answer text when there is no ``<think>`` block at all.
+
+    Returns a dict with:
+        clean_answer, clean_answer_chars, contains_think, think_trap,
+        extraction_warning
+    """
+    # Combine stderr into the stream for completeness; llama.cpp is usually run
+    # with stderr=STDOUT, so raw_stderr is often empty.
+    combined = raw_stdout if not raw_stderr else raw_stdout + "\n" + raw_stderr
+
+    contains_think = "<think>" in combined
+
+    # Remove closed <think>...</think> blocks (the empty template AND real
+    # reasoning blocks). Non-greedy, DOTALL so newlines are included.
+    stripped = re.sub(r"<think>.*?</think>", "", combined, flags=re.DOTALL)
+
+    # After removing closed pairs, anything left with an opening <think> is an
+    # UNCLOSED block — a genuine think trap. Drop it from the answer.
+    unclosed_present = "<think>" in stripped
+    stripped = re.sub(r"<think>.*", "", stripped, flags=re.DOTALL)
+
+    # A real think trap: an unclosed <think> with substantial trailing content.
+    # Re-derive from the combined text (consistent with the analyzer definition).
+    after_last_close = combined.rsplit("</think>", 1)[-1]
+    unclosed_with_content = "<think>" in after_last_close and len(after_last_close.strip()) > 40
+    # Also trap if there was an unclosed <think> anywhere AND no closed pair
+    # left visible answer behind.
+    think_trap = bool(unclosed_with_content)
+
+    # Remove llama.cpp log lines from the visible portion. Line-based filtering
+    # keyed on the log-line SHAPE (timestamp + I/W/L, or I/W/L + log prefix, or
+    # a known log prefix at line start). We intentionally do NOT strip bare
+    # "I/W/L + space" lines, which would eat genuine answer sentences like
+    # "I should restock..." — only log-shaped lines are removed.
+    _LOG_PREFIX = (
+        r"(?:repeat_last_n|dry_|top_k|top_p|min_p|xtc_|typical_p|"
+        r"top_n_sigma|mirostat|adaptive_|frequency_penalty|presence_penalty|"
+        r"repeat_penalty|sampler|generate|llama_|common_|chat template|"
+        r"interactive|Press|To return|If you want|Not using|system_info|"
+        r"system prompt|warming up|threadpool|backend init|fitting params|"
+        r"control-looking|load the model|llama_completion|llama_model_loader|"
+        r"main:|load:|print_timing|save:|slot)"
+    )
+    log_line_re = re.compile(
+        # timestamped log: "0.03.201.688 I ..." or "0.03.201.688 <prefix>"
+        r"^(?:\d+\.){2,3}\d+\s+(?:[IWL]\s+)?" + _LOG_PREFIX,
+        re.IGNORECASE,
+    )
+    log_prefix_re = re.compile(
+        # "I llama_model_loader: ...", "W system_info: ...", "L print_timing: ..."
+        r"^[IWL]\s+" + _LOG_PREFIX,
+        re.IGNORECASE,
+    )
+    bare_ts_re = re.compile(r"^(?:\d+\.){2,3}\d+\s+[IWL]\s")
+    ts_only_re = re.compile(r"^(?:\d+\.){2,3}\d+\s")
+    prefix_only_re = re.compile(r"^" + _LOG_PREFIX, re.IGNORECASE)
+
+    cleaned_lines = []
+    for ln in stripped.splitlines():
         s = ln.strip()
-        if re.match(r"^\d+\.\d+\.\d+\.\d+\s+[IWL]\s", ln):
+        if not s:
             continue
-        if re.match(
-            r"^(?:repeat_last_n|dry_|top_k|top_p|min_p|xtc_|typical_p|"
-            r"top_n_sigma|mirostat|adaptive_|frequency_penalty|presence_penalty|"
-            r"repeat_penalty|sampler|generate|llama_|common_|chat template|"
-            r"interactive|Press|To return|If you want|Not using|system_info)",
-            s,
-            re.IGNORECASE,
-        ):
+        if (bare_ts_re.match(ln) or ts_only_re.match(ln)
+                or log_line_re.match(ln) or log_prefix_re.match(ln)
+                or prefix_only_re.match(s)):
             continue
-        cleaned.append(ln)
-    return "\n".join(cleaned).strip()
+        cleaned_lines.append(ln)
+    clean_answer = "\n".join(cleaned_lines).strip()
+
+    # Extraction warning: a benign note when a think marker was present but no
+    # trap was detected (the normal Qwen non-thinking template case).
+    extraction_warning = ""
+    if think_trap:
+        extraction_warning = (
+            "Unclosed <think> block detected; hidden reasoning was removed."
+        )
+    elif contains_think and not clean_answer:
+        extraction_warning = (
+            "A <think> block was present but no answer text was found outside it."
+        )
+
+    return {
+        "clean_answer": clean_answer,
+        "clean_answer_chars": len(clean_answer),
+        "contains_think": contains_think,
+        "think_trap": think_trap,
+        "extraction_warning": extraction_warning,
+    }
 
 
 def build_ungrounded_prompt(user_question: str) -> str:
@@ -143,10 +229,20 @@ def run_model(
         "output_path": output_path,
         "return_code": None,
         "timed_out": False,
+        # Backwards-compatible raw counts.
         "stdout_chars": 0,
         "stderr_chars": 0,
+        # Backwards-compatible answer fields; now derived from the unified
+        # extract_visible_answer() so they match the UI.
         "visible_answer_chars": 0,
         "contains_think": False,
+        # New structured answer fields (Task 004D).
+        "raw_stdout_chars": 0,
+        "raw_stderr_chars": 0,
+        "clean_answer": "",
+        "clean_answer_chars": 0,
+        "think_trap": False,
+        "extraction_warning": "",
         "error": None,
     }
 
@@ -192,8 +288,17 @@ def run_model(
         out = proc.stdout or ""
 
     result["stdout_chars"] = len(out)
-    result["contains_think"] = bool(_THINK_OPEN_RE.search(out))
-    result["visible_answer_chars"] = len(_visible_answer(out))
+    result["raw_stdout_chars"] = len(out)
+
+    # Unified extraction: the same function the UI uses, so visible_answer_chars
+    # always equals the length of the answer the user sees (clean_answer_chars).
+    ext = extract_visible_answer(out)
+    result["contains_think"] = ext["contains_think"]
+    result["visible_answer_chars"] = ext["clean_answer_chars"]  # == clean
+    result["clean_answer"] = ext["clean_answer"]
+    result["clean_answer_chars"] = ext["clean_answer_chars"]
+    result["think_trap"] = ext["think_trap"]
+    result["extraction_warning"] = ext["extraction_warning"]
 
     if output_path:
         opath = Path(output_path)
@@ -254,6 +359,7 @@ def inference_summary() -> dict:
 
 
 __all__ = [
+    "extract_visible_answer",
     "build_ungrounded_prompt",
     "run_model",
     "run_ungrounded",

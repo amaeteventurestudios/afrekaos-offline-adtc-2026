@@ -75,6 +75,15 @@ class TestAnalyzerThinkTrap(unittest.TestCase):
         text = "<think>\n\n</think>\n\n1. Check inventory."
         self.assertFalse(az._think_trap(text))
 
+    def test_contains_think_distinct_from_trap(self) -> None:
+        # Empty template: contains_think True, think_trap False.
+        text = "<think>\n\n</think>\n\n1. Check inventory."
+        self.assertTrue(az._contains_think(text))
+        self.assertFalse(az._think_trap(text))
+
+    def test_no_think_when_absent(self) -> None:
+        self.assertFalse(az._contains_think("1. Check inventory."))
+
 
 class TestAnalyzerForbiddenClaims(unittest.TestCase):
     def test_detects_accounting_claim(self) -> None:

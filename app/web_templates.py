@@ -523,6 +523,13 @@ def render_job(
         )
         answer = job.get("answer", "") or "(model produced no visible answer text)"
         parts.append(f'<section class="result">{_esc(answer)}</section>\n')
+        # Extraction warning (if any) — shown only when the extractor flagged
+        # something worth noting (e.g. an unclosed <think> block).
+        warn = job.get("extraction_warning", "")
+        if warn:
+            parts.append(
+                f'<div class="warn">{_esc(warn)}</div>\n'
+            )
         parts.append('<div class="warn">{}</div>\n'.format(_esc(WARNING_TEXT)))
         notes = job.get("runtime_notes", "")
         if notes:

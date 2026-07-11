@@ -245,6 +245,39 @@ class TestJobPage(unittest.TestCase):
         self.assertIn("qwen3-1.7b-q4-k-m", html_out)
         self.assertIn("local-only, no cloud", html_out)
 
+    def test_complete_job_renders_clean_answer(self) -> None:
+        html_out = T.render_job(
+            self._job(status="complete", step=7, answer="Restock fast-moving items today.")
+        )
+        self.assertIn("Restock fast-moving items today.", html_out)
+        # Must NOT show the empty-answer fallback when an answer exists.
+        self.assertNotIn("(model produced no visible answer text)", html_out)
+
+    def test_complete_job_shows_fallback_only_when_answer_empty(self) -> None:
+        html_out = T.render_job(
+            self._job(status="complete", step=7, answer="")
+        )
+        self.assertIn("(model produced no visible answer text)", html_out)
+
+    def test_extraction_warning_renders_when_present(self) -> None:
+        html_out = T.render_job(
+            self._job(
+                status="complete", step=7, answer="Restock items.",
+                extraction_warning="Unclosed <think> block detected; hidden reasoning was removed.",
+            )
+        )
+        self.assertIn("Unclosed", html_out)
+
+    def test_runtime_summary_uses_clean_answer_chars(self) -> None:
+        html_out = T.render_job(
+            self._job(
+                status="complete", step=7, answer="Restock items.",
+                runtime_notes="return_code=0, clean_answer_chars=14, think_trap=False",
+            )
+        )
+        self.assertIn("clean_answer_chars=14", html_out)
+        self.assertIn("think_trap=False", html_out)
+
 
 class TestErrorPage(unittest.TestCase):
     def test_error_page_is_not_bare_500(self) -> None:

@@ -197,6 +197,38 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [ ] Yoruba-mode UI toggle.
 - [ ] Re-validate on target Ubuntu 22.04 / 8 GB hardware.
 
+### 004D — Answer rendering fix (complete)
+
+- [x] Root cause documented in `artifacts/eval/task-004D-answer-rendering-fix.md`:
+      two divergent "visible answer" implementations disagreed (UI
+      `_extract_answer` over-filtered `I/W/L` lines, wiping the answer; while
+      `model_inference._visible_answer` counted log lines → `visible_chars>0`).
+      Plus `contains_think` flagged the empty Qwen template as a trap.
+- [x] Added single source of truth `app.model_inference.extract_visible_answer()`
+      returning `clean_answer`, `clean_answer_chars`, `contains_think`,
+      `think_trap`, `extraction_warning`.
+- [x] `run_model()` now returns `clean_answer`, `clean_answer_chars`,
+      `think_trap`, `extraction_warning`, `raw_stdout_chars`, `raw_stderr_chars`
+      (backwards-compatible `visible_answer_chars == clean_answer_chars`,
+      `stdout_chars`, `stderr_chars`, `contains_think` retained).
+- [x] Job result page renders `clean_answer` when `clean_answer_chars > 0`;
+      shows extraction warning if present; runtime summary uses
+      `clean_answer_chars` + `think_trap`; only shows the empty-answer fallback
+      when the answer is genuinely empty.
+- [x] Empty Qwen `<think></think>` template handled as `contains_think=True,
+      think_trap=False` (not a failure).
+- [x] Optional bounded debug: `AFREKAOS_DEBUG_OUTPUT=1` writes a small snapshot
+      (no user question) to `artifacts/eval/task-004D-debug/`.
+- [x] Analyzers (`analyze_qwen_outputs`, `analyze_grounded_outputs`,
+      `analyze_target_benchmark`) expose distinct `contains_think`/`think_trap`;
+      none classify an empty template as a trap; dead code removed.
+- [x] Tests added/updated: `tests/test_model_output_extraction.py` (extraction
+      cases), `tests/test_web_templates.py` (clean_answer rendering, extraction
+      warning, clean_answer_chars in summary), `tests/test_grounded_output_analyzer.py`
+      + `tests/test_target_hardware_scripts.py` (contains_think vs think_trap).
+- [x] Final validation PASS; `smoke_web` PASS; `smoke_submit_flow` PASS; full
+      unittest (199 tests) PASS.
+
 ### 005A — Final evaluation package (complete)
 
 - [x] `scripts/final_validation.py` — runs all checks + unittest; writes

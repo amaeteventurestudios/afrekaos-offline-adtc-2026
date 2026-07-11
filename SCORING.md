@@ -132,6 +132,19 @@ a correct, fast, offline model scores well and is easy to defend.
   that freezes on submit scores worse than a plain form that redirects to a live
   progress page and returns a grounded answer.
 
+## Answer rendering note (Task 004D)
+
+- **The UI must display the cleaned visible answer text.** A job that completes
+  with `return_code=0` and `clean_answer_chars > 0` must show the answer — an
+  empty panel under those conditions is a bug, not a model failure.
+- **Empty Qwen template think blocks are not thinking traps.** The non-thinking
+  template emits `<think>\n\n</think>`; that is `contains_think=True` but
+  `think_trap=False`. Only an *unclosed* `<think>` with substantial hidden
+  reasoning is a trap.
+- **Runtime answer quality is evaluated from `clean_answer`, not raw llama
+  logs.** Log lines, timestamps, and the think marker are stripped before
+  scoring; the char count shown to the user equals the scored text length.
+
 ## Final evaluation note (Task 005A)
 
 - Final validation (`scripts/final_validation.py`) confirms **repo health and

@@ -74,6 +74,15 @@ def _think_trap(text: str) -> bool:
     return "<think>" in after and len(after.strip()) > 40
 
 
+def _contains_think(text: str) -> bool:
+    """True if any <think> marker appears (including the empty Qwen template).
+
+    Distinct from _think_trap: the empty non-thinking template block contains
+    <think> but is NOT a trap.
+    """
+    return "<think>" in text
+
+
 def analyze_output(path: Path) -> dict:
     raw = _read(path)
     if not raw and not path.is_file():
@@ -81,6 +90,7 @@ def analyze_output(path: Path) -> dict:
     vis = _visible(raw)
     return {
         "exists": path.is_file(),
+        "contains_think": _contains_think(raw),
         "think_trap": _think_trap(raw),
         "visible_chars": len(vis),
         "derailment": bool(DERAILMENT_RE.search(vis)),

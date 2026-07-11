@@ -49,7 +49,8 @@ class TestAnalyzeThink(unittest.TestCase):
             path = Path(f.name)
         try:
             r = ag.analyze_output(path)
-            self.assertFalse(r["contains_think"])
+            self.assertTrue(r["contains_think"])   # marker present
+            self.assertFalse(r["think_trap"])      # but not a trap
         finally:
             path.unlink()
 
@@ -67,6 +68,7 @@ class TestAnalyzeThink(unittest.TestCase):
         try:
             r = ag.analyze_output(path)
             self.assertTrue(r["contains_think"])
+            self.assertTrue(r["think_trap"])
         finally:
             path.unlink()
 
@@ -78,7 +80,8 @@ class TestAnalyzeThink(unittest.TestCase):
             path = Path(f.name)
         try:
             r = ag.analyze_output(path)
-            self.assertFalse(r["contains_think"])
+            self.assertTrue(r["contains_think"])   # marker present
+            self.assertFalse(r["think_trap"])      # not a trap
         finally:
             path.unlink()
 
@@ -91,6 +94,7 @@ class TestAnalyzeThink(unittest.TestCase):
         try:
             r = ag.analyze_output(path)
             self.assertFalse(r["contains_think"])
+            self.assertFalse(r["think_trap"])
         finally:
             path.unlink()
 

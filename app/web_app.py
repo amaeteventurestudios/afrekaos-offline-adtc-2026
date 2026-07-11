@@ -90,6 +90,7 @@ def _new_job(advisor: str, question: str) -> dict:
         "error": "",
         "mode_label": "retrieval-grounded, direct-answer",
         "runtime_notes": "",
+        "extraction_warning": "",
         "created_iso": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "created_epoch": time.time(),
     }
@@ -248,24 +249,35 @@ def _run_advisor_job(job_id: str, question: str) -> None:
             )
             return
 
-        # Extract the visible answer from the output file if present.
-        out_path = result.get("output_path")
-        answer_text = ""
-        if out_path and Path(out_path).is_file():
-            raw = Path(out_path).read_text(encoding="utf-8", errors="replace")
-            answer_text = _extract_answer(raw)
+        # The answer is extracted by run_model via the unified
+        # extract_visible_answer() (app.model_inference), so clean_answer_chars
+        # is exactly the length of the text we show the user.
+        answer_text = result.get("clean_answer", "") or ""
+        clean_chars = int(result.get("clean_answer_chars", 0) or 0)
+        extraction_warning = result.get("extraction_warning", "") or ""
         if not answer_text:
+            # Genuinely empty: never show a fabricated answer.
             answer_text = "(model produced no visible answer text)"
 
+        # Optional bounded debug output (off by default; no private questions).
+        if os.environ.get("AFREKAOS_DEBUG_OUTPUT", "") == "1":
+            _write_debug_output(job_id, result)
+
         rc = result.get("return_code")
-        notes = (
-            f"return_code={rc}, visible_chars={result.get('visible_answer_chars', 0)}, "
-            f"think_trap={result.get('contains_think', False)}"
-        )
+        notes_parts = [
+            f"return_code={rc}",
+            f"clean_answer_chars={clean_chars}",
+            f"think_trap={result.get('think_trap', False)}",
+        ]
+        if extraction_warning:
+            notes_parts.append(f"extraction_warning={extraction_warning}")
+        notes = ", ".join(notes_parts)
+
         _log(f"Job {job_id}: completed")
         _set_job(
             job_id, status="complete", step=7, answer=answer_text,
             mode_label=mode_label, runtime_notes=notes,
+            extraction_warning=extraction_warning,
         )
     except Exception as exc:  # pragma: no cover - defensive
         # Catch-all so the worker thread never dies silently. Do not expose a
@@ -281,33 +293,50 @@ def _run_advisor_job(job_id: str, question: str) -> None:
 def _extract_answer(raw: str) -> str:
     """Pull the user-visible answer from raw llama-completion output.
 
-    Strips <think> blocks, llama.cpp log lines, and echoed prompt headers.
+    Delegates to the single source of truth (model_inference.extract_visible_answer)
+    so the UI answer and visible_answer_chars can never disagree. Kept for
+    backwards compatibility with existing tests/callers.
     """
-    out = re.sub(r"<think>.*?</think>", "", raw, flags=re.DOTALL)
-    out = re.sub(r"<think>.*", "", out, flags=re.DOTALL)
-    lines = []
-    for ln in out.splitlines():
-        s = ln.strip()
-        if not s:
-            continue
-        if re.match(r"^\d+\.\d+\.\d+\.\d+\s+", ln):
-            continue
-        if re.match(r"^[IWL]\s+", s):
-            continue
-        if re.match(
-            r"^(?:repeat_last_n|dry_|top_k|top_p|min_p|xtc_|typical_p|"
-            r"top_n_sigma|mirostat|adaptive_|frequency_penalty|"
-            r"presence_penalty|repeat_penalty|sampler|generate|llama_|"
-            r"common_|chat template|interactive|Press|To return|"
-            r"If you want|Not using|system_info|system prompt|"
-            r"warming up|threadpool|backend init|fitting params|"
-            r"control-looking|load the model|llama_completion)",
-            s,
-            re.IGNORECASE,
-        ):
-            continue
-        lines.append(ln)
-    return "\n".join(lines).strip()
+    return model_inference.extract_visible_answer(raw)["clean_answer"]
+
+
+# --- Optional bounded debug output (AFREKAOS_DEBUG_OUTPUT=1) ----------------
+DEBUG_DIR = REPO_ROOT / "artifacts" / "eval" / "task-004D-debug"
+
+
+def _write_debug_output(job_id: str, result: dict) -> None:
+    """Write a small, bounded debug snapshot for the most recent job.
+
+    Off by default (only when AFREKAOS_DEBUG_OUTPUT=1). Does NOT persist the
+    user question. Files are capped in size so they stay small.
+    """
+    try:
+        DEBUG_DIR.mkdir(parents=True, exist_ok=True)
+        out_path = result.get("output_path")
+        raw = ""
+        if out_path and Path(out_path).is_file():
+            raw = Path(out_path).read_text(encoding="utf-8", errors="replace")
+        # Cap raw output to keep debug files small.
+        raw_capped = raw[:4000]
+        summary = {
+            "job_id": job_id,
+            "return_code": result.get("return_code"),
+            "raw_stdout_chars": result.get("raw_stdout_chars", 0),
+            "clean_answer_chars": result.get("clean_answer_chars", 0),
+            "contains_think": result.get("contains_think", False),
+            "think_trap": result.get("think_trap", False),
+            "extraction_warning": result.get("extraction_warning", ""),
+            "raw_head_chars": len(raw_capped),
+        }
+        import json as _json
+        (DEBUG_DIR / f"{job_id}-summary.json").write_text(
+            _json.dumps(summary, indent=2), encoding="utf-8"
+        )
+        (DEBUG_DIR / f"{job_id}-raw.txt").write_text(
+            raw_capped, encoding="utf-8", errors="replace"
+        )
+    except Exception as exc:  # pragma: no cover - defensive
+        _log(f"Job {job_id}: debug output failed: {exc}")
 
 
 # --- HTTP handler ------------------------------------------------------------

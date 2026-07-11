@@ -75,16 +75,18 @@ def _has_thinking_trap(text: str) -> bool:
     The non-thinking template emits an empty <think>\\n\\n</think> block (which
     is the intended direct-mode mechanism, NOT a trap). A real trap is an
     unclosed <think> followed by substantial reasoning with no </think>.
-    Mere mentions of '<think>' in answer-rule text are also not a trap.
     """
-    # Find all <think>...</think> pairs and remove them (these are fine).
-    remaining = re.sub(r"<think>\s*</think>", "", text)
-    # Also remove any rule lines that mention <think> as text.
-    remaining = re.sub(r"<think>", "", remaining.split("</think>")[-1] if "</think>" in remaining else "")
-    # After removing pairs, is there a leftover <think> with real content?
-    # Re-check the full text for an unclosed <think>.
     after_last_close = text.rsplit("</think>", 1)[-1]
     return "<think>" in after_last_close and len(after_last_close.strip()) > 40
+
+
+def _contains_think(text: str) -> bool:
+    """True if any <think> marker appears at all (including the empty template).
+
+    Distinct from _has_thinking_trap: an empty Qwen non-thinking template block
+    contains <think> but is NOT a trap.
+    """
+    return "<think>" in text
 
 
 def _visible_answer(text: str) -> str:
@@ -110,7 +112,8 @@ def analyze_output(path: Path) -> dict:
     answer = _visible_answer(raw)
     return {
         "exists": path.is_file(),
-        "contains_think": _has_thinking_trap(raw),
+        "contains_think": _contains_think(raw),
+        "think_trap": _has_thinking_trap(raw),
         "visible_answer_chars": len(answer),
         "answer_preview": answer[:200],
         "has_derailment": bool(DERAILMENT_RE.search(answer)),
@@ -138,7 +141,7 @@ def verdict(results: dict) -> str:
     if not p1g.get("exists"):
         return "INCONCLUSIVE"
     answer_chars = p1g.get("visible_answer_chars", 0)
-    has_think = p1g.get("contains_think", False)
+    has_think = p1g.get("think_trap", p1g.get("contains_think", False))
     has_derailment = p1g.get("has_derailment", False)
     sme_terms = p1g.get("sme_terms_found", [])
 
@@ -168,7 +171,8 @@ def main() -> int:
                 continue
             print(f"\n[{label}]")
             print(f"  exists            : yes")
-            print(f"  <think> present   : {r['contains_think']}")
+            print(f"  <think> present   : {r.get('contains_think', False)}")
+            print(f"  think trap        : {r.get('think_trap', False)}")
             print(f"  visible chars     : {r['visible_answer_chars']}")
             print(f"  derailment terms  : {r['has_derailment']}")
             print(f"  sme terms found   : {', '.join(r['sme_terms_found']) or '(none)'}")

@@ -378,6 +378,20 @@ afrekaos-offline-adtc-2026/
 The web port can be overridden with `AFREKAOS_WEB_PORT` (default 8787), e.g.
 for running checks without clashing with an already-open UI.
 
+**If a job completes but the answer panel is empty:**
+
+- Check the **runtime summary** on the job page — specifically `clean_answer_chars`.
+- If `clean_answer_chars > 0` but no answer text shows, that is a
+  rendering/extraction bug (report it). The UI and the char count now use the
+  same extractor, so they should always agree.
+- If `think_trap=True`, an unclosed `<think>` block swallowed the answer (the
+  model went into hidden reasoning). An empty `<think></think>` template marker
+  is normal and is **not** a trap.
+- Run final validation: `python3 scripts/final_validation.py`.
+- Optionally set `AFREKAOS_DEBUG_OUTPUT=1` and re-run the advisor to write a
+  small, bounded debug snapshot (no user question) under
+  `artifacts/eval/task-004D-debug/`.
+
 ## Basic setup (placeholders)
 
 There is no runnable app yet. For repo hygiene only:

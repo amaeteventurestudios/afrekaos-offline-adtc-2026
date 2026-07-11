@@ -451,6 +451,67 @@ standard library only. **No cloud database, no cloud inference, no private data,
 no banking workflow, no payroll workflow, no tax workflow, no lending workflow,
 and no ERP behavior was added.**
 
+## Task 004D — Answer Rendering Fix
+
+This task fixed the job result page so it displays the model's actual answer
+instead of "model produced no visible answer text" when the run succeeded.
+
+**What was observed.** On `/job/<id>`, a job completed but the answer panel
+showed "(model produced no visible answer text)" while the runtime summary
+reported `return_code=0, visible_chars=2361, think_trap=True`.
+
+**Why return_code=0 + visible_chars > 0 means the model produced text.**
+`return_code=0` means llama.cpp exited cleanly, and `visible_chars > 0` means
+the extraction function counted non-trivial content in the output stream. An
+empty answer panel alongside those two facts is therefore a rendering/extraction
+bug, not a model failure.
+
+**Root cause (confirmed by reconstruction).** There were **two divergent
+"visible answer" implementations**. `model_inference._visible_answer` (computes
+`visible_answer_chars`) had a narrow line filter and counted log lines as
+"answer"; `web_app._extract_answer` (renders the UI answer) had an over-broad
+`^[IWL]\s+` line filter that stripped *any* line starting with `I `/`W `/`L `.
+Because every llama.cpp log line starts with those letters, the UI filter wiped
+the answer whenever logs dominated the stream — so the two functions disagreed
+(186 vs 0 chars on the same input). A second defect: `contains_think` used a
+bare `<think>` substring test, so the intended empty Qwen non-thinking template
+`<think>\n\n</think>` was falsely reported as `think_trap=True`.
+
+**What was fixed in extraction/rendering.**
+- Added a single source of truth: `model_inference.extract_visible_answer()`,
+  returning `clean_answer`, `clean_answer_chars`, `contains_think`,
+  `think_trap`, `extraction_warning`. The UI and `run_model` both use it, so
+  `visible_answer_chars == clean_answer_chars` always.
+- Log-line filtering now matches the llama.cpp log *shape* (dotted timestamp, or
+  `I/W/L` + a known log prefix), not bare `I/W/L + space` — so a genuine answer
+  like "I should restock..." survives.
+- `contains_think` (marker present, incl. empty template) is now distinct from
+  `think_trap` (unclosed `<think>` with substantial trailing content). An empty
+  template is `contains_think=True, think_trap=False`.
+- The worker renders `result["clean_answer"]` directly; the job page shows the
+  extraction warning if present and only shows the empty-answer fallback when
+  `clean_answer_chars` is truly 0. Runtime summary now reports
+  `clean_answer_chars` and `think_trap`.
+- The three analyzers (`analyze_qwen_outputs`, `analyze_grounded_outputs`,
+  `analyze_target_benchmark`) now all expose distinct `contains_think` /
+  `think_trap` and never classify an empty template as a trap.
+- Optional bounded debug: `AFREKAOS_DEBUG_OUTPUT=1` writes a small snapshot
+  (no user question) to `artifacts/eval/task-004D-debug/`.
+
+**Was the issue manually retested?** The failure was reproduced deterministically
+with synthetic output mirroring real llama.cpp shape (no private data); see
+`artifacts/eval/task-004D-answer-rendering-fix.md`. Extraction/rendering is
+covered by 17 new unit tests. A full live re-run was not repeated for this
+artifact, but the unified extractor guarantees the UI char count and the
+displayed answer can no longer disagree.
+
+**Limitations.** Log-line filtering is heuristic (matches known llama.cpp log
+prefixes); an unknown future log prefix could occasionally slip through, but it
+would appear as extra text rather than a missing answer. The debug option writes
+bounded files only and never persists user questions.
+
+**No new product features or dependencies were added.** Standard library only.
+
 ## Task 005A — Final Evaluation Package
 
 This task created the final evaluation package, validation runner, and
