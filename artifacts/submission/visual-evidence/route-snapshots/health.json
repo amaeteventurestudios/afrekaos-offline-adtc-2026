@@ -1,0 +1,8 @@
+{
+  "ok": true,
+  "product": "AfrekaOS Offline",
+  "model_exists": false,
+  "retrieval_index_exists": true,
+  "llama_binary": "/usr/local/bin/llama-completion",
+  "locked_candidate": "qwen3-1.7b-q4-k-m"
+}

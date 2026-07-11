@@ -178,10 +178,25 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [x] `artifacts/submission/final-artifact-index.md` — evidence index.
 - [x] README / REPORT / SCORING updated.
 
-### 005B — Optional screenshots / demo video (open)
+### 005B — Visual evidence package (complete — instructions only)
 
-- [ ] Capture screenshots if GUI available.
-- [ ] Optional demo video.
+- [x] Visual evidence directory created:
+      `artifacts/submission/visual-evidence/`.
+- [x] `screenshot-checklist.md` — exact pages, filenames, and the one demo
+      prompt to capture (Mission Control, Demo, 3 advisors, Status, 1 live
+      advisor result).
+- [x] `demo-video-shot-list.md` — 2–3 minute shot-by-shot plan.
+- [x] `demo-video-script.md` — plain, honest narration.
+- [x] `evidence-manifest.md` — expected vs. actually-captured visual evidence.
+- [x] `scripts/prepare_visual_evidence.py` — stdlib-only helper; verifies UI is
+      live (`/`, `/demo`, `/status`, `/health` → 200) and copies existing
+      HTML/JSON snapshots into the visual-evidence directory.
+- [x] Final artifact index, README, and REPORT updated.
+- [x] Validation passes (final_validation, smoke_web, capture_ui_evidence,
+      unittest).
+- [x] **Screenshots/video are instructions only** — no fabricated images, no
+      browser-automation dependency added. Real HTML/JSON route snapshots are
+      referenced/copied instead.
 
 ### 005C — Target hardware retest (complete on closest available machine)
 

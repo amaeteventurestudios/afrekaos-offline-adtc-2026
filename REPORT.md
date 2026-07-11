@@ -481,3 +481,39 @@ Single run per prompt — TPS variance is real (2.37–3.83 tok/s).
 **No cloud database, no cloud inference, no private data, no banking workflow,
 no payroll workflow, no tax workflow, no lending workflow, and no ERP behavior
 was added.**
+
+## Task 005B — Visual Evidence Package
+
+This task produced the final screenshot and demo-video evidence package. It is a
+visual evidence task only.
+
+**What was added.** A new visual-evidence directory
+(`artifacts/submission/visual-evidence/`) with: a `README.md`,
+`screenshot-checklist.md` (exact pages, filenames, and the one demo prompt to
+use), `demo-video-shot-list.md` (a 2–3 minute shot plan),
+`demo-video-script.md` (plain, honest narration), and `evidence-manifest.md`.
+A standard-library-only helper `scripts/prepare_visual_evidence.py` was added:
+it starts the local UI, verifies `/`, `/demo`, `/status`, and `/health` return
+200, and copies the existing HTML/JSON route snapshots into the visual-evidence
+directory with an index and a prep log.
+
+**Were screenshots captured?** **Instructions only.** No browser-automation
+dependency was added (no Playwright/Selenium/pyppeteer/npm), and no PNGs were
+fabricated. Real, non-visual evidence already exists as HTML/JSON route
+snapshots under `artifacts/eval/task-004B-ui-evidence/` (and is copied by the
+prep script), but actual PNG screenshots are a manual capture step per the
+checklist.
+
+**Was a demo video captured?** **Instructions only.** A full shot list and
+narration are provided; recording the video is a manual step.
+
+**Limitations.** (1) No real PNG screenshots or video were committed — both are
+manual capture steps to avoid fabricating images. (2) The one live advisor
+screenshot requires the model present at `model/afrekaos.gguf`. (3) The
+remaining open risk — a true Ubuntu 22.04 / 8 GB run — is unchanged by this
+visual task and stays open.
+
+**No new product features or dependencies were added.** The helper script is
+Python standard library only. **No cloud database, no cloud inference, no
+private data, no banking workflow, no payroll workflow, no tax workflow, no
+lending workflow, and no ERP behavior was added.**

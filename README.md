@@ -295,6 +295,33 @@ Ubuntu 22.04 / 8 GB RAM / integrated graphics. Results must not be fabricated.
 If the current machine is not the target hardware, the artifact says so
 explicitly (see `artifacts/submission/task-005C-target-hardware-retest.md`).
 
+## Visual Evidence (Task 005B)
+
+To capture screenshots or a demo video, run the local UI first:
+
+```bash
+./scripts/run_local_web.sh
+```
+
+Then open http://127.0.0.1:8787 in a browser. Pages to screenshot:
+
+- `/` — Mission Control
+- `/demo` — Demo Scenarios
+- `/advisor/daily` — Daily Operations Advisor
+- `/advisor/inventory` — Inventory and Stock Check
+- `/advisor/cashflow` — Cashflow Pressure Coach
+- `/status` — Offline System Status
+- one live Daily Operations Advisor result
+
+Full per-page filenames, steps, and capture settings are in
+[`artifacts/submission/visual-evidence/screenshot-checklist.md`](artifacts/submission/visual-evidence/screenshot-checklist.md),
+with a demo-video shot list and narration alongside it.
+
+**Screenshots and video should use demo prompts only — not private data.** Do not
+show customer names, bank records, payroll records, tax records, or private
+company data. No screenshots or video are fabricated; if a capture cannot be
+made automatically, the package leaves a manual-capture instruction instead.
+
 ## Repository layout
 
 ```

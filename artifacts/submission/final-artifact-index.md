@@ -57,3 +57,13 @@
 | File | What it proves |
 |------|---------------|
 | `artifacts/submission/task-005D-ubuntu-8gb-retest.md` | Honest record of the Ubuntu 22.04 / 8 GB retest attempt: run was executed on macOS 12.7.6 / 32 GB (same machine as 005C), NOT Ubuntu. Benchmark + analyzer + validation + UI all PASS with fresh real numbers (TPS 2.37–3.83, no think traps). Risk 2 remains "Partially mitigated — open" because the Ubuntu target was not met. No fabricated numbers. |
+
+## Visual evidence package (Task 005B)
+
+| File | What it proves |
+|------|---------------|
+| `artifacts/submission/visual-evidence/` | Directory holding the screenshot + demo-video evidence package (instructions and manifest only — no fabricated images). |
+| `artifacts/submission/visual-evidence/screenshot-checklist.md` | Exact pages + filenames to screenshot, with capture steps and safety warnings (demo prompts only). |
+| `artifacts/submission/visual-evidence/demo-video-shot-list.md` | A 2–3 minute shot-by-shot demo video plan. |
+| `artifacts/submission/visual-evidence/demo-video-script.md` | Plain, honest 2–3 minute narration for the demo video. |
+| `artifacts/submission/visual-evidence/evidence-manifest.md` | What visual evidence is expected vs. what was actually captured (instructions only; real HTML/JSON snapshots referenced). |

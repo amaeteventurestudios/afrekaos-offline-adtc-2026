@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo Scenarios</title>
+<style>
+:root { --bg:#0f1115; --card:#1a1d24; --accent:#4ade80; --text:#e5e7eb;
+        --muted:#9ca3af; --warn:#fbbf24; --err:#f87171; --border:#2d3139;
+        --banner:#15201a; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
+       Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text);
+       line-height:1.6; }
+.container { max-width:900px; margin:0 auto; padding:1.5rem 1rem 4rem; }
+header { border-bottom:1px solid var(--border); padding-bottom:1rem; margin-bottom:1rem; }
+header h1 { margin:0; font-size:1.5rem; }
+header .tagline { color:var(--muted); font-size:.9rem; }
+.banner { background:var(--banner); border:1px solid var(--accent);
+          border-radius:10px; padding:.6rem 1rem; margin-bottom:1.2rem;
+          display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; }
+.banner .b-item { font-size:.78rem; color:var(--accent); }
+.banner .b-item::before { content:"¹3 "; }
+.banner .b-sep { color:var(--muted); font-size:.78rem; }
+nav.topnav { display:flex; flex-wrap:wrap; gap:.7rem; margin-bottom:1.5rem;
+             font-size:.88rem; }
+nav.topnav a { color:var(--muted); }
+nav.topnav a:hover { color:var(--accent); }
+a { color:var(--accent); text-decoration:none; }
+a:hover { text-decoration:underline; }
+.cards { display:grid; gap:.9rem; grid-template-columns:1fr; }
+@media(min-width:600px){ .cards{ grid-template-columns:1fr 1fr; } }
+.card { background:var(--card); border:1px solid var(--border); border-radius:10px;
+        padding:1.2rem; transition:border-color .15s; }
+.card:hover { border-color:var(--accent); }
+.card h2 { margin:0 0 .3rem; font-size:1.1rem; }
+.card h2 a { color:var(--text); }
+.card p { margin:0; color:var(--muted); font-size:.88rem; }
+.card .card-tag { display:inline-block; font-size:.7rem; color:var(--accent);
+                  border:1px solid var(--accent); border-radius:99px;
+                  padding:.05rem .5rem; margin-bottom:.5rem; }
+form { background:var(--card); border:1px solid var(--border); border-radius:10px;
+       padding:1.2rem; margin-bottom:1.5rem; }
+textarea { width:100%; min-height:110px; background:#0b0d11; color:var(--text);
+           border:1px solid var(--border); border-radius:8px; padding:.7rem;
+           font-size:.95rem; resize:vertical; }
+textarea:focus { outline:none; border-color:var(--accent); }
+button { background:var(--accent); color:#06120c; border:none; border-radius:8px;
+         padding:.6rem 1.2rem; font-size:.95rem; font-weight:600; cursor:pointer;
+         margin-top:.7rem; }
+button:hover { filter:brightness(1.1); }
+section.result { background:var(--card); border:1px solid var(--border);
+                 border-radius:10px; padding:1.2rem; margin-bottom:1.2rem;
+                 white-space:pre-wrap; word-wrap:break-word; }
+.label { color:var(--muted); font-size:.78rem; text-transform:uppercase;
+         letter-spacing:.05em; margin-bottom:.3rem; }
+.warn { background:rgba(251,191,36,.1); border:1px solid var(--warn);
+        color:var(--warn); border-radius:8px; padding:.7rem 1rem; font-size:.85rem;
+        margin-bottom:1rem; }
+.err { background:rgba(248,113,113,.1); border:1px solid var(--err);
+       color:var(--err); border-radius:8px; padding:.7rem 1rem; font-size:.85rem;
+       margin-bottom:1rem; }
+.meta { color:var(--muted); font-size:.82rem; margin-top:.8rem; }
+.status-grid { display:grid; gap:.5rem; }
+.status-grid .row { display:flex; justify-content:space-between; gap:1rem;
+                    border-bottom:1px solid var(--border); padding:.4rem 0; }
+.status-grid .row .k { color:var(--muted); }
+.status-grid .row .v { font-family:monospace; text-align:right; }
+.pill { display:inline-block; padding:.1rem .5rem; border-radius:99px; font-size:.75rem; }
+.pill.ok { background:rgba(74,222,128,.15); color:var(--accent); }
+.pill.no { background:rgba(248,113,113,.15); color:var(--err); }
+.result-nav { display:flex; flex-wrap:wrap; gap:1rem; margin-top:1rem; font-size:.88rem; }
+footer { margin-top:2rem; color:var(--muted); font-size:.8rem;
+         border-top:1px solid var(--border); padding-top:1rem; }
+</style>
+</head>
+<body>
+<div class="container">
+<header><h1>AfrekaOS Offline</h1><div class="tagline">Offline SME operations copilot</div></header>
+<div class="banner"><span class="b-item">Offline mode</span><span class="b-sep">·</span><span class="b-item">Local model</span><span class="b-sep">·</span><span class="b-item">SQLite retrieval</span><span class="b-sep">·</span><span class="b-item">No cloud dependency</span></div>
+<nav class="topnav"><a href="/">Mission Control</a>
+<a href="/demo" style="color:var(--accent);font-weight:600;">Demo Scenarios</a>
+<a href="/advisor/daily">Daily Advisor</a>
+<a href="/status">Offline Status</a></nav>
+<h2 style="margin-top:0">Demo Scenarios</h2>
+<p class="meta">Ready-made SME operations scenarios. Click "Run this scenario" to submit the prompt to the matching advisor. Answers are retrieval-grounded and local-only.</p>
+<div class="cards">
+<div class="card"><span class="card-tag">Scenario 1</span><h2>Low sales, stockout, supplier delay</h2><p><em>Daily Operations Advisor</em></p><p>A small shop has lower sales than usual, two fast-moving items are out of stock, the supplier delivery is delayed, and more customers are asking for credit. Give a short operating checklist.</p><form method="POST" action="/advisor/daily"><textarea name="question" style="display:none;">A small shop has lower sales than usual, two fast-moving items are out of stock, the supplier delivery is delayed, and more customers are asking for credit. Give a short operating checklist.</textarea><button type="submit">Run this scenario</button></form></div><div class="card"><span class="card-tag">Scenario 2</span><h2>Expansion readiness</h2><p><em>Daily Operations Advisor</em></p><p>A market operator wants to expand from one location to two locations but has irregular cash records, one trusted staff member, seasonal customer demand, and limited working capital. What should they check before expanding?</p><form method="POST" action="/advisor/daily"><textarea name="question" style="display:none;">A market operator wants to expand from one location to two locations but has irregular cash records, one trusted staff member, seasonal customer demand, and limited working capital. What should they check before expanding?</textarea><button type="submit">Run this scenario</button></form></div><div class="card"><span class="card-tag">Scenario 3</span><h2>Inventory pressure</h2><p><em>Inventory and Stock Check</em></p><p>A small retailer has too much slow-moving stock, three fast-moving items are almost finished, and supplier lead times have become unreliable. What should the operator do this week?</p><form method="POST" action="/advisor/inventory"><textarea name="question" style="display:none;">A small retailer has too much slow-moving stock, three fast-moving items are almost finished, and supplier lead times have become unreliable. What should the operator do this week?</textarea><button type="submit">Run this scenario</button></form></div><div class="card"><span class="card-tag">Scenario 4</span><h2>Cash pressure and customer credit</h2><p><em>Cashflow Pressure Coach</em></p><p>A small business has cash pressure, more customers asking to buy on credit, unpaid balances from last month, and upcoming supplier payments. What should the owner review before accepting more credit sales?</p><form method="POST" action="/advisor/cashflow"><textarea name="question" style="display:none;">A small business has cash pressure, more customers asking to buy on credit, unpaid balances from last month, and upcoming supplier payments. What should the owner review before accepting more credit sales?</textarea><button type="submit">Run this scenario</button></form></div>
+</div>
+<div class="result-nav"><a href="/">&#8592; Mission Control</a><a href="/status">Offline Status</a></div>
+
+<footer>AfrekaOS Offline — local-only. No cloud. Operational guidance, not accounting/banking/payroll/tax/ERP software.</footer>
+</div>
+</body>
+</html>
