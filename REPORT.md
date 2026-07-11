@@ -438,3 +438,46 @@ variance is real); true target-hardware run still needed.
 **No cloud database, no cloud inference, no private data, no banking workflow,
 no payroll workflow, no tax workflow, no lending workflow, and no ERP behavior
 was added.**
+
+## Task 005D — Ubuntu 22.04 / 8 GB Retest
+
+This task's goal was to run and document the **true** Ubuntu 22.04 / 8 GB target
+retest for AfrekaOS Offline.
+
+**What machine was used.** The only machine reachable from this environment is
+the same macOS workstation used in Task 005C: macOS 12.7.6 (Darwin x86_64),
+Intel Core i7-6700K, 32 GB RAM.
+
+**Does it match the target?** **No.** It is not Ubuntu 22.04, and it has 4× the
+target RAM (32 GB vs. 8 GB). The Ubuntu target was attempted but not reachable
+from this environment; an Ubuntu result is not claimed.
+
+**What ran (all on macOS).** The full pipeline was re-run end-to-end and all of
+it passed with fresh, real numbers: hardware profile → retrieval index (8 docs)
+→ final validation (PASS, 9/9 checks) → target inference benchmark
+(`AFREKAOS_QWEN_NO_THINK=1`, 3 grounded prompts, PASS) → analyzer (PASS, no
+think traps, no derailment, no forbidden claims, 8/8 SME terms) → web smoke
+test (PASS) → UI evidence capture (PASS, 7 files).
+
+**Results (actually captured, not fabricated):**
+
+| Prompt | wall-clock (s) | generation tps | prompt-eval tps | think trap |
+|--------|----------------|----------------|-----------------|------------|
+| prompt-1 grounded | 69.43 | 2.37 | 25.18 | no |
+| prompt-2 grounded | 52.48 | 3.83 | 40.69 | no |
+| smoke grounded | 43.02 | 3.33 | 40.80 | no |
+
+llama.cpp projected **~5.3 GB host memory** usage (within the 8 GB target), but
+projection is not a substitute for measured free RAM on a real 8 GB host.
+
+**Remaining limitations.** (1) Not Ubuntu 22.04 — the highest-priority
+target-hardware risk (Risk 2) is **not closed** and remains
+"Partially mitigated — open." A true Ubuntu 22.04 run on an actual host (ideally
+≤ 8 GB) is still required. (2) 32 GB RAM, not 8 GB — memory-pressure behavior
+untested. (3) Same physical machine as 005C — this refreshes evidence and
+records the Ubuntu attempt, but does not advance the platform question. (4)
+Single run per prompt — TPS variance is real (2.37–3.83 tok/s).
+
+**No cloud database, no cloud inference, no private data, no banking workflow,
+no payroll workflow, no tax workflow, no lending workflow, and no ERP behavior
+was added.**

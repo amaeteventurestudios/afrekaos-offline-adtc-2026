@@ -1,23 +1,23 @@
-0.00.025.541 I llama_completion: llama backend init
-0.00.025.552 I llama_completion: load the model and apply lora adapter, if any
-0.00.025.560 I common_init_result: fitting params to device memory ...
-0.00.025.561 I common_init_result: (for bugs during this step try to reproduce them with -fit off, or provide --verbose logs if the bug only occurs with -fit on)
-0.00.534.326 I common_params_fit_impl: projected to use 5410 MiB of host memory vs. 32768 MiB of total host memory
-0.00.852.802 W load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
-0.02.590.801 I common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
-0.03.360.924 I llama_completion: llama threadpool init, n_threads = 4
-0.03.360.976 I 
-0.03.361.013 I system_info: n_threads = 4 (n_threads_batch = 4) / 8 | CPU : SSE3 = 1 | SSSE3 = 1 | ACCELERATE = 1 | OPENMP = 1 | REPACK = 1 | 
-0.03.361.016 I 
-0.03.362.635 I sampler seed: 2485012165
-0.03.362.644 I sampler params: 
+0.00.025.295 I llama_completion: llama backend init
+0.00.025.306 I llama_completion: load the model and apply lora adapter, if any
+0.00.025.313 I common_init_result: fitting params to device memory ...
+0.00.025.314 I common_init_result: (for bugs during this step try to reproduce them with -fit off, or provide --verbose logs if the bug only occurs with -fit on)
+0.00.543.933 I common_params_fit_impl: projected to use 5410 MiB of host memory vs. 32768 MiB of total host memory
+0.00.784.780 W load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.02.299.695 I common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
+0.02.991.939 I llama_completion: llama threadpool init, n_threads = 4
+0.02.991.967 I 
+0.02.991.989 I system_info: n_threads = 4 (n_threads_batch = 4) / 8 | CPU : SSE3 = 1 | SSSE3 = 1 | ACCELERATE = 1 | OPENMP = 1 | REPACK = 1 | 
+0.02.991.992 I 
+0.02.993.832 I sampler seed: 1926571388
+0.02.993.842 I sampler params: 
 	repeat_last_n = 64, repeat_penalty = 1.000, frequency_penalty = 0.000, presence_penalty = 0.000
 	dry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = -1
 	top_k = 40, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, top_n_sigma = -1.000, temp = 0.700
 	mirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000, adaptive_target = -1.000, adaptive_decay = 0.900
-0.03.362.654 I sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
-0.03.362.655 I generate: n_ctx = 32768, n_batch = 2048, n_predict = 200, n_keep = 0
-0.03.362.655 I 
+0.02.993.852 I sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+0.02.993.853 I generate: n_ctx = 32768, n_batch = 2048, n_predict = 256, n_keep = 0
+0.02.993.853 I 
 You are AfrekaOS, an offline SME operations copilot for African small business operators.
 
 Local SME operations context (retrieved offline):
@@ -58,18 +58,20 @@ Answer: /no_think
 </think>
 
 - Check inventory levels and restock fast-moving items before sales peak  
-- Verify supplier lead times and maintain alternatives for timely delivery  
-- Review credit policies and selectively extend credit to reliable customers  
-- Monitor cashflow trends and avoid overstocking to free up capital  
-- Document and track customer requests to ensure fair credit allocation  
-- Maintain clear records of sales, stock, and supplier performance for decision-making [end of text]
+- Confirm supplier lead times and have alternatives in place  
+- Review credit policies and selectively extend credit to trusted customers  
+- Monitor cashflow trends and avoid overextending working capital  
+- Track customer requests and prioritize urgent orders  
+- Ensure staff are trained to manage stockouts and credit requests  
+- Document supplier delays and communicate proactively  
+- Maintain accurate records for cashflow and inventory tracking [end of text]
 
 
-0.45.139.109 I common_perf_print:    sampling time =      38.83 ms
-0.45.139.116 I common_perf_print:    samplers time =      19.48 ms /   552 tokens
-0.45.139.116 I common_perf_print:        load time =    2690.12 ms
-0.45.139.118 I common_perf_print: prompt eval time =   12713.93 ms /   468 tokens (   27.17 ms per token,    36.81 tokens per second)
-0.45.139.119 I common_perf_print:        eval time =   29020.64 ms /    83 runs   (  349.65 ms per token,     2.86 tokens per second)
-0.45.139.123 I common_perf_print:       total time =   41778.19 ms /   551 tokens
-0.45.139.125 I common_perf_print: unaccounted time =       4.79 ms /   0.0 %      (total - sampling - prompt eval - eval) / (total)
-0.45.139.125 I common_perf_print:    graphs reused =         81
+0.42.719.125 I common_perf_print:    sampling time =      41.36 ms
+0.42.719.134 I common_perf_print:    samplers time =      19.04 ms /   563 tokens
+0.42.719.135 I common_perf_print:        load time =    2318.34 ms
+0.42.719.136 I common_perf_print: prompt eval time =   11469.81 ms /   468 tokens (   24.51 ms per token,    40.80 tokens per second)
+0.42.719.138 I common_perf_print:        eval time =   28211.00 ms /    94 runs   (  300.12 ms per token,     3.33 tokens per second)
+0.42.719.139 I common_perf_print:       total time =   39727.20 ms /   562 tokens
+0.42.719.140 I common_perf_print: unaccounted time =       5.03 ms /   0.0 %      (total - sampling - prompt eval - eval) / (total)
+0.42.719.141 I common_perf_print:    graphs reused =         92

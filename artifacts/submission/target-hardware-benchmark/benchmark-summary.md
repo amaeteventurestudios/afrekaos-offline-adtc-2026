@@ -7,27 +7,27 @@
 
 ## prompt-1
 - rc: 0
-- wall-clock: 63.52s
-- output chars: 5291
-- generation tps: 2.77 tokens per second
-- prompt-eval tps: 26.28
-- memory: 0.00.634.696 I common_params_fit_impl: projected to use 5410 MiB of host memory vs. 32768 MiB of total host memory
+- wall-clock: 69.43s
+- output chars: 5331
+- generation tps: 2.37 tokens per second
+- prompt-eval tps: 25.18
+- memory: 0.00.527.231 I common_params_fit_impl: projected to use 5410 MiB of host memory vs. 32768 MiB of total host memory
 - think trap: False
 
 ## prompt-2
 - rc: 0
-- wall-clock: 59.15s
-- output chars: 5472
-- generation tps: 2.63 tokens per second
-- prompt-eval tps: 41.88
-- memory: 0.00.496.948 I common_params_fit_impl: projected to use 5410 MiB of host memory vs. 32768 MiB of total host memory
+- wall-clock: 52.48s
+- output chars: 5669
+- generation tps: 3.83 tokens per second
+- prompt-eval tps: 40.69
+- memory: 0.00.420.767 I common_params_fit_impl: projected to use 5410 MiB of host memory vs. 32768 MiB of total host memory
 - think trap: False
 
 ## smoke
 - rc: 0
-- wall-clock: 45.57s
-- output chars: 5134
-- generation tps: 2.86 tokens per second
-- prompt-eval tps: 36.81
-- memory: 0.00.534.326 I common_params_fit_impl: projected to use 5410 MiB of host memory vs. 32768 MiB of total host memory
+- wall-clock: 43.02s
+- output chars: 5203
+- generation tps: 3.33 tokens per second
+- prompt-eval tps: 40.80
+- memory: 0.00.543.933 I common_params_fit_impl: projected to use 5410 MiB of host memory vs. 32768 MiB of total host memory
 - think trap: False

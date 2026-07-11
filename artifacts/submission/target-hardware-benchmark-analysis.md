@@ -7,7 +7,7 @@
 ### prompt-1-grounded.txt
 - exists: yes
 - think trap: False
-- visible chars: 2594
+- visible chars: 2634
 - derailment: False
 - forbidden claim: False
 - sme terms: cash, credit, expansion, inventory, records, staff, stockout, supplier
@@ -15,7 +15,7 @@
 ### prompt-2-grounded.txt
 - exists: yes
 - think trap: False
-- visible chars: 2775
+- visible chars: 2972
 - derailment: False
 - forbidden claim: False
 - sme terms: cash, credit, expansion, inventory, records, staff, stockout, supplier
@@ -23,7 +23,7 @@
 ### smoke-grounded.txt
 - exists: yes
 - think trap: False
-- visible chars: 2437
+- visible chars: 2506
 - derailment: False
 - forbidden claim: False
 - sme terms: cash, credit, expansion, inventory, records, staff, stockout, supplier

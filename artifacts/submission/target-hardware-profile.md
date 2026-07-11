@@ -7,8 +7,8 @@
 - **Physical cores:** 4
 - **Logical cores:** 8
 - **Total memory:** 32.00 GiB (34359738368 bytes)
-- **Available memory:** 4.24 GiB (4550053888 bytes)
-- **Disk free (repo):** 11.79 GiB (12656705536 bytes)
+- **Available memory:** 1.63 GiB (1748873216 bytes)
+- **Disk free (repo):** 14.39 GiB (15447957504 bytes)
 - **model/afrekaos.gguf exists:** True
 - **model path is symlink:** True
 - **Model size:** 1.19 GiB (1282439584 bytes)

@@ -4,12 +4,12 @@
 - **Binary:** /usr/local/bin/llama-completion (llama-completion)
 - **No-think:** True
 - **Template:** True
-- **Max tokens:** 200, timeout: 150s
+- **Max tokens:** 256, timeout: 180s
 
 | Prompt | rc | wall (s) | chars | gen tps | think trap | timed out |
 |--------|----|----------|-------|---------|------------|-----------|
-| prompt-1 | 0 | 63.52 | 5291 | 2.77 tokens per second | False | False |
-| prompt-2 | 0 | 59.15 | 5472 | 2.63 tokens per second | False | False |
-| smoke | 0 | 45.57 | 5134 | 2.86 tokens per second | False | False |
+| prompt-1 | 0 | 69.43 | 5331 | 2.37 tokens per second | False | False |
+| prompt-2 | 0 | 52.48 | 5669 | 3.83 tokens per second | False | False |
+| smoke | 0 | 43.02 | 5203 | 3.33 tokens per second | False | False |
 
 No fabricated numbers. All stats scraped from real llama.cpp output or measured by Python wall-clock.

@@ -51,3 +51,9 @@
 | `artifacts/submission/target-hardware-benchmark/` | Real grounded inference outputs + timing (3 prompts). |
 | `artifacts/submission/target-hardware-benchmark-analysis.md` | Analyzer verdict: PASS (no traps, no derailment, SME terms present). |
 | `artifacts/submission/task-005C-target-hardware-retest.md` | Full retest report with honest hardware-gap documentation. |
+
+## Target hardware retest — Task 005D (Ubuntu 22.04 / 8 GB attempt)
+
+| File | What it proves |
+|------|---------------|
+| `artifacts/submission/task-005D-ubuntu-8gb-retest.md` | Honest record of the Ubuntu 22.04 / 8 GB retest attempt: run was executed on macOS 12.7.6 / 32 GB (same machine as 005C), NOT Ubuntu. Benchmark + analyzer + validation + UI all PASS with fresh real numbers (TPS 2.37–3.83, no think traps). Risk 2 remains "Partially mitigated — open" because the Ubuntu target was not met. No fabricated numbers. |

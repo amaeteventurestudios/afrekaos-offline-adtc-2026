@@ -196,3 +196,23 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [x] **Gap documented:** current machine is macOS 12.7.6 / 32 GB, NOT Ubuntu
       22.04 / 8 GB. True target run still needed on actual hardware.
 - [x] Evidence: `artifacts/submission/task-005C-target-hardware-retest.md`.
+
+### 005D — Ubuntu 22.04 / 8 GB target retest (attempt complete; Ubuntu target NOT met)
+
+- [x] Re-ran the full validation + benchmark + UI pipeline end-to-end on the only
+      machine reachable from this environment (macOS 12.7.6 / 32 GB — same as
+      005C).
+- [x] Hardware profile confirmed, retrieval index rebuilt (8 docs), final
+      validation PASS (9/9), target inference benchmark PASS (3/3, no think
+      traps, real TPS captured), analyzer PASS, web smoke test PASS, UI evidence
+      capture PASS (7 files).
+- [x] Artifact created: `artifacts/submission/task-005D-ubuntu-8gb-retest.md`
+      (honest record — no fabricated numbers; all timing/TPS/memory scraped from
+      real llama.cpp output / Python wall-clock).
+- [x] Risk register updated: Risk 2 remains **"Partially mitigated — open"**
+      because the run was **not** on Ubuntu 22.04 (per the task's contingency
+      rule for non-Ubuntu runs).
+- [ ] **True Ubuntu 22.04 / 8 GB run still open.** This task did not execute on
+      Ubuntu 22.04, so the target-hardware risk is not closed. A genuine Ubuntu
+      22.04 run (ideally ≤ 8 GB) is required to move Risk 2 to "Mitigated with
+      Ubuntu 22.04 / 8 GB retest evidence."
