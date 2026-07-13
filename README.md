@@ -392,6 +392,13 @@ for running checks without clashing with an already-open UI.
   small, bounded debug snapshot (no user question) under
   `artifacts/eval/task-004D-debug/`.
 
+**If the answer panel shows "You are AfrekaOS," "Local SME operations
+context," source file paths, or "Answer rules,"** the model/runtime is echoing
+the prompt back into the answer. AfrekaOS now strips prompt echo and shows only
+the final operating guidance (the runtime summary will note
+`prompt_echo_stripped=True` when this happens). This is handled automatically;
+no operator action is needed.
+
 ## Basic setup (placeholders)
 
 There is no runnable app yet. For repo hygiene only:

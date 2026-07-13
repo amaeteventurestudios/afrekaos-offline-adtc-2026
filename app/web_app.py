@@ -91,6 +91,7 @@ def _new_job(advisor: str, question: str) -> dict:
         "mode_label": "retrieval-grounded, direct-answer",
         "runtime_notes": "",
         "extraction_warning": "",
+        "prompt_echo_stripped": False,
         "created_iso": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "created_epoch": time.time(),
     }
@@ -202,7 +203,9 @@ def _status_detail() -> dict:
         "llama_binary": _llama_binary(),
         "retrieval_index_exists": db_path.is_file(),
         "locked_candidate": _locked_candidate(),
-        "mode": "local-only, no cloud",
+        "retrieval_grounded": True,
+        "direct_answer": True,
+        "local_only": True,
     }
 
 
@@ -251,10 +254,12 @@ def _run_advisor_job(job_id: str, question: str) -> None:
 
         # The answer is extracted by run_model via the unified
         # extract_visible_answer() (app.model_inference), so clean_answer_chars
-        # is exactly the length of the text we show the user.
+        # is exactly the length of the text we show the user. Prompt echo
+        # (role/context/rules/source paths) is stripped there too.
         answer_text = result.get("clean_answer", "") or ""
         clean_chars = int(result.get("clean_answer_chars", 0) or 0)
         extraction_warning = result.get("extraction_warning", "") or ""
+        prompt_echo_stripped = bool(result.get("prompt_echo_stripped", False))
         if not answer_text:
             # Genuinely empty: never show a fabricated answer.
             answer_text = "(model produced no visible answer text)"
@@ -269,6 +274,8 @@ def _run_advisor_job(job_id: str, question: str) -> None:
             f"clean_answer_chars={clean_chars}",
             f"think_trap={result.get('think_trap', False)}",
         ]
+        if prompt_echo_stripped:
+            notes_parts.append("prompt_echo_stripped=True")
         if extraction_warning:
             notes_parts.append(f"extraction_warning={extraction_warning}")
         notes = ", ".join(notes_parts)
@@ -278,6 +285,7 @@ def _run_advisor_job(job_id: str, question: str) -> None:
             job_id, status="complete", step=7, answer=answer_text,
             mode_label=mode_label, runtime_notes=notes,
             extraction_warning=extraction_warning,
+            prompt_echo_stripped=prompt_echo_stripped,
         )
     except Exception as exc:  # pragma: no cover - defensive
         # Catch-all so the worker thread never dies silently. Do not expose a

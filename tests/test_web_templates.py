@@ -238,12 +238,16 @@ class TestJobPage(unittest.TestCase):
             "llama_binary": "/usr/local/bin/llama-completion",
             "retrieval_index_exists": True,
             "locked_candidate": "qwen3-1.7b-q4-k-m",
-            "mode": "local-only, no cloud",
+            "retrieval_grounded": True,
+            "direct_answer": True,
+            "local_only": True,
         }
         html_out = T.render_job(self._job(), detail=detail)
         self.assertIn("Locked candidate", html_out)
         self.assertIn("qwen3-1.7b-q4-k-m", html_out)
-        self.assertIn("local-only, no cloud", html_out)
+        self.assertIn("Retrieval-grounded", html_out)
+        self.assertIn("Direct-answer mode", html_out)
+        self.assertIn("Local-only", html_out)
 
     def test_complete_job_renders_clean_answer(self) -> None:
         html_out = T.render_job(
@@ -277,6 +281,36 @@ class TestJobPage(unittest.TestCase):
         )
         self.assertIn("clean_answer_chars=14", html_out)
         self.assertIn("think_trap=False", html_out)
+
+    def test_answer_panel_titled_operating_guidance(self) -> None:
+        html_out = T.render_job(
+            self._job(status="complete", step=7, answer="Restock items.")
+        )
+        self.assertIn("Operating Guidance", html_out)
+        # The old parenthetical mode label is no longer in the title.
+        self.assertNotIn(
+            "Operating guidance (retrieval-grounded", html_out.lower()
+        )
+
+    def test_prompt_echo_note_shown_when_stripped(self) -> None:
+        html_out = T.render_job(
+            self._job(
+                status="complete", step=7, answer="Restock items.",
+                prompt_echo_stripped=True,
+            )
+        )
+        self.assertIn("Prompt echo removed from display", html_out)
+
+    def test_answer_panel_does_not_show_prompt_markers(self) -> None:
+        # Even if a buggy caller passed echo text as the answer, the title
+        # structure must not label it as prompt echo. This asserts the panel
+        # title is clean.
+        html_out = T.render_job(
+            self._job(status="complete", step=7, answer="1. Restock items.")
+        )
+        self.assertNotIn("You are AfrekaOS", html_out)
+        self.assertNotIn("Local SME operations context", html_out)
+        self.assertNotIn("Answer rules", html_out)
 
 
 class TestErrorPage(unittest.TestCase):

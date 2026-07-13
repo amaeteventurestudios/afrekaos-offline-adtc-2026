@@ -145,6 +145,16 @@ a correct, fast, offline model scores well and is easy to defend.
   logs.** Log lines, timestamps, and the think marker are stripped before
   scoring; the char count shown to the user equals the scored text length.
 
+## Prompt echo note (Task 004E)
+
+- **User-facing answers must not include the hidden prompt, retrieved snippets,
+  answer rules, or source paths.** If the answer panel shows "You are AfrekaOS,"
+  "Local SME operations context," `source:` paths, or "Answer rules," the
+  runtime is echoing the prompt — that is a display defect, not an answer.
+- **Retrieval context can support the model, but should not be confused with
+  final answer quality.** Grounding improves the answer; it is not the answer
+  itself. Score the post-extraction `clean_answer`, not the raw echoed stream.
+
 ## Final evaluation note (Task 005A)
 
 - Final validation (`scripts/final_validation.py`) confirms **repo health and

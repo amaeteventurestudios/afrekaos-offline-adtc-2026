@@ -229,6 +229,36 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [x] Final validation PASS; `smoke_web` PASS; `smoke_submit_flow` PASS; full
       unittest (199 tests) PASS.
 
+### 004E — Prompt echo & final answer display fix (complete)
+
+- [x] Root cause documented in `artifacts/eval/task-004E-prompt-echo-fix.md`:
+      runtime echoed the grounded prompt into stdout; extractor had no
+      prompt-echo awareness; latent bug where `<think>` mention in answer rules
+      triggered false think-strip.
+- [x] Explicit `BEGIN FINAL OPERATING GUIDANCE` delimiter added to both
+      `build_grounded_prompt` and `build_ungrounded_prompt`, with instructions
+      not to repeat context/sources/rules/CoT.
+- [x] `strip_prompt_echo()` added; `extract_visible_answer()` now accepts the
+      original `prompt`, prefers text after the delimiter, strips exact prefix
+      and known echo markers/source paths; returns `prompt_echo_detected` and
+      `prompt_echo_stripped`. Extraction reordered: echo-strip before
+      think-strip (so the `<think>` mention in rules cannot trigger false strip).
+- [x] Best-effort `--no-display-prompt` added to `run_model` (checked via
+      `--help`, silent fallback to post-processing). `run_model` passes the
+      prompt into extraction and returns `prompt_echo_*` fields.
+- [x] UI: answer panel titled "Operating Guidance"; mode shown in status panel
+      (Retrieval-grounded / Direct-answer mode / Local-only); "Prompt echo
+      removed from display" note when echo stripped; runtime summary includes
+      `prompt_echo_stripped`.
+- [x] Analyzers (`analyze_grounded_outputs`, `analyze_target_benchmark`,
+      `analyze_qwen_outputs`) report `prompt_echo_detected`/`prompt_echo_status`
+      over cleaned answer; older artifacts not auto-failed.
+- [x] Tests added: `tests/test_prompt_echo_extraction.py` (delimiter, echo
+      strip, markers, SME-term preservation, prompt builder),
+      `tests/test_web_templates.py` (title, echo note, no prompt markers).
+- [x] Final validation PASS; `smoke_web` PASS; `smoke_submit_flow` PASS; full
+      unittest (214 tests) PASS.
+
 ### 005A — Final evaluation package (complete)
 
 - [x] `scripts/final_validation.py` — runs all checks + unittest; writes

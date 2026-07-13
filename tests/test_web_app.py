@@ -169,9 +169,12 @@ class TestStatusDetail(unittest.TestCase):
     def test_status_detail_shape(self) -> None:
         d = web_app._status_detail()
         for key in ("model_path_exists", "llama_binary",
-                    "retrieval_index_exists", "locked_candidate", "mode"):
+                    "retrieval_index_exists", "locked_candidate",
+                    "retrieval_grounded", "direct_answer", "local_only"):
             self.assertIn(key, d)
-        self.assertIn("no cloud", d["mode"].lower())
+        self.assertTrue(d["local_only"])
+        self.assertTrue(d["retrieval_grounded"])
+        self.assertTrue(d["direct_answer"])
 
 
 class TestNoInferenceInTests(unittest.TestCase):

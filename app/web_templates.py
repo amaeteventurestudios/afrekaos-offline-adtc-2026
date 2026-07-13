@@ -453,7 +453,11 @@ def _status_detail_panel(detail: dict) -> str:
                      detail.get("retrieval_index_exists", "not available")))
     rows.append(_row("Locked candidate",
                      detail.get("locked_candidate", "unknown")))
-    rows.append(_row("Mode", detail.get("mode", "local-only, no cloud")))
+    rows.append(_row("Retrieval-grounded",
+                     detail.get("retrieval_grounded", True)))
+    rows.append(_row("Direct-answer mode",
+                     detail.get("direct_answer", True)))
+    rows.append(_row("Local-only", detail.get("local_only", True)))
     return (
         '<section class="result" style="margin-top:1rem;">'
         '<div class="label">Runtime status</div>'
@@ -517,12 +521,15 @@ def render_job(
 
     # Answer or error.
     if status == "complete":
-        parts.append(
-            f'<div class="label">Operating guidance '
-            f'({_esc(job.get("mode_label", "retrieval-grounded"))})</div>\n'
-        )
+        parts.append('<div class="label">Operating Guidance</div>\n')
         answer = job.get("answer", "") or "(model produced no visible answer text)"
         parts.append(f'<section class="result">{_esc(answer)}</section>\n')
+        # Prompt-echo note: if the echoed prompt was stripped, tell the user.
+        if job.get("prompt_echo_stripped", False):
+            parts.append(
+                '<div class="meta" style="margin-top:.4rem;">Prompt echo removed '
+                "from display.</div>\n"
+            )
         # Extraction warning (if any) — shown only when the extractor flagged
         # something worth noting (e.g. an unclosed <think> block).
         warn = job.get("extraction_warning", "")

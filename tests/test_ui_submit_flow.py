@@ -160,7 +160,9 @@ class TestJobPage(_ServerFixture):
     def test_job_page_has_status_detail_panel(self) -> None:
         _, body = self._create_job_via_post()
         self.assertIn("Locked candidate", body)
-        self.assertIn("local-only, no cloud", body)
+        self.assertIn("Local-only", body)
+        self.assertIn("Retrieval-grounded", body)
+        self.assertIn("Direct-answer mode", body)
 
     def test_job_page_has_no_13_marker(self) -> None:
         _, body = self._create_job_via_post()

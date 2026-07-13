@@ -512,6 +512,46 @@ bounded files only and never persists user questions.
 
 **No new product features or dependencies were added.** Standard library only.
 
+## Task 004E — Prompt Echo & Final Answer Display Fix
+
+The app was showing the entire grounded prompt as the answer — the role line,
+retrieved context, `source:` file paths, "Operator question:", and "Answer
+rules:" — followed by the actual checklist. The user-facing answer should show
+only the final operating guidance.
+
+**Was prompt echo reproduced?** **Yes**, deterministically: feeding the real
+grounded prompt (plus a trailing answer) through the extractor produced a
+`clean_answer` starting with "You are AfrekaOS..." and containing `source:`
+paths and "Answer rules" (1919 chars, mostly prompt).
+
+**Root cause.** (1) The runtime echoes the prompt into stdout when invoked with
+`-p`, and no `--no-display-prompt` flag was passed. (2) The extractor had no
+prompt-echo awareness. (3) A latent bug: the answer rules mention `<think>` as
+literal text, so the think-strip regex (`<think>.*` DOTALL) treated that mention
+as a real tag and deleted the delimiter + everything after it — which is why the
+fix had to reorder echo-stripping before think-stripping.
+
+**What was fixed.** Delimiter-based prompt construction
+(`BEGIN FINAL OPERATING GUIDANCE`) on both grounded and ungrounded prompts;
+`strip_prompt_echo()` + delimiter-preference in `extract_visible_answer()`
+(returning `prompt_echo_detected`/`prompt_echo_stripped`); extraction reordered
+so echo-stripping runs before think-stripping; best-effort
+`--no-display-prompt` added to `run_model` (checked via `--help`, silent
+fallback); the answer panel is titled "Operating Guidance" with mode shown
+separately in the status panel; a "Prompt echo removed from display" note
+appears when echo was stripped; analyzers now report `prompt_echo_detected`/
+`prompt_echo_status`.
+
+**Does the final answer now display only operating guidance?** **Yes.** The
+same echoed input now yields just the checklist; no role line, context, source
+paths, or rules. SME terms in the real answer are preserved.
+
+**Limitations.** Marker matching is heuristic; `--no-display-prompt` is
+binary-dependent (post-processing fallback covers older binaries); a separate
+"Local context used" panel was not added (to avoid new feature complexity).
+
+**No new product features or dependencies were added.** Standard library only.
+
 ## Task 005A — Final Evaluation Package
 
 This task created the final evaluation package, validation runner, and

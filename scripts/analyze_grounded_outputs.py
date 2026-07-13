@@ -105,15 +105,36 @@ def _visible_answer(text: str) -> str:
     return "\n".join(lines).strip()
 
 
+_PROMPT_ECHO_MARKERS = (
+    "You are AfrekaOS",
+    "Local SME operations context",
+    "Answer rules:",
+    "Operator question:",
+    "BEGIN FINAL OPERATING GUIDANCE",
+)
+_SOURCE_PATH_RE = re.compile(r"^\s*source:\s+\S+", re.IGNORECASE | re.MULTILINE)
+
+
+def _prompt_echo(text: str) -> tuple[bool, str]:
+    """Return (detected, status). status is 'clean' / 'echo in answer'."""
+    in_answer = any(m in text for m in _PROMPT_ECHO_MARKERS) or bool(
+        _SOURCE_PATH_RE.search(text)
+    )
+    return in_answer, ("echo in answer" if in_answer else "clean")
+
+
 def analyze_output(path: Path) -> dict:
     raw = _read(path)
     if not raw and not path.is_file():
         return {"exists": False}
     answer = _visible_answer(raw)
+    echo_detected, echo_status = _prompt_echo(answer)
     return {
         "exists": path.is_file(),
         "contains_think": _contains_think(raw),
         "think_trap": _has_thinking_trap(raw),
+        "prompt_echo_detected": echo_detected,
+        "prompt_echo_status": echo_status,
         "visible_answer_chars": len(answer),
         "answer_preview": answer[:200],
         "has_derailment": bool(DERAILMENT_RE.search(answer)),

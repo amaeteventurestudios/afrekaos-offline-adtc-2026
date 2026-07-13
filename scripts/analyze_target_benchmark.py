@@ -83,15 +83,35 @@ def _contains_think(text: str) -> bool:
     return "<think>" in text
 
 
+_PROMPT_ECHO_MARKERS = (
+    "You are AfrekaOS",
+    "Local SME operations context",
+    "Answer rules:",
+    "Operator question:",
+    "BEGIN FINAL OPERATING GUIDANCE",
+)
+_SOURCE_PATH_RE = re.compile(r"^\s*source:\s+\S+", re.IGNORECASE | re.MULTILINE)
+
+
+def _prompt_echo(text: str) -> tuple[bool, str]:
+    in_answer = any(m in text for m in _PROMPT_ECHO_MARKERS) or bool(
+        _SOURCE_PATH_RE.search(text)
+    )
+    return in_answer, ("echo in answer" if in_answer else "clean")
+
+
 def analyze_output(path: Path) -> dict:
     raw = _read(path)
     if not raw and not path.is_file():
         return {"exists": False}
     vis = _visible(raw)
+    echo_detected, echo_status = _prompt_echo(vis)
     return {
         "exists": path.is_file(),
         "contains_think": _contains_think(raw),
         "think_trap": _think_trap(raw),
+        "prompt_echo_detected": echo_detected,
+        "prompt_echo_status": echo_status,
         "visible_chars": len(vis),
         "derailment": bool(DERAILMENT_RE.search(vis)),
         "forbidden_claim": bool(FORBIDDEN_RE.search(raw)),

@@ -91,6 +91,8 @@ def analyze_file(label: str, path: Path) -> dict:
             "think_close": None,
             "contains_think": False,
             "think_trap": False,
+            "prompt_echo_detected": False,
+            "prompt_echo_status": "clean",
             "answer_chars": 0,
             "answer_preview": "",
             "useful": False,
@@ -100,6 +102,13 @@ def analyze_file(label: str, path: Path) -> dict:
     think_close = "</think>" in raw
     answer = visible_answer(raw)
     useful = len(answer) >= MIN_USEFUL_CHARS
+    echo_markers = (
+        "You are AfrekaOS", "Local SME operations context", "Answer rules:",
+        "Operator question:", "BEGIN FINAL OPERATING GUIDANCE",
+    )
+    src_re = re.compile(r"^\s*source:\s+\S+", re.IGNORECASE | re.MULTILINE)
+    echo_detected = any(m in answer for m in echo_markers) or bool(src_re.search(answer))
+    echo_status = "echo in answer" if echo_detected else "clean"
     return {
         "label": label,
         "path": str(path),
@@ -108,6 +117,8 @@ def analyze_file(label: str, path: Path) -> dict:
         "think_close": think_close,
         "contains_think": think_open,
         "think_trap": _think_trap(raw),
+        "prompt_echo_detected": echo_detected,
+        "prompt_echo_status": echo_status,
         "answer_chars": len(answer),
         "answer_preview": answer[:200],
         "useful": useful,

@@ -19,6 +19,11 @@ ROLE_LINE = (
     "business operators."
 )
 
+# Explicit delimiter marking where the model's final answer must begin.
+# Extraction prefers text after this line so echoed prompt/context/rules are
+# never shown to the user as the answer.
+FINAL_GUIDANCE_DELIMITER = "BEGIN FINAL OPERATING GUIDANCE"
+
 ANSWER_RULES = [
     "Give practical, concrete operating steps.",
     "Stay strictly on SME operations (inventory, cashflow, credit, supplier, staffing, expansion).",
@@ -27,6 +32,17 @@ ANSWER_RULES = [
     "Do NOT include hidden chain-of-thought or a <think> block. Answer directly.",
     "Answer as a short checklist.",
     "Where the operator should verify their own records before acting, say so explicitly.",
+]
+
+# Instructions appended after the delimiter so the model answers only with the
+# final checklist and does not repeat the prompt/context/rules.
+FINAL_GUIDANCE_INSTRUCTIONS = [
+    "Answer only after this line.",
+    "Do not repeat the local context.",
+    "Do not repeat the source list.",
+    "Do not repeat the answer rules.",
+    "Do not reveal hidden chain-of-thought.",
+    "Give only the final checklist.",
 ]
 
 
@@ -60,17 +76,30 @@ def build_grounded_prompt(user_question: str, limit: int = 5) -> str:
 
     Does not call the model. The returned string is meant to be handed to a
     local runtime (e.g. llama-completion) by the caller.
+
+    The prompt ends with an explicit FINAL_GUIDANCE_DELIMITER so that if the
+    runtime echoes the prompt back, extraction can keep only the text after the
+    delimiter (the model's final operating guidance).
     """
     context = build_context_block(user_question, limit=limit)
     rules = "\n".join(f"- {r}" for r in ANSWER_RULES)
+    final_instr = "\n".join(f"- {r}" for r in FINAL_GUIDANCE_INSTRUCTIONS)
 
     return (
         f"{ROLE_LINE}\n\n"
         f"{context}\n\n"
         f"Operator question:\n{user_question}\n\n"
         f"Answer rules:\n{rules}\n\n"
-        f"Answer:"
+        f"{FINAL_GUIDANCE_DELIMITER}\n"
+        f"{final_instr}\n\n"
     )
 
 
-__all__ = ["ROLE_LINE", "ANSWER_RULES", "build_context_block", "build_grounded_prompt"]
+__all__ = [
+    "ROLE_LINE",
+    "ANSWER_RULES",
+    "FINAL_GUIDANCE_DELIMITER",
+    "FINAL_GUIDANCE_INSTRUCTIONS",
+    "build_context_block",
+    "build_grounded_prompt",
+]

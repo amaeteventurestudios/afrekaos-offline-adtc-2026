@@ -1,6 +1,6 @@
 # Final Validation Log — AfrekaOS Offline (Task 005A)
 
-- **Date/time:** 2026-07-11 16:45:14 UTC
+- **Date/time:** 2026-07-13 18:51:13 UTC
 - **Overall:** PASS
 - **pytest available:** False
 - **Model inference required:** no (all checks are non-inference)
@@ -80,8 +80,6 @@ documents by category:
 
 ### preview_grounded_prompt — PASS
 ```
-er reports that sales are lower than usual, two fast-moving items are out of stock, customers are asking for credit, and the supplier delivery is delayed. What should they check first, and what should they avoid doing immediately?
-
 Answer rules:
 - Give practical, concrete operating steps.
 - Stay strictly on SME operations (inventory, cashflow, credit, supplier, staffing, expansion).
@@ -91,7 +89,15 @@ Answer rules:
 - Answer as a short checklist.
 - Where the operator should verify their own records before acting, say so explicitly.
 
-Answer:
+BEGIN FINAL OPERATING GUIDANCE
+- Answer only after this line.
+- Do not repeat the local context.
+- Do not repeat the source list.
+- Do not repeat the answer rules.
+- Do not reveal hidden chain-of-thought.
+- Give only the final checklist.
+
+
 ========================================================================
 
 ```
@@ -145,9 +151,9 @@ EVIDENCE CAPTURE PASSED (7 files)
 
 ### unittest discover — PASS
 ```
-.......................................................................................................................................................................................................
+......................................................................................................................................................................................................................
 ----------------------------------------------------------------------
-Ran 199 tests in 1.411s
+Ran 214 tests in 1.451s
 
 OK
 
