@@ -75,8 +75,10 @@ def _log(msg: str) -> None:
     sys.stderr.flush()
 
 
-def _new_job(advisor: str, question: str) -> dict:
+def _new_job(advisor: str, question: str, language: str = "en") -> dict:
     """Create and register a new job dict. Returns the job."""
+    from app import language_mode
+    lang_code = language_mode.normalize_language_code(language)
     job_id = secrets.token_hex(6)
     job = {
         "job_id": job_id,
@@ -84,6 +86,8 @@ def _new_job(advisor: str, question: str) -> dict:
         # Truncate for safety in logs/state; full question kept only in memory
         # for the duration of the job and never written to disk.
         "question": question,
+        "language_code": lang_code,
+        "language_label": language_mode.get_language_label(lang_code),
         "status": "queued",
         "step": 1,  # index into T.JOB_STEPS
         "answer": "",
@@ -203,13 +207,14 @@ def _status_detail() -> dict:
         "llama_binary": _llama_binary(),
         "retrieval_index_exists": db_path.is_file(),
         "locked_candidate": _locked_candidate(),
+        "response_language": "selectable (en/yo/ha/sw/pcm/fr)",
         "retrieval_grounded": True,
         "direct_answer": True,
         "local_only": True,
     }
 
 
-def _run_advisor_job(job_id: str, question: str) -> None:
+def _run_advisor_job(job_id: str, question: str, language: str = "en") -> None:
     """Run grounded inference for a job in a background thread.
 
     Updates the job's status/step as it progresses. Never raises into the
@@ -238,6 +243,7 @@ def _run_advisor_job(job_id: str, question: str) -> None:
             question,
             max_tokens=int(os.environ.get("AFREKAOS_UI_MAX_TOKENS", "256")),
             timeout_seconds=int(os.environ.get("AFREKAOS_UI_TIMEOUT", "150")),
+            language=language,
         )
 
         _set_job(job_id, step=6)  # Formatting answer
@@ -478,6 +484,7 @@ class Handler(BaseHTTPRequestHandler):
             raw_body = self.rfile.read(length) if length else b""
             params = parse_qs(raw_body.decode("utf-8", errors="replace"))
             question = (params.get("question", [""])[0] or "").strip()
+            language = (params.get("language", ["en"])[0] or "en").strip()
 
             heading = ADVISOR_HEADINGS.get(route)
             if heading is None:
@@ -502,11 +509,11 @@ class Handler(BaseHTTPRequestHandler):
                 return
 
             # Create a job and start a background worker. Redirect immediately.
-            job = _new_job(heading, question)
+            job = _new_job(heading, question, language=language)
             _log(f"Created job {job['job_id']}")
             t = threading.Thread(
                 target=_run_advisor_job,
-                args=(job["job_id"], question),
+                args=(job["job_id"], question, language),
                 daemon=True,
             )
             t.start()

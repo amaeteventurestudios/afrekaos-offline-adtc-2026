@@ -69,6 +69,13 @@ class TestAdvisorForm(unittest.TestCase):
         self.assertIn("<textarea", html_out)
         self.assertIn("name=\"question\"", html_out)
 
+    def test_includes_language_selector(self) -> None:
+        html_out = T.render_advisor_form("/advisor/daily", "H", "d", "x")
+        self.assertIn('select name="language"', html_out)
+        self.assertIn('value="en"', html_out)
+        self.assertIn('value="fr"', html_out)
+        self.assertIn('value="yo"', html_out)
+
     def test_includes_default_question(self) -> None:
         html_out = T.render_advisor_form("/x", "H", "d", "my default text")
         self.assertIn("my default text", html_out)
@@ -195,6 +202,11 @@ class TestLoadingFeedback(unittest.TestCase):
         self.assertIn("demoBtn1", html_out)
         self.assertIn(T.LOADING_BUTTON_TEXT, html_out)
 
+    def test_demo_forms_have_language_selector(self) -> None:
+        html_out = T.render_demo()
+        self.assertIn('select name="language"', html_out)
+        self.assertIn('value="fr"', html_out)
+
 
 class TestJobPage(unittest.TestCase):
     def _job(self, **over) -> dict:
@@ -311,6 +323,13 @@ class TestJobPage(unittest.TestCase):
         self.assertNotIn("You are AfrekaOS", html_out)
         self.assertNotIn("Local SME operations context", html_out)
         self.assertNotIn("Answer rules", html_out)
+
+    def test_job_page_shows_response_language(self) -> None:
+        html_out = T.render_job(
+            self._job(status="complete", step=7, answer="x", language_label="French")
+        )
+        self.assertIn("Response language:", html_out)
+        self.assertIn("French", html_out)
 
 
 class TestErrorPage(unittest.TestCase):

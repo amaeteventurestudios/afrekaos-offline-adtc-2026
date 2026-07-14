@@ -10,7 +10,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Optional
 
-from app import retrieval
+from app import language_mode, retrieval
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -71,16 +71,27 @@ def build_context_block(query: str, limit: int = 5) -> str:
     return "\n".join(lines)
 
 
-def build_grounded_prompt(user_question: str, limit: int = 5) -> str:
+def build_grounded_prompt(
+    user_question: str, limit: int = 5, language: str = "en"
+) -> str:
     """Assemble a full grounded prompt: role + context + question + rules.
 
     Does not call the model. The returned string is meant to be handed to a
     local runtime (e.g. llama-completion) by the caller.
 
+    ``language`` selects the response language (normalized via language_mode;
+    unknown codes fall back to English). The retrieved context remains English
+    in this version; only the answer language is controlled. There is no cloud
+    translation.
+
     The prompt ends with an explicit FINAL_GUIDANCE_DELIMITER so that if the
     runtime echoes the prompt back, extraction can keep only the text after the
     delimiter (the model's final operating guidance).
     """
+    lang_code = language_mode.normalize_language_code(language)
+    lang_label = language_mode.get_language_label(lang_code)
+    lang_instruction = language_mode.get_language_instruction(lang_code)
+
     context = build_context_block(user_question, limit=limit)
     rules = "\n".join(f"- {r}" for r in ANSWER_RULES)
     final_instr = "\n".join(f"- {r}" for r in FINAL_GUIDANCE_INSTRUCTIONS)
@@ -90,6 +101,13 @@ def build_grounded_prompt(user_question: str, limit: int = 5) -> str:
         f"{context}\n\n"
         f"Operator question:\n{user_question}\n\n"
         f"Answer rules:\n{rules}\n\n"
+        f"Response language: {lang_label}\n"
+        f"{lang_instruction}\n"
+        f"- Do not use cloud translation or any external translation service.\n"
+        f"- If a term is difficult to translate, use simple wording or keep "
+        f"the business term in English.\n"
+        f"- The retrieved context above may be in English; answer in the "
+        f"selected response language regardless.\n\n"
         f"{FINAL_GUIDANCE_DELIMITER}\n"
         f"{final_instr}\n\n"
     )

@@ -322,6 +322,43 @@ show customer names, bank records, payroll records, tax records, or private
 company data. No screenshots or video are fabricated; if a capture cannot be
 made automatically, the package leaves a manual-capture instruction instead.
 
+## Language Mode
+
+AfrekaOS supports six response languages. The operator selects one in the
+advisor UI; the local model answers in that language. **No cloud translation is
+used** — the model produces the localized answer directly.
+
+Supported languages:
+
+- English (default)
+- Yorùbá
+- Hausa
+- Swahili
+- Nigerian Pidgin
+- French (Francophone Africa)
+
+Notes:
+
+- The **retrieval corpus remains English** in this version. Retrieved context is
+  injected as English; only the *answer* language is controlled.
+- **Quality depends on the local model** (qwen3-1.7b). Smaller models may
+  produce mixed-language answers or leave difficult terms in English.
+- If a term has no clean translation, the model keeps it in English for clarity.
+- The operational boundary (not accounting/banking/payroll/tax/lending/ERP) is
+  enforced in every language.
+
+Validate the language configuration (no model required):
+
+```bash
+python3 scripts/smoke_language_mode.py
+```
+
+Optional live sample in a selected language (requires model + llama runtime):
+
+```bash
+AFREKAOS_QWEN_NO_THINK=1 python3 scripts/run_language_inference_sample.py fr
+```
+
 ## Repository layout
 
 ```

@@ -155,6 +155,19 @@ a correct, fast, offline model scores well and is easy to defend.
   final answer quality.** Grounding improves the answer; it is not the answer
   itself. Score the post-extraction `clean_answer`, not the raw echoed stream.
 
+## Language mode note (Task 006A)
+
+- **Language mode supports demo and operator accessibility.** A selectable
+  response language (English, Yorùbá, Hausa, Swahili, Nigerian Pidgin, French)
+  broadens who can use the copilot.
+- **Automated scoring still depends on model/runtime behavior.** The language
+  configuration is validated model-free; actual multilingual answer quality is a
+  runtime property.
+- **Multilingual answers should be evaluated as user-facing quality**, not as a
+  separate benchmark unless explicitly tested with the model.
+- **Do not claim perfect translation.** Difficult terms may remain in English;
+  the local model determines quality. No cloud translation is used.
+
 ## Final evaluation note (Task 005A)
 
 - Final validation (`scripts/final_validation.py`) confirms **repo health and

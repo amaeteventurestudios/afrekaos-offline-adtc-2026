@@ -585,6 +585,42 @@ is conservative — only known control markers are removed, never SME terms.
 
 **No new product features or dependencies were added.** Standard library only.
 
+## Task 006A — Language Mode
+
+AfrekaOS now supports controlled multilingual responses in six languages:
+English, Yorùbá, Hausa, Swahili, Nigerian Pidgin, and French.
+
+**HyveGrid discipline reused conceptually.** A HyveGrid Offline repo exists
+locally; its language architecture (registry, controlled labels, glossary,
+fallback, prompt instructions) was ported as a *pattern only* — no bee/hive/
+apiculture content, product names, or UI wording was copied.
+
+**What was added.** `app/language_mode.py` (6-language registry, normalization
+with English fallback, per-language response instructions); glossary files under
+`data/language/` for each language; language support in
+`build_grounded_prompt`/`build_ungrounded_prompt`/`run_grounded`/`run_ungrounded`
+(injecting the response-language instruction + "no cloud translation" rule); a
+`<select name="language">` on advisor and demo forms (works without JS); the job
+page shows "Response language: <label>"; `scripts/smoke_language_mode.py`
+(model-free validation + prompt previews) and `scripts/run_language_inference_sample.py`
+(optional live sample).
+
+**Why French.** Francophone West and Central Africa — extends the operator base
+with clear, simple business French.
+
+**Retrieval remains English** for now. The FTS5 corpus is English; retrieved
+context is injected as English and only the *answer* language is controlled.
+Parallel non-English corpus notes are deferred to later work.
+
+**No cloud translation** was added. No Google Translate, no external API, no
+network calls. The local model produces the localized answer directly.
+
+**Limitations.** Quality depends on the local model (qwen3-1.7b); smaller
+models may mix languages or leave difficult terms in English. We do not claim
+perfect translation. The operational boundary is enforced in every language.
+
+**No external dependencies were added.** Standard library only.
+
 ## Task 005A — Final Evaluation Package
 
 This task created the final evaluation package, validation runner, and

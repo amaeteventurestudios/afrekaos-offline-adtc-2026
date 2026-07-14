@@ -45,6 +45,9 @@ textarea { width:100%; min-height:110px; background:#0b0d11; color:var(--text);
            border:1px solid var(--border); border-radius:8px; padding:.7rem;
            font-size:.95rem; resize:vertical; }
 textarea:focus { outline:none; border-color:var(--accent); }
+select { width:100%; background:#0b0d11; color:var(--text); border:1px solid var(--border);
+         border-radius:8px; padding:.55rem; font-size:.95rem; margin-top:.3rem; }
+select:focus { outline:none; border-color:var(--accent); }
 button { background:var(--accent); color:#06120c; border:none; border-radius:8px;
          padding:.6rem 1.2rem; font-size:.95rem; font-weight:600; cursor:pointer;
          margin-top:.7rem; }
@@ -92,7 +95,43 @@ footer { margin-top:2rem; color:var(--muted); font-size:.8rem;
 <h2 style="margin-top:0">Demo Scenarios</h2>
 <p class="meta">Ready-made SME operations scenarios. Click "Run this scenario" to submit the prompt to the matching advisor. Answers are retrieval-grounded and local-only.</p>
 <div class="cards">
-<div class="card"><span class="card-tag">Scenario 1</span><h2>Low sales, stockout, supplier delay</h2><p><em>Daily Operations Advisor</em></p><p>A small shop has lower sales than usual, two fast-moving items are out of stock, the supplier delivery is delayed, and more customers are asking for credit. Give a short operating checklist.</p><form method="POST" action="/advisor/daily"><textarea name="question" style="display:none;">A small shop has lower sales than usual, two fast-moving items are out of stock, the supplier delivery is delayed, and more customers are asking for credit. Give a short operating checklist.</textarea><button id="demoBtn1" type="submit">Run this scenario</button><div id="loadingMsg1" class="meta" style="display:none;margin-top:.6rem;font-size:.8rem;">AfrekaOS received your question. It is building local retrieval context and running the local model. This can take 30 to 90 seconds on CPU-only hardware.</div></form></div><div class="card"><span class="card-tag">Scenario 2</span><h2>Expansion readiness</h2><p><em>Daily Operations Advisor</em></p><p>A market operator wants to expand from one location to two locations but has irregular cash records, one trusted staff member, seasonal customer demand, and limited working capital. What should they check before expanding?</p><form method="POST" action="/advisor/daily"><textarea name="question" style="display:none;">A market operator wants to expand from one location to two locations but has irregular cash records, one trusted staff member, seasonal customer demand, and limited working capital. What should they check before expanding?</textarea><button id="demoBtn2" type="submit">Run this scenario</button><div id="loadingMsg2" class="meta" style="display:none;margin-top:.6rem;font-size:.8rem;">AfrekaOS received your question. It is building local retrieval context and running the local model. This can take 30 to 90 seconds on CPU-only hardware.</div></form></div><div class="card"><span class="card-tag">Scenario 3</span><h2>Inventory pressure</h2><p><em>Inventory and Stock Check</em></p><p>A small retailer has too much slow-moving stock, three fast-moving items are almost finished, and supplier lead times have become unreliable. What should the operator do this week?</p><form method="POST" action="/advisor/inventory"><textarea name="question" style="display:none;">A small retailer has too much slow-moving stock, three fast-moving items are almost finished, and supplier lead times have become unreliable. What should the operator do this week?</textarea><button id="demoBtn3" type="submit">Run this scenario</button><div id="loadingMsg3" class="meta" style="display:none;margin-top:.6rem;font-size:.8rem;">AfrekaOS received your question. It is building local retrieval context and running the local model. This can take 30 to 90 seconds on CPU-only hardware.</div></form></div><div class="card"><span class="card-tag">Scenario 4</span><h2>Cash pressure and customer credit</h2><p><em>Cashflow Pressure Coach</em></p><p>A small business has cash pressure, more customers asking to buy on credit, unpaid balances from last month, and upcoming supplier payments. What should the owner review before accepting more credit sales?</p><form method="POST" action="/advisor/cashflow"><textarea name="question" style="display:none;">A small business has cash pressure, more customers asking to buy on credit, unpaid balances from last month, and upcoming supplier payments. What should the owner review before accepting more credit sales?</textarea><button id="demoBtn4" type="submit">Run this scenario</button><div id="loadingMsg4" class="meta" style="display:none;margin-top:.6rem;font-size:.8rem;">AfrekaOS received your question. It is building local retrieval context and running the local model. This can take 30 to 90 seconds on CPU-only hardware.</div></form></div>
+<div class="card"><span class="card-tag">Scenario 1</span><h2>Low sales, stockout, supplier delay</h2><p><em>Daily Operations Advisor</em></p><p>A small shop has lower sales than usual, two fast-moving items are out of stock, the supplier delivery is delayed, and more customers are asking for credit. Give a short operating checklist.</p><form method="POST" action="/advisor/daily"><textarea name="question" style="display:none;">A small shop has lower sales than usual, two fast-moving items are out of stock, the supplier delivery is delayed, and more customers are asking for credit. Give a short operating checklist.</textarea><div class="label">Response language</div>
+<select name="language">
+<option value="en" selected>English</option>
+<option value="fr">French</option>
+<option value="ha">Hausa</option>
+<option value="pcm">Nigerian Pidgin</option>
+<option value="sw">Swahili</option>
+<option value="yo">Yorùbá</option>
+</select>
+<button id="demoBtn1" type="submit">Run this scenario</button><div id="loadingMsg1" class="meta" style="display:none;margin-top:.6rem;font-size:.8rem;">AfrekaOS received your question. It is building local retrieval context and running the local model. This can take 30 to 90 seconds on CPU-only hardware.</div></form></div><div class="card"><span class="card-tag">Scenario 2</span><h2>Expansion readiness</h2><p><em>Daily Operations Advisor</em></p><p>A market operator wants to expand from one location to two locations but has irregular cash records, one trusted staff member, seasonal customer demand, and limited working capital. What should they check before expanding?</p><form method="POST" action="/advisor/daily"><textarea name="question" style="display:none;">A market operator wants to expand from one location to two locations but has irregular cash records, one trusted staff member, seasonal customer demand, and limited working capital. What should they check before expanding?</textarea><div class="label">Response language</div>
+<select name="language">
+<option value="en" selected>English</option>
+<option value="fr">French</option>
+<option value="ha">Hausa</option>
+<option value="pcm">Nigerian Pidgin</option>
+<option value="sw">Swahili</option>
+<option value="yo">Yorùbá</option>
+</select>
+<button id="demoBtn2" type="submit">Run this scenario</button><div id="loadingMsg2" class="meta" style="display:none;margin-top:.6rem;font-size:.8rem;">AfrekaOS received your question. It is building local retrieval context and running the local model. This can take 30 to 90 seconds on CPU-only hardware.</div></form></div><div class="card"><span class="card-tag">Scenario 3</span><h2>Inventory pressure</h2><p><em>Inventory and Stock Check</em></p><p>A small retailer has too much slow-moving stock, three fast-moving items are almost finished, and supplier lead times have become unreliable. What should the operator do this week?</p><form method="POST" action="/advisor/inventory"><textarea name="question" style="display:none;">A small retailer has too much slow-moving stock, three fast-moving items are almost finished, and supplier lead times have become unreliable. What should the operator do this week?</textarea><div class="label">Response language</div>
+<select name="language">
+<option value="en" selected>English</option>
+<option value="fr">French</option>
+<option value="ha">Hausa</option>
+<option value="pcm">Nigerian Pidgin</option>
+<option value="sw">Swahili</option>
+<option value="yo">Yorùbá</option>
+</select>
+<button id="demoBtn3" type="submit">Run this scenario</button><div id="loadingMsg3" class="meta" style="display:none;margin-top:.6rem;font-size:.8rem;">AfrekaOS received your question. It is building local retrieval context and running the local model. This can take 30 to 90 seconds on CPU-only hardware.</div></form></div><div class="card"><span class="card-tag">Scenario 4</span><h2>Cash pressure and customer credit</h2><p><em>Cashflow Pressure Coach</em></p><p>A small business has cash pressure, more customers asking to buy on credit, unpaid balances from last month, and upcoming supplier payments. What should the owner review before accepting more credit sales?</p><form method="POST" action="/advisor/cashflow"><textarea name="question" style="display:none;">A small business has cash pressure, more customers asking to buy on credit, unpaid balances from last month, and upcoming supplier payments. What should the owner review before accepting more credit sales?</textarea><div class="label">Response language</div>
+<select name="language">
+<option value="en" selected>English</option>
+<option value="fr">French</option>
+<option value="ha">Hausa</option>
+<option value="pcm">Nigerian Pidgin</option>
+<option value="sw">Swahili</option>
+<option value="yo">Yorùbá</option>
+</select>
+<button id="demoBtn4" type="submit">Run this scenario</button><div id="loadingMsg4" class="meta" style="display:none;margin-top:.6rem;font-size:.8rem;">AfrekaOS received your question. It is building local retrieval context and running the local model. This can take 30 to 90 seconds on CPU-only hardware.</div></form></div>
 </div>
 <script>
 (function(){

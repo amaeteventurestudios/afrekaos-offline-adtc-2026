@@ -277,6 +277,34 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [x] Final validation PASS; `smoke_web` PASS; `smoke_submit_flow` PASS; full
       unittest (227 tests) PASS.
 
+### 006A — Language mode (complete)
+
+- [x] Language config module: `app/language_mode.py` — 6 languages
+      (en/yo/ha/sw/pcm/fr), `normalize_language_code` (English fallback + aliases),
+      `get_language_label`, `get_language_native`, `get_language_instruction`,
+      `is_supported_language`, `language_summary`.
+- [x] Glossary files under `data/language/`: english/yoruba/hausa/swahili/
+      pidgin/french SME terms + `language_mode_notes.md`.
+- [x] Prompt builder: `build_grounded_prompt(user_question, limit, language)`
+      injects response-language label + instruction + no-cloud-translation rule;
+      keeps `BEGIN FINAL OPERATING GUIDANCE` delimiter.
+- [x] Model inference: `build_ungrounded_prompt(language)`, `run_ungrounded(
+      language)`, `run_grounded(language)` pass language through; result dict
+      carries `language_code`/`language_label`.
+- [x] Web UI: `<select name="language">` on advisor forms + demo forms (works
+      without JS); job page shows "Response language: <label>"; runtime status
+      notes response language is selectable.
+- [x] `scripts/smoke_language_mode.py` — model-free validation + 6 prompt
+      previews under `artifacts/eval/task-006A-language-mode/`. PASS.
+- [x] `scripts/run_language_inference_sample.py` — optional live sample
+      (manual; fails gracefully without model).
+- [x] Tests added: `tests/test_language_mode.py` (registry, normalize, labels,
+      instructions, fallback, summary), `tests/test_prompt_context.py`
+      (language in grounded prompt), `tests/test_web_templates.py` (selector
+      in advisor + demo forms, job page response language).
+- [x] Final validation PASS; `smoke_web` PASS; `smoke_submit_flow` PASS;
+      `smoke_language_mode` PASS; full unittest (251 tests) PASS.
+
 ### 005A — Final evaluation package (complete)
 
 - [x] `scripts/final_validation.py` — runs all checks + unittest; writes

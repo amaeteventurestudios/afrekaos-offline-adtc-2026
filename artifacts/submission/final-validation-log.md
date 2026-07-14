@@ -1,6 +1,6 @@
 # Final Validation Log — AfrekaOS Offline (Task 005A)
 
-- **Date/time:** 2026-07-14 02:41:42 UTC
+- **Date/time:** 2026-07-14 17:33:36 UTC
 - **Overall:** PASS
 - **pytest available:** False
 - **Model inference required:** no (all checks are non-inference)
@@ -52,14 +52,14 @@ CANDIDATES CHECK PASSED
 AfrekaOS retrieval index built
 ----------------------------------------
 database path    : /Users/amaeteumanah/Desktop/Projects/afrekaos-offline-adtc-2026/data/afrekaos_fts.sqlite
-documents indexed : 8
+documents indexed : 15
 FTS5 available    : True
 source directories:
   - /Users/amaeteumanah/Desktop/Projects/afrekaos-offline-adtc-2026/data/sme_operations
   - /Users/amaeteumanah/Desktop/Projects/afrekaos-offline-adtc-2026/data/language
   - /Users/amaeteumanah/Desktop/Projects/afrekaos-offline-adtc-2026/data/sources
 documents by category:
-  - language: 1
+  - language: 8
   - sme_operations: 6
   - sources: 1
 
@@ -67,11 +67,12 @@ documents by category:
 
 ### query_retrieval — PASS
 ```
-/staffing.md
+tions)
+     path  : data/sme_operations/staffing.md
      snippet: ...stomer or private data. ## Concept Most small operators rely on a very small number of trusted staff. Coverage, delegation, and trust are the real constraints — not headcount. Expa...
-  4. [language] Yoruba mode — design placeholder
-     path  : data/language/yoruba_mode.md
-     snippet: ...erage for the two test-prompt families (daily triage, expansion readiness)? ## Status Placeholder. Deferred to a later task. The `data/language/` directory exists so language-mode ...
+  4. [sme_operations] Cashflow (SME operations)
+     path  : data/sme_operations/cashflow.md
+     snippet: # Cashflow (SME operations) > Public, challenge-safe placeholder notes. No customer or private data. ## Concept Cashflow pressure is about tim...
   5. [sme_operations] Supplier (SME operations)
      path  : data/sme_operations/supplier.md
      snippet: ...in stock). ## What to avoid - Promising customers restock dates based on the supplier's best case. - Burning the supplier relationship over a single delay. - Carrying no buffer for...
@@ -80,14 +81,15 @@ documents by category:
 
 ### preview_grounded_prompt — PASS
 ```
-Answer rules:
-- Give practical, concrete operating steps.
-- Stay strictly on SME operations (inventory, cashflow, credit, supplier, staffing, expansion).
-- Do NOT make accounting, banking, payroll, tax-filing, or ERP claims.
-- Do NOT invent facts. If records or numbers are needed, say so.
-- Do NOT include hidden chain-of-thought or a <think> block. Answer directly.
+ght or a <think> block. Answer directly.
 - Answer as a short checklist.
 - Where the operator should verify their own records before acting, say so explicitly.
+
+Response language: English
+Answer in clear, simple English.
+- Do not use cloud translation or any external translation service.
+- If a term is difficult to translate, use simple wording or keep the business term in English.
+- The retrieved context above may be in English; answer in the selected response language regardless.
 
 BEGIN FINAL OPERATING GUIDANCE
 - Answer only after this line.
@@ -124,8 +126,8 @@ PROMPT-1 GROUNDING VERDICT: PASS
 ### smoke_web — PASS
 ```
 [ok] server is healthy
-[ok] / -> 200 (6813 bytes)
-[ok] /status -> 200 (6982 bytes)
+[ok] / -> 200 (7046 bytes)
+[ok] /status -> 200 (7216 bytes)
 [ok] /health -> 200 (204 bytes)
 [ok] /health is valid JSON: ok=True
 
@@ -137,12 +139,12 @@ SMOKE TEST PASSED
 ```
 [ok] server healthy
 [ok] /health -> 200 (valid JSON)
-[ok] / -> 200 (6813 bytes) -> home.html
-[ok] /demo -> 200 (10402 bytes) -> demo.html
-[ok] /advisor/daily -> 200 (6791 bytes) -> advisor-daily.html
-[ok] /advisor/inventory -> 200 (6815 bytes) -> advisor-inventory.html
-[ok] /advisor/cashflow -> 200 (6835 bytes) -> advisor-cashflow.html
-[ok] /status -> 200 (6982 bytes) -> status.html
+[ok] / -> 200 (7046 bytes) -> home.html
+[ok] /demo -> 200 (11867 bytes) -> demo.html
+[ok] /advisor/daily -> 200 (7332 bytes) -> advisor-daily.html
+[ok] /advisor/inventory -> 200 (7356 bytes) -> advisor-inventory.html
+[ok] /advisor/cashflow -> 200 (7376 bytes) -> advisor-cashflow.html
+[ok] /status -> 200 (7216 bytes) -> status.html
 [inference] skipped (set AFREKAOS_CAPTURE_INFERENCE=1 to enable)
 
 EVIDENCE CAPTURE PASSED (7 files)
@@ -151,9 +153,9 @@ EVIDENCE CAPTURE PASSED (7 files)
 
 ### unittest discover — PASS
 ```
-...................................................................................................................................................................................................................................
+...........................................................................................................................................................................................................................................................
 ----------------------------------------------------------------------
-Ran 227 tests in 1.521s
+Ran 251 tests in 1.547s
 
 OK
 

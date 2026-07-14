@@ -95,5 +95,35 @@ class TestPromptContext(unittest.TestCase):
         self.assertIn("<think>", prompt)
 
 
+class TestGroundedPromptLanguage(unittest.TestCase):
+    def test_default_language_is_english(self) -> None:
+        prompt = prompt_context.build_grounded_prompt("anything")
+        self.assertIn("Response language: English", prompt)
+
+    def test_french_prompt_has_french_label_and_instruction(self) -> None:
+        prompt = prompt_context.build_grounded_prompt("anything", language="fr")
+        self.assertIn("Response language: French", prompt)
+        self.assertIn("French", prompt)
+
+    def test_pidgin_prompt_has_pidgin_instruction(self) -> None:
+        prompt = prompt_context.build_grounded_prompt("anything", language="pcm")
+        self.assertIn("Response language: Nigerian Pidgin", prompt)
+        self.assertIn("Pidgin", prompt)
+
+    def test_unknown_language_falls_back_to_english(self) -> None:
+        prompt = prompt_context.build_grounded_prompt("anything", language="zz")
+        self.assertIn("Response language: English", prompt)
+
+    def test_prompt_has_no_cloud_translation(self) -> None:
+        for code in ("en", "yo", "ha", "sw", "pcm", "fr"):
+            prompt = prompt_context.build_grounded_prompt("anything", language=code)
+            self.assertIn("cloud translation", prompt.lower())
+
+    def test_prompt_has_delimiter(self) -> None:
+        for code in ("en", "yo", "ha", "sw", "pcm", "fr"):
+            prompt = prompt_context.build_grounded_prompt("anything", language=code)
+            self.assertIn(prompt_context.FINAL_GUIDANCE_DELIMITER, prompt)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -333,18 +333,30 @@ def extract_visible_answer(
     }
 
 
-def build_ungrounded_prompt(user_question: str) -> str:
+def build_ungrounded_prompt(
+    user_question: str, language: str = "en"
+) -> str:
     """Build a direct-answer prompt WITHOUT retrieved context.
 
     Still includes the AfrekaOS role and answer rules so the only variable
     between ungrounded and grounded is the local context block. Uses the same
     FINAL_GUIDANCE_DELIMITER so extraction can strip any echoed prompt.
+    ``language`` selects the response language (normalized; English fallback).
     """
+    from app import language_mode
+    lang_code = language_mode.normalize_language_code(language)
+    lang_label = language_mode.get_language_label(lang_code)
+    lang_instruction = language_mode.get_language_instruction(lang_code)
     rules = "\n".join(f"- {r}" for r in prompt_context.ANSWER_RULES)
     return (
         f"{prompt_context.ROLE_LINE}\n\n"
         f"Operator question:\n{user_question}\n\n"
         f"Answer rules:\n{rules}\n\n"
+        f"Response language: {lang_label}\n"
+        f"{lang_instruction}\n"
+        f"- Do not use cloud translation or any external translation service.\n"
+        f"- Do not repeat these instructions.\n"
+        f"- Output only the final checklist.\n\n"
         f"{prompt_context.FINAL_GUIDANCE_DELIMITER}\n"
         "- Do not repeat these instructions.\n"
         "- Output only the final checklist.\n\n"
@@ -393,6 +405,8 @@ def run_model(
         "prompt_echo_detected": False,
         "prompt_echo_stripped": False,
         "extraction_warning": "",
+        "language_code": "en",
+        "language_label": "English",
         "error": None,
     }
 
@@ -476,15 +490,21 @@ def run_ungrounded(
     output_path: Optional[str] = None,
     max_tokens: int = 384,
     timeout_seconds: int = 120,
+    language: str = "en",
 ) -> dict:
     """Run an ungrounded (no retrieval) direct-answer prompt."""
-    prompt = _maybe_no_think(build_ungrounded_prompt(user_question))
-    return run_model(
+    from app import language_mode
+    lang_code = language_mode.normalize_language_code(language)
+    prompt = _maybe_no_think(build_ungrounded_prompt(user_question, language=lang_code))
+    result = run_model(
         prompt,
         output_path=output_path,
         max_tokens=max_tokens,
         timeout_seconds=timeout_seconds,
     )
+    result["language_code"] = lang_code
+    result["language_label"] = language_mode.get_language_label(lang_code)
+    return result
 
 
 def run_grounded(
@@ -493,16 +513,24 @@ def run_grounded(
     retrieval_limit: int = 5,
     max_tokens: int = 384,
     timeout_seconds: int = 120,
+    language: str = "en",
 ) -> dict:
     """Run a retrieval-grounded prompt."""
-    grounded = prompt_context.build_grounded_prompt(user_question, limit=retrieval_limit)
+    from app import language_mode
+    lang_code = language_mode.normalize_language_code(language)
+    grounded = prompt_context.build_grounded_prompt(
+        user_question, limit=retrieval_limit, language=lang_code
+    )
     prompt = _maybe_no_think(grounded)
-    return run_model(
+    result = run_model(
         prompt,
         output_path=output_path,
         max_tokens=max_tokens,
         timeout_seconds=timeout_seconds,
     )
+    result["language_code"] = lang_code
+    result["language_label"] = language_mode.get_language_label(lang_code)
+    return result
 
 
 def inference_summary() -> dict:

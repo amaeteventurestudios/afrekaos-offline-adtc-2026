@@ -52,6 +52,9 @@ textarea { width:100%; min-height:110px; background:#0b0d11; color:var(--text);
            border:1px solid var(--border); border-radius:8px; padding:.7rem;
            font-size:.95rem; resize:vertical; }
 textarea:focus { outline:none; border-color:var(--accent); }
+select { width:100%; background:#0b0d11; color:var(--text); border:1px solid var(--border);
+         border-radius:8px; padding:.55rem; font-size:.95rem; margin-top:.3rem; }
+select:focus { outline:none; border-color:var(--accent); }
 button { background:var(--accent); color:#06120c; border:none; border-radius:8px;
          padding:.6rem 1.2rem; font-size:.95rem; font-weight:600; cursor:pointer;
          margin-top:.7rem; }
@@ -134,6 +137,30 @@ def _loading_script(button_id: str = "submitBtn") -> str:
         "  });\n"
         "})();\n"
         "</script>\n"
+    )
+
+
+def _language_selector(selected: str = "en") -> str:
+    """Render a language <select> for advisor/demo forms.
+
+    Works without JavaScript (plain form POST). Uses name="language". Defaults
+    to English. Imported lazily so the template module stays import-safe even
+    before language_mode is fully wired.
+    """
+    from app import language_mode as lm
+    langs = lm.get_supported_languages()
+    options = []
+    for code in sorted(langs):
+        v = langs[code]
+        sel = " selected" if code == selected else ""
+        options.append(
+            f'<option value="{code}"{sel}>{_esc(v["label"])}</option>'
+        )
+    return (
+        '<div class="label">Response language</div>\n'
+        '<select name="language">\n'
+        + "\n".join(options) + "\n"
+        "</select>\n"
     )
 
 
@@ -253,6 +280,7 @@ def render_advisor_form(
         f'<div class="label">Your operations question</div>\n'
         f'<textarea name="question" placeholder="{_esc(placeholder)}">'
         f"{_esc(default_question)}</textarea>\n"
+        f"{_language_selector()}"
         '<button id="submitBtn" type="submit">Get operating guidance</button>\n'
         f'<div id="loadingMsg" class="meta" style="display:none;'
         f'margin-top:.8rem;">{_esc(LOADING_MESSAGE)}</div>\n'
@@ -379,6 +407,7 @@ def render_demo() -> str:
             f'<p>{_esc(prompt)}</p>'
             f'<form method="POST" action="{_esc(action)}">'
             f'<textarea name="question" style="display:none;">{_esc(prompt)}</textarea>'
+            f"{_language_selector()}"
             f'<button id="{btn_id}" type="submit">Run this scenario</button>'
             f'<div id="loadingMsg{i}" class="meta" style="display:none;'
             f'margin-top:.6rem;font-size:.8rem;">{_esc(LOADING_MESSAGE)}</div>'
@@ -496,6 +525,13 @@ def render_job(
     parts.append(
         f'<div class="label">Job {job.get("job_id", "")} · {status_pill}</div>\n'
     )
+
+    # Response language (if set on the job).
+    lang_label = job.get("language_label")
+    if lang_label:
+        parts.append(
+            f'<p class="meta">Response language: <strong>{_esc(lang_label)}</strong></p>\n'
+        )
 
     # Step list with current highlighted.
     parts.append('<ol class="steps">\n')
