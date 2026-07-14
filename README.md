@@ -399,6 +399,11 @@ the final operating guidance (the runtime summary will note
 `prompt_echo_stripped=True` when this happens). This is handled automatically;
 no operator action is needed.
 
+**If answer text shows runtime markers such as `</think>` or `[end of text]`,**
+run final validation (`python3 scripts/final_validation.py`). These Qwen/llama.cpp
+markers should be stripped automatically by the answer extractor; if they
+appear, the extraction path needs updating.
+
 ## Basic setup (placeholders)
 
 There is no runnable app yet. For repo hygiene only:

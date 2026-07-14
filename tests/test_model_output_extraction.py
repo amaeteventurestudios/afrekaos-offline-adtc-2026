@@ -107,6 +107,78 @@ class TestExtractVisibleAnswer(unittest.TestCase):
         self.assertNotIn("sampler", r["clean_answer"])
 
 
+class TestRuntimeMarkerCleanup(unittest.TestCase):
+    """Qwen/llama.cpp runtime markers must not appear in the visible answer."""
+
+    def setUp(self) -> None:
+        self.eva = model_inference.extract_visible_answer
+
+    def test_leading_close_think_removed(self) -> None:
+        r = self.eva("</think>\n- Check inventory")
+        self.assertEqual(r["clean_answer"], "- Check inventory")
+        self.assertNotIn("</think>", r["clean_answer"])
+
+    def test_empty_think_block_removed(self) -> None:
+        r = self.eva("<think>\n\n</think>\n- Check inventory")
+        self.assertEqual(r["clean_answer"], "- Check inventory")
+
+    def test_inline_end_of_text_removed(self) -> None:
+        r = self.eva("- Check inventory [end of text]")
+        self.assertEqual(r["clean_answer"], "- Check inventory")
+        self.assertNotIn("[end of text]", r["clean_answer"])
+
+    def test_trailing_end_of_text_removed(self) -> None:
+        r = self.eva("- Check inventory\n[end of text]")
+        self.assertEqual(r["clean_answer"], "- Check inventory")
+
+    def test_close_think_and_end_of_text_together(self) -> None:
+        r = self.eva("</think>\n- Check supplier\n[end of text]")
+        self.assertEqual(r["clean_answer"], "- Check supplier")
+
+    def test_endoftext_token_removed(self) -> None:
+        r = self.eva("<|endoftext|>\n- Check cash")
+        self.assertEqual(r["clean_answer"], "- Check cash")
+        self.assertNotIn("<|endoftext|>", r["clean_answer"])
+
+    def test_im_end_token_removed(self) -> None:
+        r = self.eva("- Check credit\n<|im_end|>")
+        self.assertEqual(r["clean_answer"], "- Check credit")
+
+    def test_end_of_turn_removed(self) -> None:
+        r = self.eva("[end of turn]\n- Check records")
+        self.assertEqual(r["clean_answer"], "- Check records")
+
+    def test_lone_close_think_not_a_trap(self) -> None:
+        r = self.eva("</think>\n- Check inventory")
+        self.assertFalse(r["think_trap"])
+
+    def test_clean_answer_chars_matches_length(self) -> None:
+        r = self.eva("</think>\n- Check supplier\n[end of text]")
+        self.assertEqual(r["clean_answer_chars"], len(r["clean_answer"]))
+
+    def test_numbered_list_and_bullets_preserved(self) -> None:
+        raw = (
+            "</think>\n1. Restock items.\n2. Call supplier.\n"
+            "   - sub-point A\n   - sub-point B\n[end of text]"
+        )
+        r = self.eva(raw)
+        self.assertIn("1. Restock items.", r["clean_answer"])
+        self.assertIn("- sub-point A", r["clean_answer"])
+        self.assertNotIn("[end of text]", r["clean_answer"])
+        self.assertNotIn("</think>", r["clean_answer"])
+
+    def test_real_unclosed_think_still_trapped(self) -> None:
+        raw = "<think>hidden reasoning " + "x " * 30
+        r = self.eva(raw)
+        self.assertTrue(r["think_trap"])
+
+    def test_excessive_blank_lines_collapsed(self) -> None:
+        raw = "</think>\n\n\n\n- Check inventory"
+        r = self.eva(raw)
+        self.assertEqual(r["clean_answer"], "- Check inventory")
+        self.assertNotIn("\n\n\n", r["clean_answer"])
+
+
 class TestRunModelFields(unittest.TestCase):
     """run_model's result dict must carry the new structured fields. We test
     the dict shape without invoking the model by calling the field defaults."""

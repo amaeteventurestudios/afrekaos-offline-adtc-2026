@@ -79,6 +79,31 @@ def _qwen_extra_args(binary: str) -> list[str]:
     return args
 
 
+# Leftover Qwen / llama.cpp runtime control markers that can leak into the
+# visible answer when the model emits a closing tag or an EOS token as text.
+# These are removed by _clean_runtime_markers() before the answer is shown.
+_RUNTIME_MARKERS_RE = re.compile(
+    r"</think>|<think>|<think\s*/>|"
+    r"\[end of text\]|\[end of turn\]|"
+    r"<\|endoftext\|>|<\|im_end\|>|<\|im_start\|>",
+    re.IGNORECASE,
+)
+
+
+def _clean_runtime_markers(text: str) -> str:
+    """Remove leftover Qwen/runtime control markers and normalize whitespace.
+
+    Removes: lone </think>, lone <think>, empty <think></think> remnants,
+    [end of text], [end of turn], <|endoftext|>, <|im_end|>, <|im_start|>.
+    Then collapses 3+ consecutive newlines down to 2 and trims the result.
+    Does NOT remove real business guidance, bullets, or numbered lists.
+    """
+    out = _RUNTIME_MARKERS_RE.sub("", text)
+    # Collapse excessive blank lines caused by marker removal (3+ newlines -> 2).
+    out = re.sub(r"\n{3,}", "\n\n", out)
+    return out.strip()
+
+
 # Markers that indicate the model/runtime echoed the prompt back into stdout.
 # If any of these appear, the answer panel would otherwise show role/context/
 # rules/source-paths instead of the final operating guidance.
@@ -238,6 +263,11 @@ def extract_visible_answer(
     think_trap = bool(unclosed_with_content)
     # Now drop the unclosed block from the answer text.
     stripped = re.sub(r"<think>.*", "", stripped, flags=re.DOTALL)
+
+    # Remove leftover Qwen/runtime control markers (lone </think>, [end of
+    # text], <|endoftext|>, etc.) that leak into the visible answer, and
+    # normalize blank lines caused by their removal.
+    stripped = _clean_runtime_markers(stripped)
 
     # Remove llama.cpp log lines from the visible portion. Line-based filtering
     # keyed on the log-line SHAPE (timestamp + I/W/L, or I/W/L + log prefix, or

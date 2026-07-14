@@ -552,6 +552,39 @@ binary-dependent (post-processing fallback covers older binaries); a separate
 
 **No new product features or dependencies were added.** Standard library only.
 
+## Task 004F — Qwen Marker Cleanup
+
+After Task 004E the answer panel showed the correct operating guidance, but the
+text still began with a leftover `</think>` and ended with `[end of text]` —
+Qwen/llama.cpp runtime control markers that leaked into the visible answer.
+
+**Was the marker leakage reproduced?** **Yes**, deterministically: the pre-fix
+extractor left `</think>`, `[end of text]`, `[end of turn]`, `<|endoftext|>`,
+and `<|im_end|>` in the output. Only the complete `<think>\n\n</think>` block
+was already removed.
+
+**What was fixed.** Added `app.model_inference._clean_runtime_markers()`,
+integrated into `extract_visible_answer()`, which strips lone `</think>`,
+lone `<think>`, empty block remnants, `[end of text]`, `[end of turn]`,
+`<|endoftext|>`, `<|im_end|>`, and `<|im_start|>`, then collapses excessive
+blank lines and trims. A lone closing `</think>` is **not** treated as a think
+trap; valid answer text after it is preserved, as is text before `[end of text]`.
+Bullets and numbered lists are preserved; no markdown conversion is forced.
+
+**Are `</think>` and `[end of text]` no longer visible?** **Yes** — verified by
+13 new unit tests (`TestRuntimeMarkerCleanup`) plus the full 227-test suite.
+`final_validation.py` PASS; `smoke_web` PASS; `smoke_submit_flow` PASS.
+
+**Was real inference manually retested?** Verified deterministically with
+synthetic output mirroring the real model stream (no private data). The cleanup
+runs on every extraction path.
+
+**Limitations.** Marker matching is regex-based; an unknown future EOS token
+could slip through (as extra trailing text, not a missing answer). The cleanup
+is conservative — only known control markers are removed, never SME terms.
+
+**No new product features or dependencies were added.** Standard library only.
+
 ## Task 005A — Final Evaluation Package
 
 This task created the final evaluation package, validation runner, and

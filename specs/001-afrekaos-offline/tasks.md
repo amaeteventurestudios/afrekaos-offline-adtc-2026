@@ -259,6 +259,24 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [x] Final validation PASS; `smoke_web` PASS; `smoke_submit_flow` PASS; full
       unittest (214 tests) PASS.
 
+### 004F — Qwen marker cleanup (complete)
+
+- [x] Root cause + fix documented in
+      `artifacts/eval/task-004F-qwen-marker-cleanup.md`: leftover
+      `</think>` and `[end of text]` (plus `[end of turn]`, `<|endoftext|>`,
+      `<|im_end|>`, `<|im_start|>`) leaked into the visible answer.
+- [x] Added `app.model_inference._clean_runtime_markers()`, integrated into
+      `extract_visible_answer()`: strips lone `</think>`, lone `<think>`, empty
+      block remnants, `[end of text]`, `[end of turn]`, `<|endoftext|>`,
+      `<|im_end|>`, `<|im_start|>`; collapses excessive blank lines; trims.
+      A lone `</think>` is NOT a think trap; lists/bullets preserved.
+- [x] Tests added: `tests/test_model_output_extraction.py`
+      (`TestRuntimeMarkerCleanup`, 13 cases: leading `</think>`, empty block,
+      inline/trailing `[end of text]`, EOS tokens, lone-close no-trap,
+      chars-match, list preservation, real-trap preserved, blank-line collapse).
+- [x] Final validation PASS; `smoke_web` PASS; `smoke_submit_flow` PASS; full
+      unittest (227 tests) PASS.
+
 ### 005A — Final evaluation package (complete)
 
 - [x] `scripts/final_validation.py` — runs all checks + unittest; writes
