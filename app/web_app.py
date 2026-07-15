@@ -82,8 +82,13 @@ def _advisor_heading(route: str, language: str = "en") -> str:
 
 
 def _advisor_description(route: str, language: str = "en") -> str:
-    """Return the advisor description (English for now; descriptions are short)."""
-    return _ADVISOR_DESCRIPTIONS.get(route, "")
+    """Return the localized advisor description for a route."""
+    keys = {
+        "/advisor/daily": "daily_advisor_description",
+        "/advisor/inventory": "inventory_advisor_description",
+        "/advisor/cashflow": "cashflow_advisor_description",
+    }
+    return language_mode.get_ui_text(keys.get(route, ""), language)
 
 # --- In-memory job store ----------------------------------------------------
 # Jobs are kept only in process memory. Never persisted. Never logged in full.
@@ -510,7 +515,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         job = get_job(job_id)
         if job is None:
-            self._send_html(404, T.render_job_missing(job_id))
+            self._send_html(404, T.render_job_missing(job_id, language=self._lang_from_path(self.path)))
             return
         # The job page renders in the language stored on the job.
         self._send_html(

@@ -122,12 +122,13 @@ JOB_STEPS = [
 ]
 
 
-def _loading_script(button_id: str = "submitBtn") -> str:
+def _loading_script(button_id: str = "submitBtn", language: str = "en") -> str:
     """Inline JS that disables the submit button and shows a loading message.
 
     No external files or dependencies. If JavaScript is disabled, the form
     submits normally as a plain POST. The script is intentionally tiny.
     """
+    from app import language_mode as lm
     return (
         "<script>\n"
         "(function(){\n"
@@ -135,7 +136,7 @@ def _loading_script(button_id: str = "submitBtn") -> str:
         "  if(!btn || !btn.form){ return; }\n"
         "  btn.form.addEventListener('submit', function(){\n"
         f"    btn.disabled = true;\n"
-        f"    btn.textContent = {_esc(LOADING_BUTTON_TEXT)!r};\n"
+        f"    btn.textContent = {_esc(lm.get_ui_text('running_local_model', language))!r};\n"
         "    var msg = document.getElementById('loadingMsg');\n"
         "    if(msg){ msg.style.display = 'block'; }\n"
         "  });\n"
@@ -283,15 +284,15 @@ def render_home(language: str = "en") -> str:
     L = lm.get_ui_bundle(language)
     cards = [
         ("/advisor/daily", L["daily_operations_advisor"], "advisor",
-         "Triage low sales, stockouts, supplier delays, and credit pressure."),
+         L["daily_advisor_description"]),
         ("/advisor/inventory", L["inventory_and_stock_check"], "advisor",
-         "Check fast-moving items, slow stock, reorder points, and supplier lead times."),
+         L["inventory_advisor_description"]),
         ("/advisor/cashflow", L["cashflow_pressure_coach"], "advisor",
-         "Reason through cash pressure, credit requests, and record gaps."),
+         L["cashflow_advisor_description"]),
         ("/demo", L["demo_scenarios"], "demo",
          L["demo_intro"]),
         ("/status", L["offline_system_status"], "status",
-         "Model lock, retrieval index, runtime, and offline status."),
+         L["status_runtime_details"]),
     ]
     card_html = "\n".join(
         f'<div class="card"><span class="card-tag">{_esc(tag)}</span>'
@@ -332,7 +333,7 @@ def render_advisor_form(
         f'<div id="loadingMsg" class="meta" style="display:none;'
         f'margin-top:.8rem;">{_esc(L["loading_message"])}</div>\n'
         "</form>\n"
-        f"{_loading_script()}"
+        f"{_loading_script(language=language)}"
     )
     return _page(heading, body, active=active, language=language)
 
@@ -471,7 +472,7 @@ def render_demo(language: str = "en") -> str:
         btn_id = f"demoBtn{i}"
         cards.append(
             f'<div class="card">'
-            f'<span class="card-tag">Scenario {i}</span>'
+            f'<span class="card-tag">{_esc(L["scenario"])} {i}</span>'
             f"<h2>{_esc(title)}</h2>"
             f'<p><em>{_esc(advisor)}</em></p>'
             f'<p>{_esc(prompt)}</p>'

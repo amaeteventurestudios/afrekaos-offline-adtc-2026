@@ -324,6 +324,11 @@ made automatically, the package leaves a manual-capture instruction instead.
 
 ## Language Mode
 
+Task 006C completes visible UI localization: advisor descriptions, default
+prompts, demo scenarios, warnings, runtime and job labels, and the footer now
+follow the selected language. Retrieval notes remain English for now. Run the
+leakage audit with `python3 scripts/check_localization_completeness.py`.
+
 AfrekaOS supports six response languages. The operator selects one in the
 advisor UI; the local model answers in that language. **No cloud translation is
 used** — the model produces the localized answer directly.

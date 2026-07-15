@@ -412,7 +412,7 @@ class TestUiLocalization(unittest.TestCase):
 
     def test_french_home_localized(self) -> None:
         html_out = T.render_home(language="fr")
-        self.assertIn("Contrôle Mission", html_out)
+        self.assertIn("Tableau de bord", html_out)
         self.assertNotIn("Mission Control", html_out)
         self.assertIn("langswitch", html_out)
         self.assertIn('lang="fr"', html_out)
@@ -486,7 +486,15 @@ class TestUiLocalization(unittest.TestCase):
     def test_pidgin_advisor_form_localized(self) -> None:
         html_out = T.render_advisor_form("/advisor/daily", "H", "d", "q", language="pcm")
         self.assertIn("Get business guide", html_out)
-        self.assertIn("Your business question", html_out)
+        self.assertIn("Your business matter", html_out)
+
+    def test_localized_home_has_no_english_advisor_description(self) -> None:
+        for language in ("fr", "yo", "ha", "sw", "pcm"):
+            html_out = T.render_home(language=language)
+            self.assertNotIn("Check fast-moving items", html_out)
+
+    def test_pidgin_nav_does_not_use_standard_english_mission_control(self) -> None:
+        self.assertNotIn("Mission Control", T.render_home(language="pcm"))
 
 
 if __name__ == "__main__":

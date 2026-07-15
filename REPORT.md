@@ -621,6 +621,13 @@ perfect translation. The operational boundary is enforced in every language.
 
 **No external dependencies were added.** Standard library only.
 
+## Task 006C — Localization Completeness Audit
+
+Post-006B screenshots showed English leakage in advisor descriptions, default
+prompts, demo content, and Pidgin navigation. Task 006C puts those strings in
+the local registry, adds a route-level English leakage checker, and retains no
+cloud translation or external API. Retrieval remains English.
+
 ## Task 006B — Full UI Localization
 
 Task 006A only localized the answer language; the page chrome stayed English.

@@ -168,6 +168,12 @@ a correct, fast, offline model scores well and is easy to defend.
 - **Do not claim perfect translation.** Difficult terms may remain in English;
   the local model determines quality. No cloud translation is used.
 
+## Task 006C verification
+
+Full localization must be verified with an English leakage audit, not visual
+spot checks alone. Technical terms may remain unchanged, but user-facing
+instructions must follow the selected language.
+
 ## Full UI localization note (Task 006B)
 
 - **Full UI localization supports operator accessibility and demo clarity.**

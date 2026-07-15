@@ -697,6 +697,66 @@ DEFAULT_PROMPTS: dict[str, dict[str, str]] = {
     },
 }
 
+# Task 006C: descriptions and prompts are content shown directly in the UI,
+# rather than model instructions. Keep them in the same registry as the page
+# chrome so every language selection controls the whole advisor experience.
+_UI_COMPLETENESS: dict[str, dict[str, str]] = {
+    "en": {
+        "daily_advisor_description": "Triage low sales, stockouts, supplier delays, and credit pressure.",
+        "inventory_advisor_description": "Check fast-moving items, slow stock, reorder points, and supplier lead times.",
+        "cashflow_advisor_description": "Reason through cash pressure, credit requests, and record gaps.",
+        "scenario": "Scenario",
+        "status_runtime_details": "Model lock, retrieval index, runtime, and offline status.",
+    },
+    "fr": {
+        "mission_control": "Tableau de bord", "demo_scenarios": "Scénarios de démonstration",
+        "daily_advisor_description": "Analysez les ventes faibles, les ruptures de stock, les retards fournisseur et la pression du crédit.",
+        "inventory_advisor_description": "Vérifiez les articles à forte rotation, les stocks lents, les points de réapprovisionnement et les délais fournisseur.",
+        "cashflow_advisor_description": "Analysez la pression de trésorerie, les demandes de crédit client et les écarts dans les registres.",
+        "scenario": "Scénario", "status_runtime_details": "Verrouillage du modèle, index de recherche, exécution et état hors ligne.",
+    },
+    "yo": {
+        "daily_advisor_description": "Ṣàyẹ̀wò títà kéré, ọjà tó tán, ìdádúró olùpèsè, àti ìdààmú gbèsè.",
+        "inventory_advisor_description": "Ṣàyẹ̀wò ọjà tó ń ta yára, ọjà tó ń lọ díẹ̀, ìgbà àtúnra, àti ìdádúró olùpèsè.",
+        "cashflow_advisor_description": "Ṣàyẹ̀wò ìdààmú owó, ìbéèrè gbèsè, àti àlàfo inú ìforúkọsílẹ̀.",
+        "scenario": "Àpẹẹrẹ", "status_runtime_details": "Ìdákọ̀rọ̀ model, àkójọ àwáàrí, iṣẹ́, àti ipo aládàáyé.",
+    },
+    "ha": {
+        "mission_control": "Sarrafa aiki", "demo_scenarios": "Misalan gwaji",
+        "daily_advisor_description": "Duba ƙarancin tallace-tallace, kayayyakin da suka ƙare, jinkirin mai kaya, da matsin bashi.",
+        "inventory_advisor_description": "Duba kayayyakin da suke saurin sayuwa, stock mai jinkirin motsi, lokacin sake oda, da jinkirin mai kaya.",
+        "cashflow_advisor_description": "Duba matsalar kuɗi, buƙatun bashi, da gibin rubuce-rubuce.",
+        "scenario": "Misali", "status_runtime_details": "Kulle model, fihirisar bincike, aiki, da matsayin ba tare da intanet ba.",
+    },
+    "sw": {
+        "mission_control": "Udhibiti Mkuu",
+        "daily_advisor_description": "Chunguza mauzo madogo, bidhaa zilizoisha, ucheleweshaji wa wasambazaji na shinikizo la mkopo.",
+        "inventory_advisor_description": "Angalia bidhaa zinazouzwa haraka, stock inayokwenda polepole, muda wa kuagiza tena, na ucheleweshaji wa wasambazaji.",
+        "cashflow_advisor_description": "Chunguza shinikizo la fedha, maombi ya mkopo na mapungufu ya kumbukumbu.",
+        "scenario": "Mfano", "status_runtime_details": "Kufunga modeli, faharasa ya utafutaji, utekelezaji na hali ya nje ya mtandao.",
+    },
+    "pcm": {
+        "mission_control": "Main Control", "demo_scenarios": "Demo Examples", "daily_advisor": "Daily Business Guide", "offline_status": "Status wey no need internet",
+        "daily_advisor_description": "Check low sales, stock wey don finish, supplier delay, and credit pressure.",
+        "inventory_advisor_description": "Check fast-moving goods, slow stock, when to reorder, and supplier delay.",
+        "cashflow_advisor_description": "Check cash wahala, credit request, and record gaps.",
+        "daily_operations_advisor": "Daily Business Guide", "inventory_and_stock_check": "Stock Check", "cashflow_pressure_coach": "Cash Wahala Guide",
+        "scenario": "Example", "status_runtime_details": "Model lock, search index, runtime, and offline status.",
+        "your_operations_question": "Your business matter", "your_question": "Your matter",
+        "response_language": "Language wey answer go use", "select_language": "Pick language",
+    },
+}
+
+for _language, _texts in _UI_COMPLETENESS.items():
+    UI_TEXT_BUNDLES[_language].update(_texts)
+
+DEFAULT_PROMPTS.update({
+    "yo": {"daily": "Ilé ìtajà kékeré ní títà kéré, ọjà tó ń ta yára ti tán, olùpèsè pẹ́, àwọn oníbàárà sì ń béèrè gbèsè. Fun mi ní àkójọ ìgbésẹ̀ kúkúrú.", "inventory": "Ọjà méjì tó ń ta yára ti tán, olùpèsè sì pẹ́. Kí ni mo gbọdọ̀ ṣàyẹ̀wò, báwo ni mo ṣe lè yẹra fún rírà ọjà tó ń lọ díẹ̀ ju?", "cashflow": "Àwọn oníbàárà ń béèrè gbèsè, ìforúkọsílẹ̀ owó mi kò pé. Kí ni mo gbọdọ̀ ṣàyẹ̀wò kí n tó fúnni ní gbèsè?"},
+    "ha": {"daily": "Wani ƙaramin shago yana da ƙarancin tallace-tallace, kayan da ake saurin saya sun ƙare, mai kaya ya yi jinkiri, kuma abokan ciniki suna neman bashi. Ba da gajeren jerin matakai.", "inventory": "Kayayyaki biyu masu saurin sayuwa sun ƙare kuma mai kaya ya jinkirta. Me zan duba, kuma ta yaya zan guji tara stock mai jinkirin sayuwa?", "cashflow": "Abokan ciniki suna neman bashi kuma rubutun kuɗina ba daidai ba ne. Me zan duba kafin in ba da bashi?"},
+    "sw": {"daily": "Duka dogo lina mauzo madogo, bidhaa zinazouzwa haraka zimeisha, msambazaji amechelewa, na wateja wanaomba mkopo. Toa orodha fupi ya hatua.", "inventory": "Bidhaa mbili zinazouzwa haraka zimeisha na msambazaji amechelewa. Niangalie nini, na nitaepukaje kununua stock nyingi inayokwenda polepole?", "cashflow": "Wateja wanaomba mkopo na kumbukumbu zangu za fedha haziko sawa. Niangalie nini kabla ya kutoa mkopo?"},
+    "pcm": {"daily": "Small shop get low sales, fast-moving goods don finish, supplier delay, and more customers dey ask for credit. Give short business checklist.", "inventory": "Two fast-moving goods don finish, and supplier dey delay. Wetin I suppose check, and how I fit avoid buying too much slow stock?", "cashflow": "Customers dey ask for credit and my cash record no balance well. Wetin I suppose check before I give credit?"},
+})
+
 
 # Localized demo scenarios: (title_key, advisor_action, advisor_name_key,
 # prompt). The prompt text controls the answer language; titles come from

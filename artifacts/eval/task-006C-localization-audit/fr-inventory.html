@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Conseiller en opérations quotidiennes</title>
+<title>Inventaire et contrôle de stock</title>
 <style>
 :root { --bg:#0f1115; --card:#1a1d24; --accent:#4ade80; --text:#e5e7eb;
         --muted:#9ca3af; --warn:#fbbf24; --err:#f87171; --border:#2d3139;
@@ -101,11 +101,11 @@ footer { margin-top:2rem; color:var(--muted); font-size:.8rem;
 <a href="/demo?lang=fr">Scénarios de démonstration</a>
 <a href="/advisor/daily?lang=fr" style="color:var(--accent);font-weight:600;">Conseiller quotidien</a>
 <a href="/status?lang=fr">Statut hors ligne</a></nav>
-<h2 style="margin-top:0">Conseiller en opérations quotidiennes</h2>
-<p class="meta">Analysez les ventes faibles, les ruptures de stock, les retards fournisseur et la pression du crédit.</p>
-<form method="POST" action="/advisor/daily">
+<h2 style="margin-top:0">Inventaire et contrôle de stock</h2>
+<p class="meta">Vérifiez les articles à forte rotation, les stocks lents, les points de réapprovisionnement et les délais fournisseur.</p>
+<form method="POST" action="/advisor/inventory">
 <div class="label">Votre question d&#x27;exploitation</div>
-<textarea name="question" placeholder="">Une petite boutique a des ventes en baisse, des articles à forte rotation en rupture, un fournisseur en retard, et plus de clients demandant du crédit. Donnez une courte checklist.</textarea>
+<textarea name="question" placeholder="">J&#x27;ai deux articles à forte rotation en rupture et un fournisseur en retard. Que dois-je vérifier pour éviter le surstock ?</textarea>
 <div class="label">Langue de réponse</div>
 <select name="language">
 <option value="en">English</option>

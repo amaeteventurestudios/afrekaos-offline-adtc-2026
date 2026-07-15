@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="ha">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Conseiller en opérations quotidiennes</title>
+<title>Kayayyaki da duba stock</title>
 <style>
 :root { --bg:#0f1115; --card:#1a1d24; --accent:#4ade80; --text:#e5e7eb;
         --muted:#9ca3af; --warn:#fbbf24; --err:#f87171; --border:#2d3139;
@@ -90,33 +90,33 @@ footer { margin-top:2rem; color:var(--muted); font-size:.8rem;
 </head>
 <body>
 <div class="container">
-<header><h1>AfrekaOS Offline</h1><div class="tagline">Copilote d&#x27;exploitation PME hors ligne</div><form class="langswitch" method="get" action="/" style="margin:0;"><label class="langswitch-label">Choisir la langue: </label><select name="lang" onchange="this.form.submit()"><option value="en">English</option>
-<option value="fr" selected>French</option>
-<option value="ha">Hausa</option>
+<header><h1>AfrekaOS Offline</h1><div class="tagline">Mataimakin kasuwancin PME ba tare da intanet ba</div><form class="langswitch" method="get" action="/" style="margin:0;"><label class="langswitch-label">Zaɓi yare: </label><select name="lang" onchange="this.form.submit()"><option value="en">English</option>
+<option value="fr">French</option>
+<option value="ha" selected>Hausa</option>
 <option value="pcm">Nigerian Pidgin</option>
 <option value="sw">Swahili</option>
 <option value="yo">Yorùbá</option></select></form></header>
-<div class="banner"><span class="b-item"><span class="b-mark">✓</span>Mode hors ligne</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>Modèle local</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>Recherche SQLite</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>Aucun cloud</span></div>
-<nav class="topnav"><a href="/?lang=fr">Tableau de bord</a>
-<a href="/demo?lang=fr">Scénarios de démonstration</a>
-<a href="/advisor/daily?lang=fr" style="color:var(--accent);font-weight:600;">Conseiller quotidien</a>
-<a href="/status?lang=fr">Statut hors ligne</a></nav>
-<h2 style="margin-top:0">Conseiller en opérations quotidiennes</h2>
-<p class="meta">Analysez les ventes faibles, les ruptures de stock, les retards fournisseur et la pression du crédit.</p>
-<form method="POST" action="/advisor/daily">
-<div class="label">Votre question d&#x27;exploitation</div>
-<textarea name="question" placeholder="">Une petite boutique a des ventes en baisse, des articles à forte rotation en rupture, un fournisseur en retard, et plus de clients demandant du crédit. Donnez une courte checklist.</textarea>
-<div class="label">Langue de réponse</div>
+<div class="banner"><span class="b-item"><span class="b-mark">✓</span>Ba tare da intanet</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>Samfurin gida</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>Binciken SQLite</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>Babu cloud</span></div>
+<nav class="topnav"><a href="/?lang=ha">Sarrafa aiki</a>
+<a href="/demo?lang=ha">Misalan gwaji</a>
+<a href="/advisor/daily?lang=ha" style="color:var(--accent);font-weight:600;">Mai ba da shawara ta yau</a>
+<a href="/status?lang=ha">Matsayin ba tare da intanet</a></nav>
+<h2 style="margin-top:0">Kayayyaki da duba stock</h2>
+<p class="meta">Duba kayayyakin da suke saurin sayuwa, stock mai jinkirin motsi, lokacin sake oda, da jinkirin mai kaya.</p>
+<form method="POST" action="/advisor/inventory">
+<div class="label">Tambayar aikin ku</div>
+<textarea name="question" placeholder="">Kayayyaki biyu masu saurin sayuwa sun ƙare kuma mai kaya ya jinkirta. Me zan duba, kuma ta yaya zan guji tara stock mai jinkirin sayuwa?</textarea>
+<div class="label">Harshen amsa</div>
 <select name="language">
 <option value="en">English</option>
-<option value="fr" selected>French</option>
-<option value="ha">Hausa</option>
+<option value="fr">French</option>
+<option value="ha" selected>Hausa</option>
 <option value="pcm">Nigerian Pidgin</option>
 <option value="sw">Swahili</option>
 <option value="yo">Yorùbá</option>
 </select>
-<button id="submitBtn" type="submit">Obtenir des conseils</button>
-<div id="loadingMsg" class="meta" style="display:none;margin-top:.8rem;">AfrekaOS a reçu votre question. Elle prépare le contexte local et exécute le modèle. Cela peut prendre 30 à 90 secondes sur CPU.</div>
+<button id="submitBtn" type="submit">Samu shawarar aiki</button>
+<div id="loadingMsg" class="meta" style="display:none;margin-top:.8rem;">AfrekaOS ta karɓi tambayar ku. Tana gina bayanan gida da gudanar samfurin. Wannan na iya ɗaukar sakan 30 zuwa 90 akan CPU.</div>
 </form>
 <script>
 (function(){
@@ -124,14 +124,14 @@ footer { margin-top:2rem; color:var(--muted); font-size:.8rem;
   if(!btn || !btn.form){ return; }
   btn.form.addEventListener('submit', function(){
     btn.disabled = true;
-    btn.textContent = 'Modèle local en cours...';
+    btn.textContent = 'Samfurin gida yana gudan...';
     var msg = document.getElementById('loadingMsg');
     if(msg){ msg.style.display = 'block'; }
   });
 })();
 </script>
 
-<footer>AfrekaOS Offline — local uniquement. Aucun cloud. Conseils d&#x27;exploitation, non un logiciel de comptabilité/banque/paie/fiscalité/ERP.</footer>
+<footer>AfrekaOS Offline — gida kawai. Babu cloud. Shawarar aiki, ba tsarin lissafi/banki/albashin/haraji/ERP ba.</footer>
 </div>
 </body>
 </html>

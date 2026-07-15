@@ -70,7 +70,7 @@ def main() -> int:
         # --- French pages ---
         checks = [
             ("/?lang=fr", "fr-home.html", [
-                ("Contrôle Mission", True),
+                ("Tableau de bord", True),
                 ("Mission Control", False),
                 ("langswitch", True),
                 ("local uniquement", True),
@@ -91,7 +91,8 @@ def main() -> int:
             ]),
             ("/advisor/daily?lang=pcm", "pcm-daily-advisor.html", [
                 ("Get business guide", True),
-                ("Your business question", True),
+                ("Your business matter", True),
+                ("Mission Control", False),
             ]),
             ("/advisor/daily?lang=yo", "yo-daily-advisor.html", [
                 ("Ìdarí iṣẹ́", True),
@@ -137,7 +138,7 @@ def main() -> int:
     (OUT_DIR / "localization-smoke-notes.md").write_text(
         "# UI Localization Smoke Notes (Task 006B)\n\n"
         f"- Port: {PORT}\n"
-        f"- Languages tested: fr, pcm, yo, en\n"
+        f"- Languages tested: fr, pcm, yo, en; advisor descriptions and prompts checked by the 006C audit\n"
         f"- Snapshots saved: {len(list(OUT_DIR.glob('*.html')))}\n"
         f"- No model inference required.\n",
         encoding="utf-8",

@@ -307,6 +307,12 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 
 ### 006B — Full UI localization (complete)
 
+### 006C — Localization completeness audit (complete)
+
+- [x] Localized advisor descriptions, default prompts, and demo prompts.
+- [x] Added English leakage checker and localized route snapshots.
+- [x] `smoke_ui_localization.py`, completeness audit, and tests pass.
+
 - [x] UI translation registry in `app/language_mode.py`: `UI_TEXT_BUNDLES`
       (~60 keys × 6 languages), `get_ui_text`, `get_ui_bundle`,
       `get_default_prompt`, `get_demo_scenarios`, `get_boundary_warning`,

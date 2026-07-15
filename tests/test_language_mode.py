@@ -100,7 +100,7 @@ class TestSummary(unittest.TestCase):
 class TestUiText(unittest.TestCase):
     def test_french_mission_control(self) -> None:
         fr = lm.get_ui_text("mission_control", "fr")
-        self.assertEqual(fr, "Contrôle Mission")
+        self.assertEqual(fr, "Tableau de bord")
 
     def test_english_mission_control(self) -> None:
         self.assertEqual(lm.get_ui_text("mission_control", "en"), "Mission Control")
@@ -114,7 +114,7 @@ class TestUiText(unittest.TestCase):
     def test_bundle_merge(self) -> None:
         b = lm.get_ui_bundle("fr")
         # French value
-        self.assertEqual(b["mission_control"], "Contrôle Mission")
+        self.assertEqual(b["mission_control"], "Tableau de bord")
         # English fallback for a key not in French bundle (all keys present in
         # both, but this verifies the merge mechanism)
         self.assertIn("footer", b)
@@ -143,9 +143,22 @@ class TestUiText(unittest.TestCase):
         en = lm.get_default_prompt("daily", "en")
         self.assertIn("shop", en.lower())
 
+    def test_all_non_english_prompts_and_descriptions_are_localized(self) -> None:
+        for language in ("fr", "yo", "ha", "sw", "pcm"):
+            for advisor in ("daily", "inventory", "cashflow"):
+                self.assertNotEqual(
+                    lm.get_default_prompt(advisor, language),
+                    lm.get_default_prompt(advisor, "en"),
+                )
+            self.assertNotEqual(
+                lm.get_ui_text("inventory_advisor_description", language),
+                lm.get_ui_text("inventory_advisor_description", "en"),
+            )
+
     def test_demo_scenarios_localized(self) -> None:
         fr = lm.get_demo_scenarios("fr")
         self.assertEqual(len(fr), 4)
         self.assertIn("Ventes basses", fr[0][0])
         en = lm.get_demo_scenarios("en")
+        self.assertNotEqual(lm.get_demo_scenarios("sw")[2][3], en[2][3])
         self.assertIn("Low sales", en[0][0])
