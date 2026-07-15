@@ -12,26 +12,26 @@ from typing import Optional
 # --- Embedded CSS -----------------------------------------------------------
 
 _CSS = """
-:root { --bg:#0f1115; --card:#1a1d24; --accent:#4ade80; --text:#e5e7eb;
+:root { --bg:#030607; --card:rgba(11,16,17,.88); --accent:#e1ad3d; --text:#f4f1e9;
+        --gold:#e1ad3d; --bright-gold:#f5c453; --forest:#070b0c; --critical:#c75b52;
         --muted:#9ca3af; --warn:#fbbf24; --err:#f87171; --border:#2d3139;
         --banner:#15201a; }
-* { box-sizing:border-box; }
-body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
-       Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text);
-       line-height:1.6; }
-.container { max-width:900px; margin:0 auto; padding:1.5rem 1rem 4rem; }
-header { border-bottom:1px solid var(--border); padding-bottom:1rem; margin-bottom:1rem; }
-header h1 { margin:0; font-size:1.5rem; }
+* { box-sizing:border-box; } html { background:var(--bg); scroll-behavior:smooth; }
+body { margin:0; font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif; background:radial-gradient(circle at 70% 30%,rgba(141,100,28,.16) 0,transparent 26%),linear-gradient(115deg,#030607 10%,#070b0c 55%,#111718); color:var(--text);
+       line-height:1.6; min-height:100vh; }
+body:before { content:""; pointer-events:none; position:fixed; inset:0; opacity:.12; z-index:5; background-image:linear-gradient(90deg,transparent 24.9%,rgba(225,173,61,.18) 25%,transparent 25.1%,transparent 49.9%,rgba(225,173,61,.12) 50%,transparent 50.1%,transparent 74.9%,rgba(225,173,61,.18) 75%,transparent 75.1%); background-size:100% 100%; }
+.container { max-width:1240px; margin:0 auto; padding:1.25rem clamp(1rem,4vw,4rem) 4rem; position:relative; }
+header { display:flex; align-items:center; gap:1rem; border-bottom:1px solid rgba(243,239,229,.15); padding-bottom:1rem; margin-bottom:1rem; position:relative; z-index:6; }
+header h1 { margin:0; font-size:1.02rem; letter-spacing:.08em; text-transform:uppercase; }
 header .tagline { color:var(--muted); font-size:.9rem; }
-.banner { background:var(--banner); border:1px solid var(--accent);
-          border-radius:10px; padding:.6rem 1rem; margin-bottom:1.2rem;
-          display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; }
-.banner .b-item { font-size:.78rem; color:var(--accent); }
+.banner { background:rgba(11,16,17,.8); border:1px solid rgba(225,173,61,.34);
+          border-radius:999px; padding:.35rem .75rem; margin-bottom:1.2rem;
+          display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; width:max-content; }
+.banner .b-item { font-size:.78rem; color:#55d784; }
 .banner .b-mark { font-weight:700; margin-right:.2rem; }
 .banner .b-sep { color:var(--muted); font-size:.78rem; }
-nav.topnav { display:flex; flex-wrap:wrap; gap:.7rem; margin-bottom:1.5rem;
-             font-size:.88rem; }
-nav.topnav a { color:var(--muted); }
+nav.topnav { display:flex; flex-wrap:wrap; gap:1.15rem; margin:0 0 1.5rem; font-size:.78rem; letter-spacing:.06em; text-transform:uppercase; position:relative; z-index:6; }
+nav.topnav a { color:rgba(243,239,229,.68); }
 nav.topnav a:hover { color:var(--accent); }
 .langswitch { display:inline-block; margin-left:auto; }
 .langswitch-label { font-size:.78rem; color:var(--muted); }
@@ -41,30 +41,28 @@ a { color:var(--accent); text-decoration:none; }
 a:hover { text-decoration:underline; }
 .cards { display:grid; gap:.9rem; grid-template-columns:1fr; }
 @media(min-width:600px){ .cards{ grid-template-columns:1fr 1fr; } }
-.card { background:var(--card); border:1px solid var(--border); border-radius:10px;
-        padding:1.2rem; transition:border-color .15s; }
-.card:hover { border-color:var(--accent); }
+.card,form,section.result { background:linear-gradient(135deg,rgba(255,255,255,.055),rgba(255,255,255,.015)); border:1px solid rgba(243,239,229,.14); border-radius:14px; backdrop-filter:blur(8px); box-shadow:inset 0 1px 1px rgba(255,255,255,.08),0 24px 50px rgba(0,0,0,.15); }
+.card { padding:1.2rem; transition:border-color .15s,transform .15s; }
+.card:hover { border-color:var(--accent); transform:translateY(-2px); }
 .card h2 { margin:0 0 .3rem; font-size:1.1rem; }
 .card h2 a { color:var(--text); }
 .card p { margin:0; color:var(--muted); font-size:.88rem; }
 .card .card-tag { display:inline-block; font-size:.7rem; color:var(--accent);
                   border:1px solid var(--accent); border-radius:99px;
                   padding:.05rem .5rem; margin-bottom:.5rem; }
-form { background:var(--card); border:1px solid var(--border); border-radius:10px;
-       padding:1.2rem; margin-bottom:1.5rem; }
-textarea { width:100%; min-height:110px; background:#0b0d11; color:var(--text);
+form { padding:1.2rem; margin-bottom:1.5rem; }
+textarea { width:100%; min-height:160px; background:rgba(5,8,7,.72); color:var(--text);
            border:1px solid var(--border); border-radius:8px; padding:.7rem;
            font-size:.95rem; resize:vertical; }
 textarea:focus { outline:none; border-color:var(--accent); }
 select { width:100%; background:#0b0d11; color:var(--text); border:1px solid var(--border);
          border-radius:8px; padding:.55rem; font-size:.95rem; margin-top:.3rem; }
 select:focus { outline:none; border-color:var(--accent); }
-button { background:var(--accent); color:#06120c; border:none; border-radius:8px;
-         padding:.6rem 1.2rem; font-size:.95rem; font-weight:600; cursor:pointer;
+button { background:var(--accent); color:#06120c; border:none; border-radius:999px;
+         padding:.75rem 1.3rem; font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; font-weight:800; cursor:pointer;
          margin-top:.7rem; }
 button:hover { filter:brightness(1.1); }
-section.result { background:var(--card); border:1px solid var(--border);
-                 border-radius:10px; padding:1.2rem; margin-bottom:1.2rem;
+section.result { padding:1.2rem; margin-bottom:1.2rem;
                  white-space:pre-wrap; word-wrap:break-word; }
 .label { color:var(--muted); font-size:.78rem; text-transform:uppercase;
          letter-spacing:.05em; margin-bottom:.3rem; }
@@ -93,6 +91,18 @@ ol.steps li.step-current { color:var(--accent); border-color:var(--accent);
 ol.steps li.step-todo { color:var(--muted); opacity:.6; }
 footer { margin-top:2rem; color:var(--muted); font-size:.8rem;
          border-top:1px solid var(--border); padding-top:1rem; }
+.hero { min-height:calc(100vh - 135px); display:grid; grid-template-columns:minmax(0,1fr) minmax(360px,.95fr); gap:3rem; align-items:center; padding:clamp(2rem,7vh,6rem) 0 4rem; position:relative; }
+.eyebrow { color:var(--gold); font-size:.7rem; font-weight:800; letter-spacing:.17em; } .eyebrow:before { content:""; display:inline-block; width:7px; height:7px; background:var(--gold); border-radius:50%; box-shadow:0 0 12px var(--gold); margin-right:.55rem; }.trust-list i {content:"";display:inline-block;width:5px;height:5px;background:#55d784;border-radius:50%;box-shadow:0 0 8px #55d784;margin-right:.55rem}
+.hero h2 { font-size:clamp(2.7rem,7vw,5.3rem); line-height:.93; letter-spacing:-.07em; max-width:800px; margin:.8rem 0 1.25rem; text-transform:uppercase; } .hero h2 em { font-style:normal;color:var(--gold); }
+.hero-copy { max-width:560px; color:rgba(243,239,229,.75); font-size:1rem; } .hero-actions {display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.7rem}.secondary {border:1px solid rgba(243,239,229,.36);color:var(--text);padding:.7rem 1.15rem;border-radius:999px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+.core { min-height:540px; position:relative; perspective:1000px; } .core:before {content:"";position:absolute;left:10%;right:5%;bottom:0;height:150px;background:repeating-radial-gradient(ellipse at center,rgba(225,173,61,.9) 0 1px,transparent 2px 22px),radial-gradient(ellipse,rgba(225,173,61,.35),transparent 64%);border-radius:50%;transform:perspective(500px) rotateX(62deg);filter:drop-shadow(0 0 14px rgba(225,173,61,.6));}
+.core-main,.module,.trust-card { position:absolute; background:linear-gradient(135deg,rgba(255,255,255,.09),rgba(5,8,7,.65)); border:1px solid rgba(243,239,229,.17); box-shadow:inset 0 1px 1px rgba(255,255,255,.12),0 30px 80px rgba(0,0,0,.35); backdrop-filter:blur(8px); }
+.core-main { inset:12% 12% 18% 12%; padding:1.7rem; transform:rotateY(-12deg) rotateX(6deg); border-radius:8px; border-color:rgba(225,173,61,.55); } .core-main:after{content:"";position:absolute;inset:12px;border:1px solid rgba(225,173,61,.2);border-radius:3px;pointer-events:none}.core-label{color:var(--gold);font-size:.68rem;letter-spacing:.15em;font-weight:800}.input-preview{margin-top:1.3rem;color:var(--text);font-size:1.05rem;line-height:1.45}.diagnostics{display:flex;flex-wrap:wrap;gap:.45rem;margin:1rem 0}.diagnostics span{font-size:.65rem;border:1px solid rgba(225,173,61,.45);color:var(--gold);border-radius:4px;padding:.22rem .55rem}.first-action{border-top:1px solid rgba(243,239,229,.13);padding-top:.8rem;font-size:.82rem;color:rgba(243,239,229,.8)}
+.module{padding:.45rem .65rem;border-radius:8px;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(243,239,229,.82)}.m1{top:7%;right:0}.m2{top:26%;left:0}.m3{right:0;bottom:25%}.m4{bottom:6%;left:10%}.m5{top:2%;left:35%}.m6{right:15%;bottom:4%}.m7{top:48%;right:4%}.trust-card{right:4%;top:8%;width:220px;padding:1.1rem;border-radius:14px;z-index:2}.trust-card strong{display:block;font-size:1.1rem;line-height:1.15;margin:.5rem 0 1rem}.trust-list{list-style:none;padding:0;margin:0}.trust-list li{font-size:.7rem;margin:.45rem 0;color:rgba(243,239,229,.75)}.trust-list i{width:5px;height:5px}
+.pressure-section,.operator-section{padding:2rem;margin:1rem 0 2rem;border:1px solid rgba(255,255,255,.12);background:linear-gradient(135deg,rgba(17,23,24,.76),rgba(3,6,7,.7));border-radius:8px}.pressure-section h2{font-size:clamp(1.7rem,3vw,3rem);letter-spacing:-.04em;max-width:620px}.pressure-flow{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:1.5rem;align-items:center}.pressure-flow div{padding:1rem;border:1px solid rgba(225,173,61,.38);background:rgba(11,16,17,.9);border-radius:6px;font-size:.75rem;flex:1;min-width:130px}.pressure-flow b{color:var(--gold)}.operator-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.65rem;margin-top:1rem}.operator-grid .card{min-height:150px}.runtime-bar{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}.runtime-bar span{padding:.65rem;border:1px solid rgba(255,255,255,.12);font-size:.67rem;letter-spacing:.08em}.runtime-bar strong{color:#55d784;display:block}.runtime-note{color:var(--gold)!important;border-color:rgba(225,173,61,.5)!important}
+@media(max-width:720px){.container{padding:1rem 1.1rem 3rem}header .tagline,.banner{display:none}.topnav{gap:.75rem;font-size:.65rem}.hero{grid-template-columns:1fr;min-height:auto;padding-top:3rem;gap:1rem}.hero h2{font-size:clamp(2.6rem,13vw,4rem)}.core{min-height:460px}.trust-card{width:180px;right:0}.core-main{inset:18% 2% 10% 4%}.module{font-size:.55rem}.m2,.m5{display:none}.pressure-section{padding:1.2rem}.operator-grid{grid-template-columns:1fr}.pressure-flow{flex-direction:column;align-items:stretch}.pressure-flow b{text-align:center}}
+@media(prefers-reduced-motion:no-preference){.core-main{animation:float 9s ease-in-out infinite}.module{animation:float 11s ease-in-out infinite}.m3,.m6{animation-delay:-4s}@keyframes float{50%{transform:translateY(-8px) rotateY(-10deg)}}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important}}
 """
 
 # The unified boundary warning text used on every advisor result.
@@ -282,28 +292,22 @@ def _page(title: str, body: str, active: str = "",
 def render_home(language: str = "en") -> str:
     from app import language_mode as lm
     L = lm.get_ui_bundle(language)
-    cards = [
-        ("/advisor/daily", L["daily_operations_advisor"], "advisor",
-         L["daily_advisor_description"]),
-        ("/advisor/inventory", L["inventory_and_stock_check"], "advisor",
-         L["inventory_advisor_description"]),
-        ("/advisor/cashflow", L["cashflow_pressure_coach"], "advisor",
-         L["cashflow_advisor_description"]),
-        ("/demo", L["demo_scenarios"], "demo",
-         L["demo_intro"]),
-        ("/status", L["offline_system_status"], "status",
-         L["status_runtime_details"]),
-    ]
-    card_html = "\n".join(
-        f'<div class="card"><span class="card-tag">{_esc(tag)}</span>'
-        f'<h2><a href="{_url_with_lang(href, language)}">{_esc(name)}</a></h2>'
-        f"<p>{_esc(desc)}</p></div>"
-        for href, name, tag, desc in cards
-    )
+    advisor = _url_with_lang("/advisor/daily", language)
+    status = _url_with_lang("/status", language)
     body = (
-        f'<h2 style="margin-top:0">{_esc(L["mission_control"])}</h2>\n'
-        f'<div class="cards">\n{card_html}\n</div>\n'
-        f'<p class="meta">{_esc(L["choose_advisor"])}</p>\n'
+        '<main class="hero">'
+        f'<section><div class="eyebrow">{_esc(L["hero_eyebrow"])}</div>'
+        f'<h2>{_esc(L["hero_title"])}<em>.</em></h2>'
+        f'<p class="hero-copy">{_esc(L["hero_copy"])}</p>'
+        '<div class="hero-actions">'
+        f'<a class="secondary" style="background:var(--accent);color:#050807;border-color:var(--accent)" href="{advisor}">{_esc(L["open_daily"])} &#8594;</a>'
+        f'<a class="secondary" href="{status}">{_esc(L["view_status"])}</a></div></section>'
+        '<section class="core" aria-label="AfrekaOS operations preview">'
+        f'<div class="trust-card"><span class="core-label">{_esc(L["local_only"])}</span><strong>{_esc(L["operational_guidance_only"])}</strong><ul class="trust-list"><li><i></i>{_esc(L["local_model"])}</li><li><i></i>{_esc(L["retrieval_index"])}</li><li><i></i>{_esc(L["no_cloud_dependency"])}</li><li><i></i>{_esc(L["local_only"])}</li></ul></div>'
+        f'<div class="core-main"><span class="core-label">{_esc(L["daily_advisor"])} · {_esc(L["your_operations_question"])}</span><p class="input-preview">{_esc(lm.get_default_prompt("daily", language))}</p><div class="diagnostics"><span>{_esc(L["inventory_advisor"])}</span><span>{_esc(L["retrieval_grounded"])}</span><span>{_esc(L["daily_advisor"])}</span><span>{_esc(L["cashflow_advisor"])}</span></div><div class="first-action"><span class="core-label">{_esc(L["operating_guidance"])}</span><br>{_esc(L["choose_advisor"])}</div></div>'
+        f'<a class="module m1" href="{_url_with_lang("/advisor/inventory", language)}">Inventory</a><span class="module m2">Suppliers</span><span class="module m3">Customer Credit</span><a class="module m4" href="{_url_with_lang("/advisor/cashflow", language)}">Cashflow</a><span class="module m5">Staffing</span><span class="module m6">Records</span><span class="module m7">Expansion</span></section></main>'
+        '<section class="pressure-section"><div class="eyebrow">CONNECTED PRESSURES</div><h2>ONE PROBLEM. MULTIPLE CONNECTED PRESSURES.</h2><p class="meta">Problems in one area create pressure in others.</p><div class="pressure-flow"><div><span class="core-label">SUPPLIER DELAY</span><br>Late deliveries or stockouts</div><b>&#8594;</b><div><span class="core-label">INVENTORY PRESSURE</span><br>Stock missing or unavailable</div><b>&#8594;</b><div><span class="core-label">LOST SALES</span><br>Customers go elsewhere</div><b>&#8594;</b><div><span class="core-label">CUSTOMER CREDIT</span><br>More credit requests</div><b>&#8594;</b><div><span class="core-label">CASHFLOW PRESSURE</span><br>Less cash for operations</div></div><p class="meta" style="text-align:center">AfrekaOS shows what is connected and what to do first.</p></section>'
+        '<section class="operator-section"><div class="eyebrow">BUILT FOR BUSINESS OPERATORS</div><div class="operator-grid"><div class="card"><span class="core-label">UNDERSTAND FAST</span><p>Clear insights from real business situations.</p></div><div class="card"><span class="core-label">STAY IN CONTROL</span><p>Make better decisions with confidence.</p></div><div class="card"><span class="core-label">100% PRIVATE</span><p>Runs locally. Your data stays on this device.</p></div><div class="card"><span class="core-label">IMPROVE RESULTS</span><p>Take action that improves cash, stock, and growth.</p></div><div class="card"><span class="core-label">ALWAYS AVAILABLE</span><p>No internet needed. Works when you need it.</p></div></div><div class="runtime-bar"><span>LOCAL MODEL<strong>Ready</strong></span><span>LOCAL KNOWLEDGE<strong>Ready</strong></span><span>INTERNET REQUIRED<strong>No</strong></span><span>CLOUD SYNC<strong>None</strong></span><span class="runtime-note">THIS SYSTEM IS RUNNING ENTIRELY ON THIS COMPUTER.</span></div></section>'
     )
     return _page(L["mission_control"], body, active="home", language=language)
 
@@ -320,7 +324,8 @@ def render_advisor_form(
     from app import language_mode as lm
     L = lm.get_ui_bundle(language)
     body = (
-        f'<h2 style="margin-top:0">{_esc(heading)}</h2>\n'
+        '<section class="advisor-shell">'
+        f'<div class="eyebrow">LOCAL OPERATING BRIEF</div><h2 style="margin:.5rem 0">{_esc(heading)}</h2>\n'
         f"<p class=\"meta\">{_esc(description)}</p>\n"
         # POST goes to the plain action (no ?lang=); language is carried in
         # the hidden/selector field and stored on the job.
@@ -333,7 +338,7 @@ def render_advisor_form(
         f'<div id="loadingMsg" class="meta" style="display:none;'
         f'margin-top:.8rem;">{_esc(L["loading_message"])}</div>\n'
         "</form>\n"
-        f"{_loading_script(language=language)}"
+        f"{_loading_script(language=language)}</section>"
     )
     return _page(heading, body, active=active, language=language)
 

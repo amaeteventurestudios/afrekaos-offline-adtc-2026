@@ -750,6 +750,17 @@ _UI_COMPLETENESS: dict[str, dict[str, str]] = {
 for _language, _texts in _UI_COMPLETENESS.items():
     UI_TEXT_BUNDLES[_language].update(_texts)
 
+_HERO_TEXT = {
+    "en": {"hero_eyebrow":"LOCAL SME OPERATIONS INTELLIGENCE", "hero_title":"SEE WHAT IS HAPPENING INSIDE YOUR BUSINESS", "hero_copy":"AfrekaOS helps business operators understand inventory pressure, supplier delays, customer credit, cashflow, staffing, and expansion readiness without cloud access.", "open_daily":"OPEN DAILY ADVISOR", "view_status":"VIEW SYSTEM STATUS"},
+    "fr": {"hero_eyebrow":"INTELLIGENCE LOCALE POUR OPÉRATIONS PME", "hero_title":"VOYEZ CE QUI SE PASSE DANS VOTRE ENTREPRISE", "hero_copy":"AfrekaOS aide les opérateurs à comprendre les stocks, les retards fournisseur, le crédit client, la trésorerie, le personnel et l'expansion sans cloud.", "open_daily":"OUVRIR LE CONSEILLER QUOTIDIEN", "view_status":"VOIR L'ÉTAT DU SYSTÈME"},
+    "yo": {"hero_eyebrow":"ÌMỌ̀ ẸRỌ IṢẸ́ PME ÀGBÈGBÈ", "hero_title":"WO OHUN TÓ Ń ṢẸLẸ̀ NÍNÚ IṢẸ́ RẸ", "hero_copy":"AfrekaOS ń ran oníṣòwò lọ́wọ́ láti lóye ọjà, ìdádúró olùpèsè, gbèsè oníbàárà, owó, àti ìfẹ̀síwájú láìsí cloud.", "open_daily":"ṢÍ AMỌ̀RAN OJOOJÚMỌ́", "view_status":"WO IPO ÈTÒ"},
+    "ha": {"hero_eyebrow":"HANKALI NA AIKIN PME A GIDA", "hero_title":"GA ABIN DA KE FARUWA A CIKIN KASUWANCINKU", "hero_copy":"AfrekaOS tana taimaka wa masu kasuwanci su fahimci stock, jinkirin mai kaya, bashin ciniki, kuɗi, ma'aikata da faɗaɗa ba tare da cloud ba.", "open_daily":"BUƊE MAI BA DA SHAWARA TA YAU", "view_status":"DUBA MATSAYIN TSARI"},
+    "sw": {"hero_eyebrow":"AKILI YA NDANI YA UENDESHAJI WA PME", "hero_title":"ONA KINACHOTOKEA NDANI YA BIASHARA YAKO", "hero_copy":"AfrekaOS huwasaidia waendeshaji kuelewa stock, ucheleweshaji wa wasambazaji, mkopo wa wateja, fedha, wafanyakazi na upanuzi bila cloud.", "open_daily":"FUNGUA MSHAURI WA KILA SIKU", "view_status":"TAZAMA HALI YA MFUMO"},
+    "pcm": {"hero_eyebrow":"LOCAL SME BUSINESS INTELLIGENCE", "hero_title":"SEE WETIN DEY HAPPEN FOR YOUR BUSINESS", "hero_copy":"AfrekaOS dey help business people understand stock wahala, supplier delay, customer credit, cashflow, staff and expansion without cloud.", "open_daily":"OPEN DAILY BUSINESS GUIDE", "view_status":"CHECK SYSTEM STATUS"},
+}
+for _language, _texts in _HERO_TEXT.items():
+    UI_TEXT_BUNDLES[_language].update(_texts)
+
 DEFAULT_PROMPTS.update({
     "yo": {"daily": "Ilé ìtajà kékeré ní títà kéré, ọjà tó ń ta yára ti tán, olùpèsè pẹ́, àwọn oníbàárà sì ń béèrè gbèsè. Fun mi ní àkójọ ìgbésẹ̀ kúkúrú.", "inventory": "Ọjà méjì tó ń ta yára ti tán, olùpèsè sì pẹ́. Kí ni mo gbọdọ̀ ṣàyẹ̀wò, báwo ni mo ṣe lè yẹra fún rírà ọjà tó ń lọ díẹ̀ ju?", "cashflow": "Àwọn oníbàárà ń béèrè gbèsè, ìforúkọsílẹ̀ owó mi kò pé. Kí ni mo gbọdọ̀ ṣàyẹ̀wò kí n tó fúnni ní gbèsè?"},
     "ha": {"daily": "Wani ƙaramin shago yana da ƙarancin tallace-tallace, kayan da ake saurin saya sun ƙare, mai kaya ya yi jinkiri, kuma abokan ciniki suna neman bashi. Ba da gajeren jerin matakai.", "inventory": "Kayayyaki biyu masu saurin sayuwa sun ƙare kuma mai kaya ya jinkirta. Me zan duba, kuma ta yaya zan guji tara stock mai jinkirin sayuwa?", "cashflow": "Abokan ciniki suna neman bashi kuma rubutun kuɗina ba daidai ba ne. Me zan duba kafin in ba da bashi?"},
