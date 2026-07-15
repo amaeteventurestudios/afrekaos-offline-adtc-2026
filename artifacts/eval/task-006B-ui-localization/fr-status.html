@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Offline System Status</title>
+<title>Statut du système hors ligne</title>
 <style>
 :root { --bg:#0f1115; --card:#1a1d24; --accent:#4ade80; --text:#e5e7eb;
         --muted:#9ca3af; --warn:#fbbf24; --err:#f87171; --border:#2d3139;
@@ -90,24 +90,24 @@ footer { margin-top:2rem; color:var(--muted); font-size:.8rem;
 </head>
 <body>
 <div class="container">
-<header><h1>AfrekaOS Offline</h1><div class="tagline">Offline SME operations copilot</div><form class="langswitch" method="get" action="/" style="margin:0;"><label class="langswitch-label">Select language: </label><select name="lang" onchange="this.form.submit()"><option value="en" selected>English</option>
-<option value="fr">French</option>
+<header><h1>AfrekaOS Offline</h1><div class="tagline">Copilote d&#x27;exploitation PME hors ligne</div><form class="langswitch" method="get" action="/" style="margin:0;"><label class="langswitch-label">Choisir la langue: </label><select name="lang" onchange="this.form.submit()"><option value="en">English</option>
+<option value="fr" selected>French</option>
 <option value="ha">Hausa</option>
 <option value="pcm">Nigerian Pidgin</option>
 <option value="sw">Swahili</option>
 <option value="yo">Yorùbá</option></select></form></header>
-<div class="banner"><span class="b-item"><span class="b-mark">✓</span>Offline mode</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>Local model</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>SQLite retrieval</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>No cloud dependency</span></div>
-<nav class="topnav"><a href="/">Mission Control</a>
-<a href="/demo">Demo Scenarios</a>
-<a href="/advisor/daily">Daily Advisor</a>
-<a href="/status" style="color:var(--accent);font-weight:600;">Offline Status</a></nav>
-<h2 style="margin-top:0">Offline System Status</h2>
+<div class="banner"><span class="b-item"><span class="b-mark">✓</span>Mode hors ligne</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>Modèle local</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>Recherche SQLite</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>Aucun cloud</span></div>
+<nav class="topnav"><a href="/?lang=fr">Contrôle Mission</a>
+<a href="/demo?lang=fr">Scénarios de démo</a>
+<a href="/advisor/daily?lang=fr">Conseiller quotidien</a>
+<a href="/status?lang=fr" style="color:var(--accent);font-weight:600;">Statut hors ligne</a></nav>
+<h2 style="margin-top:0">Statut du système hors ligne</h2>
 <div class="status-grid">
-<div class="row"><span class="k">AfrekaOS Offline</span><span class="v">AfrekaOS Offline</span></div><div class="row"><span class="k">Locked candidate</span><span class="v">qwen3-1.7b-q4-k-m</span></div><div class="row"><span class="k">canonical_model_path</span><span class="v">model/afrekaos.gguf</span></div><div class="row"><span class="k">Model path exists</span><span class="pill no">no</span></div><div class="row"><span class="k">model_path_is_symlink</span><span class="pill no">no</span></div><div class="row"><span class="k">Llama binary</span><span class="v">/usr/local/bin/llama-completion</span></div><div class="row"><span class="k">Retrieval index</span><span class="pill ok">yes</span></div><div class="row"><span class="k">indexed_documents</span><span class="v">15</span></div><div class="row"><span class="k">Retrieval index</span><span class="v">available</span></div><div class="row"><span class="k">qwen_direct_answer</span><span class="v">/no_think=1, template=templates/qwen3_nonthinking.jinja</span></div><div class="row"><span class="k">No cloud dependency</span><span class="v">none — fully local</span></div>
+<div class="row"><span class="k">AfrekaOS Offline</span><span class="v">AfrekaOS Offline</span></div><div class="row"><span class="k">Candidat verrouillé</span><span class="v">qwen3-1.7b-q4-k-m</span></div><div class="row"><span class="k">canonical_model_path</span><span class="v">model/afrekaos.gguf</span></div><div class="row"><span class="k">Chemin du modèle existe</span><span class="pill no">non</span></div><div class="row"><span class="k">model_path_is_symlink</span><span class="pill no">non</span></div><div class="row"><span class="k">Binaire llama</span><span class="v">/usr/local/bin/llama-completion</span></div><div class="row"><span class="k">Index de recherche</span><span class="pill ok">oui</span></div><div class="row"><span class="k">indexed_documents</span><span class="v">15</span></div><div class="row"><span class="k">Index de recherche</span><span class="v">available</span></div><div class="row"><span class="k">qwen_direct_answer</span><span class="v">/no_think=unset, template=templates/qwen3_nonthinking.jinja</span></div><div class="row"><span class="k">Aucun cloud</span><span class="v">none — fully local</span></div>
 </div>
-<div class="result-nav"><a href="/">&#8592; Mission Control</a><a href="/demo">Demo Scenarios</a></div>
+<div class="result-nav"><a href="/?lang=fr">&#8592; Contrôle Mission</a><a href="/demo?lang=fr">Scénarios de démo</a></div>
 
-<footer>AfrekaOS Offline — local-only. No cloud. Operational guidance, not accounting/banking/payroll/tax/ERP software.</footer>
+<footer>AfrekaOS Offline — local uniquement. Aucun cloud. Conseils d&#x27;exploitation, non un logiciel de comptabilité/banque/paie/fiscalité/ERP.</footer>
 </div>
 </body>
 </html>

@@ -1,6 +1,6 @@
 # Final Validation Log — AfrekaOS Offline (Task 005A)
 
-- **Date/time:** 2026-07-14 17:33:36 UTC
+- **Date/time:** 2026-07-15 03:30:47 UTC
 - **Overall:** PASS
 - **pytest available:** False
 - **Model inference required:** no (all checks are non-inference)
@@ -126,8 +126,8 @@ PROMPT-1 GROUNDING VERDICT: PASS
 ### smoke_web — PASS
 ```
 [ok] server is healthy
-[ok] / -> 200 (7046 bytes)
-[ok] /status -> 200 (7216 bytes)
+[ok] / -> 200 (7720 bytes)
+[ok] /status -> 200 (7882 bytes)
 [ok] /health -> 200 (204 bytes)
 [ok] /health is valid JSON: ok=True
 
@@ -139,12 +139,12 @@ SMOKE TEST PASSED
 ```
 [ok] server healthy
 [ok] /health -> 200 (valid JSON)
-[ok] / -> 200 (7046 bytes) -> home.html
-[ok] /demo -> 200 (11867 bytes) -> demo.html
-[ok] /advisor/daily -> 200 (7332 bytes) -> advisor-daily.html
-[ok] /advisor/inventory -> 200 (7356 bytes) -> advisor-inventory.html
-[ok] /advisor/cashflow -> 200 (7376 bytes) -> advisor-cashflow.html
-[ok] /status -> 200 (7216 bytes) -> status.html
+[ok] / -> 200 (7720 bytes) -> home.html
+[ok] /demo -> 200 (11982 bytes) -> demo.html
+[ok] /advisor/daily -> 200 (7957 bytes) -> advisor-daily.html
+[ok] /advisor/inventory -> 200 (7977 bytes) -> advisor-inventory.html
+[ok] /advisor/cashflow -> 200 (7924 bytes) -> advisor-cashflow.html
+[ok] /status -> 200 (7882 bytes) -> status.html
 [inference] skipped (set AFREKAOS_CAPTURE_INFERENCE=1 to enable)
 
 EVIDENCE CAPTURE PASSED (7 files)
@@ -153,9 +153,9 @@ EVIDENCE CAPTURE PASSED (7 files)
 
 ### unittest discover — PASS
 ```
-...........................................................................................................................................................................................................................................................
+..................................................................................................................................................................................................................................................................................
 ----------------------------------------------------------------------
-Ran 251 tests in 1.547s
+Ran 274 tests in 1.442s
 
 OK
 

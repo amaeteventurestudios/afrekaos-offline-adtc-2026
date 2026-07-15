@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Demo Scenarios</title>
+<title>Scénarios de démo</title>
 <style>
 :root { --bg:#0f1115; --card:#1a1d24; --accent:#4ade80; --text:#e5e7eb;
         --muted:#9ca3af; --warn:#fbbf24; --err:#f87171; --border:#2d3139;
@@ -90,57 +90,57 @@ footer { margin-top:2rem; color:var(--muted); font-size:.8rem;
 </head>
 <body>
 <div class="container">
-<header><h1>AfrekaOS Offline</h1><div class="tagline">Offline SME operations copilot</div><form class="langswitch" method="get" action="/" style="margin:0;"><label class="langswitch-label">Select language: </label><select name="lang" onchange="this.form.submit()"><option value="en" selected>English</option>
-<option value="fr">French</option>
+<header><h1>AfrekaOS Offline</h1><div class="tagline">Copilote d&#x27;exploitation PME hors ligne</div><form class="langswitch" method="get" action="/" style="margin:0;"><label class="langswitch-label">Choisir la langue: </label><select name="lang" onchange="this.form.submit()"><option value="en">English</option>
+<option value="fr" selected>French</option>
 <option value="ha">Hausa</option>
 <option value="pcm">Nigerian Pidgin</option>
 <option value="sw">Swahili</option>
 <option value="yo">Yorùbá</option></select></form></header>
-<div class="banner"><span class="b-item"><span class="b-mark">✓</span>Offline mode</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>Local model</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>SQLite retrieval</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>No cloud dependency</span></div>
-<nav class="topnav"><a href="/">Mission Control</a>
-<a href="/demo" style="color:var(--accent);font-weight:600;">Demo Scenarios</a>
-<a href="/advisor/daily">Daily Advisor</a>
-<a href="/status">Offline Status</a></nav>
-<h2 style="margin-top:0">Demo Scenarios</h2>
-<p class="meta">Ready-made SME operations scenarios. Click &quot;Run this scenario&quot; to submit the prompt to the matching advisor.</p>
+<div class="banner"><span class="b-item"><span class="b-mark">✓</span>Mode hors ligne</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>Modèle local</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>Recherche SQLite</span><span class="b-sep">·</span><span class="b-item"><span class="b-mark">✓</span>Aucun cloud</span></div>
+<nav class="topnav"><a href="/?lang=fr">Contrôle Mission</a>
+<a href="/demo?lang=fr" style="color:var(--accent);font-weight:600;">Scénarios de démo</a>
+<a href="/advisor/daily?lang=fr">Conseiller quotidien</a>
+<a href="/status?lang=fr">Statut hors ligne</a></nav>
+<h2 style="margin-top:0">Scénarios de démo</h2>
+<p class="meta">Scénarios PME prêts à l&#x27;emploi. Cliquez sur « Lancer ce scénario » pour soumettre au conseiller correspondant.</p>
 <div class="cards">
-<div class="card"><span class="card-tag">Scenario 1</span><h2>Low sales, stockout, supplier delay</h2><p><em>Daily Operations Advisor</em></p><p>A small shop has low sales, missing fast-moving stock, supplier delay, and more customers asking for credit. Give a short operating checklist.</p><form method="POST" action="/advisor/daily"><textarea name="question" style="display:none;">A small shop has low sales, missing fast-moving stock, supplier delay, and more customers asking for credit. Give a short operating checklist.</textarea><div class="label">Response language</div>
+<div class="card"><span class="card-tag">Scenario 1</span><h2>Ventes basses, rupture, retard fournisseur</h2><p><em>Conseiller en opérations quotidiennes</em></p><p>Une petite boutique a des ventes en baisse, des articles à forte rotation en rupture, un fournisseur en retard, et plus de clients demandant du crédit. Donnez une courte checklist.</p><form method="POST" action="/advisor/daily"><textarea name="question" style="display:none;">Une petite boutique a des ventes en baisse, des articles à forte rotation en rupture, un fournisseur en retard, et plus de clients demandant du crédit. Donnez une courte checklist.</textarea><div class="label">Langue de réponse</div>
 <select name="language">
-<option value="en" selected>English</option>
-<option value="fr">French</option>
+<option value="en">English</option>
+<option value="fr" selected>French</option>
 <option value="ha">Hausa</option>
 <option value="pcm">Nigerian Pidgin</option>
 <option value="sw">Swahili</option>
 <option value="yo">Yorùbá</option>
 </select>
-<button id="demoBtn1" type="submit">Run this scenario</button><div id="loadingMsg1" class="meta" style="display:none;margin-top:.6rem;font-size:.8rem;">AfrekaOS received your question. It is building local retrieval context and running the local model. This can take 30 to 90 seconds on CPU-only hardware.</div></form></div><div class="card"><span class="card-tag">Scenario 2</span><h2>Expansion readiness</h2><p><em>Daily Operations Advisor</em></p><p>A small shop has low sales, missing fast-moving stock, supplier delay, and more customers asking for credit. Give a short operating checklist.</p><form method="POST" action="/advisor/daily"><textarea name="question" style="display:none;">A small shop has low sales, missing fast-moving stock, supplier delay, and more customers asking for credit. Give a short operating checklist.</textarea><div class="label">Response language</div>
+<button id="demoBtn1" type="submit">Lancer ce scénario</button><div id="loadingMsg1" class="meta" style="display:none;margin-top:.6rem;font-size:.8rem;">AfrekaOS a reçu votre question. Elle prépare le contexte local et exécute le modèle. Cela peut prendre 30 à 90 secondes sur CPU.</div></form></div><div class="card"><span class="card-tag">Scenario 2</span><h2>Préparation à l&#x27;expansion</h2><p><em>Conseiller en opérations quotidiennes</em></p><p>Une petite boutique a des ventes en baisse, des articles à forte rotation en rupture, un fournisseur en retard, et plus de clients demandant du crédit. Donnez une courte checklist.</p><form method="POST" action="/advisor/daily"><textarea name="question" style="display:none;">Une petite boutique a des ventes en baisse, des articles à forte rotation en rupture, un fournisseur en retard, et plus de clients demandant du crédit. Donnez une courte checklist.</textarea><div class="label">Langue de réponse</div>
 <select name="language">
-<option value="en" selected>English</option>
-<option value="fr">French</option>
+<option value="en">English</option>
+<option value="fr" selected>French</option>
 <option value="ha">Hausa</option>
 <option value="pcm">Nigerian Pidgin</option>
 <option value="sw">Swahili</option>
 <option value="yo">Yorùbá</option>
 </select>
-<button id="demoBtn2" type="submit">Run this scenario</button><div id="loadingMsg2" class="meta" style="display:none;margin-top:.6rem;font-size:.8rem;">AfrekaOS received your question. It is building local retrieval context and running the local model. This can take 30 to 90 seconds on CPU-only hardware.</div></form></div><div class="card"><span class="card-tag">Scenario 3</span><h2>Inventory pressure</h2><p><em>Inventory and Stock Check</em></p><p>I have two fast-moving items out of stock and a supplier that is delayed. What should I check, and how do I avoid overstocking slow-moving items?</p><form method="POST" action="/advisor/inventory"><textarea name="question" style="display:none;">I have two fast-moving items out of stock and a supplier that is delayed. What should I check, and how do I avoid overstocking slow-moving items?</textarea><div class="label">Response language</div>
+<button id="demoBtn2" type="submit">Lancer ce scénario</button><div id="loadingMsg2" class="meta" style="display:none;margin-top:.6rem;font-size:.8rem;">AfrekaOS a reçu votre question. Elle prépare le contexte local et exécute le modèle. Cela peut prendre 30 à 90 secondes sur CPU.</div></form></div><div class="card"><span class="card-tag">Scenario 3</span><h2>Pression d&#x27;inventaire</h2><p><em>Inventaire et contrôle de stock</em></p><p>J&#x27;ai deux articles à forte rotation en rupture et un fournisseur en retard. Que dois-je vérifier pour éviter le surstock ?</p><form method="POST" action="/advisor/inventory"><textarea name="question" style="display:none;">J&#x27;ai deux articles à forte rotation en rupture et un fournisseur en retard. Que dois-je vérifier pour éviter le surstock ?</textarea><div class="label">Langue de réponse</div>
 <select name="language">
-<option value="en" selected>English</option>
-<option value="fr">French</option>
+<option value="en">English</option>
+<option value="fr" selected>French</option>
 <option value="ha">Hausa</option>
 <option value="pcm">Nigerian Pidgin</option>
 <option value="sw">Swahili</option>
 <option value="yo">Yorùbá</option>
 </select>
-<button id="demoBtn3" type="submit">Run this scenario</button><div id="loadingMsg3" class="meta" style="display:none;margin-top:.6rem;font-size:.8rem;">AfrekaOS received your question. It is building local retrieval context and running the local model. This can take 30 to 90 seconds on CPU-only hardware.</div></form></div><div class="card"><span class="card-tag">Scenario 4</span><h2>Cash pressure and customer credit</h2><p><em>Cashflow Pressure Coach</em></p><p>Customers are asking for credit and my cash records are irregular. What should I check before extending credit?</p><form method="POST" action="/advisor/cashflow"><textarea name="question" style="display:none;">Customers are asking for credit and my cash records are irregular. What should I check before extending credit?</textarea><div class="label">Response language</div>
+<button id="demoBtn3" type="submit">Lancer ce scénario</button><div id="loadingMsg3" class="meta" style="display:none;margin-top:.6rem;font-size:.8rem;">AfrekaOS a reçu votre question. Elle prépare le contexte local et exécute le modèle. Cela peut prendre 30 à 90 secondes sur CPU.</div></form></div><div class="card"><span class="card-tag">Scenario 4</span><h2>Pression de trésorerie et crédit client</h2><p><em>Coach en pression de trésorerie</em></p><p>Les clients demandent du crédit et mes registres de caisse sont irréguliers. Que dois-je vérifier avant d&#x27;accorder du crédit ?</p><form method="POST" action="/advisor/cashflow"><textarea name="question" style="display:none;">Les clients demandent du crédit et mes registres de caisse sont irréguliers. Que dois-je vérifier avant d&#x27;accorder du crédit ?</textarea><div class="label">Langue de réponse</div>
 <select name="language">
-<option value="en" selected>English</option>
-<option value="fr">French</option>
+<option value="en">English</option>
+<option value="fr" selected>French</option>
 <option value="ha">Hausa</option>
 <option value="pcm">Nigerian Pidgin</option>
 <option value="sw">Swahili</option>
 <option value="yo">Yorùbá</option>
 </select>
-<button id="demoBtn4" type="submit">Run this scenario</button><div id="loadingMsg4" class="meta" style="display:none;margin-top:.6rem;font-size:.8rem;">AfrekaOS received your question. It is building local retrieval context and running the local model. This can take 30 to 90 seconds on CPU-only hardware.</div></form></div>
+<button id="demoBtn4" type="submit">Lancer ce scénario</button><div id="loadingMsg4" class="meta" style="display:none;margin-top:.6rem;font-size:.8rem;">AfrekaOS a reçu votre question. Elle prépare le contexte local et exécute le modèle. Cela peut prendre 30 à 90 secondes sur CPU.</div></form></div>
 </div>
 <script>
 (function(){
@@ -149,7 +149,7 @@ footer { margin-top:2rem; color:var(--muted); font-size:.8rem;
     if(!btn || !btn.form){ return; }
     btn.form.addEventListener('submit', function(){
       btn.disabled = true;
-      btn.textContent = 'Running local model...';
+      btn.textContent = 'Modèle local en cours...';
       var msg = document.getElementById(msgId);
       if(msg){ msg.style.display = 'block'; }
     });
@@ -160,9 +160,9 @@ footer { margin-top:2rem; color:var(--muted); font-size:.8rem;
   _wire('demoBtn4','loadingMsg4');
 })();
 </script>
-<div class="result-nav"><a href="/">&#8592; Mission Control</a><a href="/status">Offline Status</a></div>
+<div class="result-nav"><a href="/?lang=fr">&#8592; Contrôle Mission</a><a href="/status?lang=fr">Statut hors ligne</a></div>
 
-<footer>AfrekaOS Offline — local-only. No cloud. Operational guidance, not accounting/banking/payroll/tax/ERP software.</footer>
+<footer>AfrekaOS Offline — local uniquement. Aucun cloud. Conseils d&#x27;exploitation, non un logiciel de comptabilité/banque/paie/fiscalité/ERP.</footer>
 </div>
 </body>
 </html>

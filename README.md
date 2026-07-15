@@ -359,6 +359,20 @@ Optional live sample in a selected language (requires model + llama runtime):
 AFREKAOS_QWEN_NO_THINK=1 python3 scripts/run_language_inference_sample.py fr
 ```
 
+**Full UI localization (Task 006B):** the selected language now changes the
+**entire page** — navigation, labels, warnings, form text, job progress steps,
+runtime labels, footer, demo page, and status page — not just the answer
+language. Use the language selector in the page header, or append `?lang=fr`
+(or `yo`, `ha`, `sw`, `pcm`) to any URL. The selected language persists across
+navigation. Retrieval corpus and technical values (model paths, job ids) remain
+English/unchanged.
+
+Validate UI localization (no model required):
+
+```bash
+python3 scripts/smoke_ui_localization.py
+```
+
 ## Repository layout
 
 ```

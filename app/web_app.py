@@ -34,6 +34,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from app import model_inference, retrieval, runtime_config  # noqa: E402
+from app import language_mode  # noqa: E402
 from app import web_templates as T  # noqa: E402
 
 HOST = "127.0.0.1"
@@ -58,6 +59,31 @@ ADVISOR_HEADINGS = {
     "/advisor/inventory": "Inventory and Stock Check",
     "/advisor/cashflow": "Cashflow Pressure Coach",
 }
+
+# Maps advisor path -> localized heading/description UI keys.
+_ADVISOR_HEADING_KEYS = {
+    "/advisor/daily": "daily_operations_advisor",
+    "/advisor/inventory": "inventory_and_stock_check",
+    "/advisor/cashflow": "cashflow_pressure_coach",
+}
+_ADVISOR_DESCRIPTIONS = {
+    "/advisor/daily": "Triage low sales, stockouts, supplier delays, and credit pressure.",
+    "/advisor/inventory": "Check fast-moving items, slow stock, reorder points, and supplier lead times.",
+    "/advisor/cashflow": "Reason through cash pressure, credit requests, and record gaps.",
+}
+
+
+def _advisor_heading(route: str, language: str = "en") -> str:
+    """Return the localized advisor heading for a route."""
+    key = _ADVISOR_HEADING_KEYS.get(route)
+    if key:
+        return language_mode.get_ui_text(key, language)
+    return ADVISOR_HEADINGS.get(route, "Advisor")
+
+
+def _advisor_description(route: str, language: str = "en") -> str:
+    """Return the advisor description (English for now; descriptions are short)."""
+    return _ADVISOR_DESCRIPTIONS.get(route, "")
 
 # --- In-memory job store ----------------------------------------------------
 # Jobs are kept only in process memory. Never persisted. Never logged in full.
@@ -382,14 +408,15 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Location", location)
         self.end_headers()
 
-    def _error_page(self, route: str, exc: BaseException) -> None:
+    def _error_page(self, route: str, exc: BaseException, lang: str = "en") -> None:
         """Render a browser-friendly error page. Full traceback to terminal
         only; a short summary to the browser."""
         summary = f"{type(exc).__name__}: {exc}" if exc else "Unknown error"
         traceback.print_exc()  # full detail to terminal logs only
         try:
             self._send_html(
-                500, T.render_error(summary, route=route, detail=_status_detail())
+                500, T.render_error(summary, route=route, detail=_status_detail(),
+                                    language=lang)
             )
         except Exception:
             # Last-resort fallback if even rendering the error page fails.
@@ -404,23 +431,37 @@ class Handler(BaseHTTPRequestHandler):
 
     # --- GET routes ----------------------------------------------------------
 
+    @staticmethod
+    def _lang_from_path(full_path: str) -> str:
+        """Extract ?lang=<code> from the request path; English fallback."""
+        from app import language_mode
+        if "?" not in full_path:
+            return language_mode.DEFAULT_LANGUAGE
+        qs = full_path.split("?", 1)[1]
+        from urllib.parse import parse_qs
+        params = parse_qs(qs)
+        return language_mode.normalize_language_code(
+            (params.get("lang", ["en"])[0] or "en")
+        )
+
     def do_GET(self) -> None:
         route = self.path.split("?")[0]
+        lang = self._lang_from_path(self.path)
         try:
             if route == "/":
-                self._send_html(200, T.render_home())
+                self._send_html(200, T.render_home(language=lang))
             elif route == "/demo":
-                self._send_html(200, T.render_demo())
+                self._send_html(200, T.render_demo(language=lang))
             elif route == "/advisor/daily":
                 self._send_html(
                     200,
                     T.render_advisor_form(
                         "/advisor/daily",
-                        "Daily Operations Advisor",
-                        "Triage low sales, stockouts, supplier delays, and credit pressure.",
-                        DEFAULT_DAILY,
-                        "Describe your daily operations problem...",
+                        _advisor_heading(route, lang),
+                        _advisor_description(route, lang),
+                        language_mode.get_default_prompt("daily", lang),
                         active="daily",
+                        language=lang,
                     ),
                 )
             elif route == "/advisor/inventory":
@@ -428,11 +469,11 @@ class Handler(BaseHTTPRequestHandler):
                     200,
                     T.render_advisor_form(
                         "/advisor/inventory",
-                        "Inventory and Stock Check",
-                        "Check fast-moving items, slow stock, reorder points, and supplier lead times.",
-                        DEFAULT_INVENTORY,
-                        "Describe your inventory / stockout problem...",
+                        _advisor_heading(route, lang),
+                        _advisor_description(route, lang),
+                        language_mode.get_default_prompt("inventory", lang),
                         active="daily",
+                        language=lang,
                     ),
                 )
             elif route == "/advisor/cashflow":
@@ -440,26 +481,26 @@ class Handler(BaseHTTPRequestHandler):
                     200,
                     T.render_advisor_form(
                         "/advisor/cashflow",
-                        "Cashflow Pressure Coach",
-                        "Reason through cash pressure, credit requests, and record gaps. Not accounting/banking/lending/tax/payroll advice.",
-                        DEFAULT_CASHFLOW,
-                        "Describe your cashflow / credit problem...",
+                        _advisor_heading(route, lang),
+                        _advisor_description(route, lang),
+                        language_mode.get_default_prompt("cashflow", lang),
                         active="daily",
+                        language=lang,
                     ),
                 )
             elif route.startswith("/job/"):
                 self._handle_job_get(route)
             elif route == "/status":
-                self._send_html(200, T.render_status(status_payload()))
+                self._send_html(200, T.render_status(status_payload(), language=lang))
             elif route == "/health":
                 self._send_json(200, T.health_json(health_payload()))
             else:
-                self._send_html(404, T._page("Not found", "<h2>404 — Not found</h2><p><a href=\"/\">Home</a></p>"))
+                self._send_html(404, T._page("Not found", "<h2>404 — Not found</h2><p><a href=\"/\">Home</a></p>", language=lang))
         except Exception as exc:
-            self._error_page(route, exc)
+            self._error_page(route, exc, lang=lang)
 
     def _handle_job_get(self, route: str) -> None:
-        """GET /job/<id> — render progress/result page."""
+        """GET /job/<id> — render progress/result page (job's language)."""
         job_id = route[len("/job/"):].strip("/")
         if not job_id:
             self._send_html(
@@ -471,6 +512,7 @@ class Handler(BaseHTTPRequestHandler):
         if job is None:
             self._send_html(404, T.render_job_missing(job_id))
             return
+        # The job page renders in the language stored on the job.
         self._send_html(
             200, T.render_job(job, detail=_status_detail(), active="daily")
         )
@@ -496,14 +538,16 @@ class Handler(BaseHTTPRequestHandler):
 
             if not question:
                 # No question: redisplay the form with a note (no job created).
+                lang = language_mode.normalize_language_code(language)
                 self._send_html(
                     200,
                     T.render_advisor_result(
-                        heading,
+                        _advisor_heading(route, lang),
                         "(empty)",
-                        "Please enter an operations question.",
+                        language_mode.get_ui_text("enter_question", lang),
                         "retrieval-grounded, direct-answer",
                         active="daily",
+                        language=lang,
                     ),
                 )
                 return
@@ -519,7 +563,7 @@ class Handler(BaseHTTPRequestHandler):
             t.start()
             self._redirect(f"/job/{job['job_id']}")
         except Exception as exc:
-            self._error_page(route, exc)
+            self._error_page(route, exc, lang=language_mode.normalize_language_code(language))
 
 
 def main() -> int:

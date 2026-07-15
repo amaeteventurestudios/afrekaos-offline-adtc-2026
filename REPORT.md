@@ -621,6 +621,38 @@ perfect translation. The operational boundary is enforced in every language.
 
 **No external dependencies were added.** Standard library only.
 
+## Task 006B — Full UI Localization
+
+Task 006A only localized the answer language; the page chrome stayed English.
+Task 006B localizes the **entire UI**: navigation, labels, warnings, form text,
+job progress steps, runtime labels, footer, demo page, and status page.
+
+**HyveGrid localization pattern reused conceptually.** The HyveGrid Offline repo
+uses the same discipline (language registry, controlled labels, `?lang=`
+selector, localized page chrome). The pattern was ported — no bee/hive content
+or product wording was copied.
+
+**What was added.** A UI translation registry (`UI_TEXT_BUNDLES`) with ~60 keys
+× 6 languages in `app/language_mode.py`; all page renderers in
+`app/web_templates.py` now accept a `language` parameter and render chrome from
+the bundle; a global language selector (`<form class="langswitch">`) in the
+header on every page; `?lang=<code>` query parameter support with language
+persistence across nav links; localized default advisor prompts; job pages
+render in the job's stored language. `scripts/smoke_ui_localization.py`
+validates the localization without requiring the model.
+
+**French page chrome now renders in French.** So do Yorùbá, Hausa, Swahili, and
+Nigerian Pidgin. Technical values (model paths, job ids, return codes) remain
+unchanged.
+
+**No cloud translation or external APIs were added.** All UI strings are baked
+into the standard-library Python module. Retrieval remains English for now.
+
+**Limitations.** Yorùbá/Hausa/Swahili translations are best-effort; we do not
+claim perfect translation. Retrieval corpus is English.
+
+**No external dependencies were added.** Standard library only.
+
 ## Task 005A — Final Evaluation Package
 
 This task created the final evaluation package, validation runner, and

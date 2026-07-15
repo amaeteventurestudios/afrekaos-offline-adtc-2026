@@ -95,3 +95,57 @@ class TestSummary(unittest.TestCase):
         self.assertEqual(s["count"], 6)
         self.assertFalse(s["cloud_translation"])
         self.assertIn("fr", s["codes"])
+
+
+class TestUiText(unittest.TestCase):
+    def test_french_mission_control(self) -> None:
+        fr = lm.get_ui_text("mission_control", "fr")
+        self.assertEqual(fr, "Contrôle Mission")
+
+    def test_english_mission_control(self) -> None:
+        self.assertEqual(lm.get_ui_text("mission_control", "en"), "Mission Control")
+
+    def test_unknown_key_returns_key(self) -> None:
+        self.assertEqual(lm.get_ui_text("nonexistent_key", "fr"), "nonexistent_key")
+
+    def test_unknown_language_falls_back(self) -> None:
+        self.assertEqual(lm.get_ui_text("mission_control", "zz"), "Mission Control")
+
+    def test_bundle_merge(self) -> None:
+        b = lm.get_ui_bundle("fr")
+        # French value
+        self.assertEqual(b["mission_control"], "Contrôle Mission")
+        # English fallback for a key not in French bundle (all keys present in
+        # both, but this verifies the merge mechanism)
+        self.assertIn("footer", b)
+
+    def test_boundary_warning_localized(self) -> None:
+        fr = lm.get_boundary_warning("fr")
+        self.assertIn("comptabilité", fr.lower())
+        en = lm.get_boundary_warning("en")
+        self.assertIn("accounting", en.lower())
+
+    def test_footer_localized(self) -> None:
+        fr = lm.get_footer_text("fr")
+        self.assertIn("cloud", fr.lower())
+
+    def test_progress_steps_localized(self) -> None:
+        fr = lm.get_progress_steps("fr")
+        self.assertEqual(len(fr), 7)
+        self.assertEqual(fr[0], "Demande reçue")
+        self.assertEqual(fr[-1], "Terminé")
+        en = lm.get_progress_steps("en")
+        self.assertEqual(en[0], "Request received")
+
+    def test_default_prompt_localized(self) -> None:
+        fr = lm.get_default_prompt("daily", "fr")
+        self.assertIn("boutique", fr.lower())
+        en = lm.get_default_prompt("daily", "en")
+        self.assertIn("shop", en.lower())
+
+    def test_demo_scenarios_localized(self) -> None:
+        fr = lm.get_demo_scenarios("fr")
+        self.assertEqual(len(fr), 4)
+        self.assertIn("Ventes basses", fr[0][0])
+        en = lm.get_demo_scenarios("en")
+        self.assertIn("Low sales", en[0][0])

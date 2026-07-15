@@ -168,6 +168,16 @@ a correct, fast, offline model scores well and is easy to defend.
 - **Do not claim perfect translation.** Difficult terms may remain in English;
   the local model determines quality. No cloud translation is used.
 
+## Full UI localization note (Task 006B)
+
+- **Full UI localization supports operator accessibility and demo clarity.**
+  When the selected language changes the entire page chrome — not just the
+  answer — the operator can follow the workflow end-to-end in their language.
+- **Multilingual UI should not be confused with a translated retrieval corpus.**
+  The UI strings are human-curated baked text; the retrieval corpus remains
+  English until a future multilingual retrieval task.
+- **Technical values (model paths, job ids, return codes) are never translated.**
+
 ## Final evaluation note (Task 005A)
 
 - Final validation (`scripts/final_validation.py`) confirms **repo health and

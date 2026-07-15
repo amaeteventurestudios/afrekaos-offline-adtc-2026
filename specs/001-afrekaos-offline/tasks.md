@@ -305,6 +305,34 @@ Status legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [x] Final validation PASS; `smoke_web` PASS; `smoke_submit_flow` PASS;
       `smoke_language_mode` PASS; full unittest (251 tests) PASS.
 
+### 006B — Full UI localization (complete)
+
+- [x] UI translation registry in `app/language_mode.py`: `UI_TEXT_BUNDLES`
+      (~60 keys × 6 languages), `get_ui_text`, `get_ui_bundle`,
+      `get_default_prompt`, `get_demo_scenarios`, `get_boundary_warning`,
+      `get_footer_text`, `get_progress_steps`. English fallback for unknown
+      keys/languages.
+- [x] Global language selector (`<form class="langswitch">`) in header on every
+      page; `?lang=<code>` query param; nav links preserve language; auto-submit
+      via inline onchange (works without JS as plain GET).
+- [x] All page templates localized: home, advisor forms, advisor result, demo,
+      status, job progress/result, error page, job-missing page — header,
+      banner, nav, titles, labels, buttons, steps, warnings, runtime labels,
+      footer.
+- [x] Localized default advisor prompts (French daily/inventory/cashflow).
+- [x] Language persistence: nav links carry `?lang=`; advisor POST stores
+      `language_code`/`language_label` on job; job page renders in job's stored
+      language.
+- [x] Technical values unchanged (model paths, job ids, return codes, locked
+      candidate).
+- [x] `scripts/smoke_ui_localization.py` — model-free; requests fr/pcm/yo pages,
+      verifies localization, saves snapshots. PASS.
+- [x] Tests added: `tests/test_language_mode.py` (`TestUiText` — 12 cases),
+      `tests/test_web_templates.py` (`TestUiLocalization` — 13 cases).
+- [x] Final validation PASS; `smoke_web` PASS; `smoke_submit_flow` PASS;
+      `smoke_language_mode` PASS; `smoke_ui_localization` PASS; full unittest
+      (274 tests) PASS.
+
 ### 005A — Final evaluation package (complete)
 
 - [x] `scripts/final_validation.py` — runs all checks + unittest; writes

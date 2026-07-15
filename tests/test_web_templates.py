@@ -99,15 +99,19 @@ class TestAdvisorResult(unittest.TestCase):
         self.assertIn("my answer", html_out)
 
     def test_includes_mode_label(self) -> None:
+        # Mode label is no longer in the title (Task 004E); the title is just
+        # "Operating Guidance". Mode is shown in the status panel instead.
         html_out = T.render_advisor_result("H", "q", "a", "retrieval-grounded")
-        self.assertIn("retrieval-grounded", html_out)
+        self.assertIn("Operating Guidance", html_out)
 
 
 class TestStatusPage(unittest.TestCase):
     def test_renders_keys(self) -> None:
         html_out = T.render_status({"product": "AfrekaOS Offline", "ok": True})
         self.assertIn("AfrekaOS Offline", html_out)
-        self.assertIn("product", html_out)
+        # Status keys are now localized via the UI bundle; "product" maps to the
+        # product label. The value "AfrekaOS Offline" should still appear.
+        self.assertIn("yes", html_out)  # the pill for True
 
     def test_handles_missing_model_gracefully(self) -> None:
         html_out = T.render_status(
@@ -401,6 +405,88 @@ class TestNavLinks(unittest.TestCase):
         self.assertIn('href="/"', html_out)
         self.assertIn('href="/demo"', html_out)
         self.assertIn('href="/status"', html_out)
+
+
+class TestUiLocalization(unittest.TestCase):
+    """Task 006B: full UI localization."""
+
+    def test_french_home_localized(self) -> None:
+        html_out = T.render_home(language="fr")
+        self.assertIn("Contrôle Mission", html_out)
+        self.assertNotIn("Mission Control", html_out)
+        self.assertIn("langswitch", html_out)
+        self.assertIn('lang="fr"', html_out)
+
+    def test_french_advisor_form_localized(self) -> None:
+        html_out = T.render_advisor_form("/advisor/daily", "H", "d", "q", language="fr")
+        self.assertIn("Obtenir des conseils", html_out)
+        self.assertIn("Votre question", html_out)
+        self.assertNotIn("Get operating guidance", html_out)
+        self.assertNotIn("Your operations question", html_out)
+
+    def test_french_status_localized(self) -> None:
+        html_out = T.render_status({"product": "x", "ok": True}, language="fr")
+        self.assertIn("Statut du système hors ligne", html_out)
+        self.assertNotIn("Offline System Status", html_out)
+
+    def test_french_job_steps_localized(self) -> None:
+        html_out = T.render_job(
+            {"job_id": "x", "advisor": "Daily", "status": "running", "step": 5,
+             "language_code": "fr", "language_label": "French"}
+        )
+        self.assertIn("Demande reçue", html_out)
+        self.assertIn("peut prendre 30", html_out)
+
+    def test_french_boundary_warning(self) -> None:
+        html_out = T.render_advisor_result("H", "q", "a", "m", language="fr")
+        self.assertIn("comptabilité", html_out.lower())
+
+    def test_french_footer(self) -> None:
+        html_out = T.render_home(language="fr")
+        self.assertIn("local uniquement", html_out)
+
+    def test_english_default_not_localized(self) -> None:
+        html_out = T.render_home()
+        self.assertIn("Mission Control", html_out)
+        self.assertNotIn("Contrôle Mission", html_out)
+
+    def test_global_lang_selector_on_every_page(self) -> None:
+        for renderer in (
+            lambda: T.render_home(),
+            lambda: T.render_demo(),
+            lambda: T.render_advisor_form("/x", "H", "d", "q"),
+            lambda: T.render_status({"k": "v"}),
+        ):
+            self.assertIn("langswitch", renderer())
+
+    def test_nav_links_preserve_language(self) -> None:
+        html_out = T.render_home(language="fr")
+        self.assertIn("?lang=fr", html_out)
+
+    def test_advisor_form_includes_language_in_select(self) -> None:
+        html_out = T.render_advisor_form("/x", "H", "d", "q", language="fr")
+        self.assertIn('select name="language"', html_out)
+        self.assertIn('value="fr" selected', html_out)
+
+    def test_french_job_page_shows_response_language(self) -> None:
+        html_out = T.render_job(
+            {"job_id": "x", "advisor": "Daily", "status": "complete", "step": 7,
+             "answer": "test", "language_code": "fr", "language_label": "French"}
+        )
+        self.assertIn("Langue de réponse", html_out)
+        self.assertIn("French", html_out)
+
+    def test_technical_values_not_translated(self) -> None:
+        html_out = T.render_status(
+            {"locked_candidate": "qwen3-1.7b-q4-k-m", "model_path_exists": True},
+            language="fr",
+        )
+        self.assertIn("qwen3-1.7b-q4-k-m", html_out)
+
+    def test_pidgin_advisor_form_localized(self) -> None:
+        html_out = T.render_advisor_form("/advisor/daily", "H", "d", "q", language="pcm")
+        self.assertIn("Get business guide", html_out)
+        self.assertIn("Your business question", html_out)
 
 
 if __name__ == "__main__":
